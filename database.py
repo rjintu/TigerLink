@@ -23,9 +23,25 @@ class Database:
                 '(userid INTEGER, firstname TEXT, lastname TEXT)')
         cursor.execute('INSERT INTO students (userid, firstname, lastname) ' +
                 'VALUES (1, \'Devon\', \'Ulrich\')')
+        cursor.execute('INSERT INTO students (userid, firstname, lastname) ' +
+                'VALUES (2, \'Ayush\', \'Alag\')')
+        cursor.execute('INSERT INTO students (userid, firstname, lastname) ' +
+                'VALUES (3, \'Rohan\', \'Jinturkar\')')
         self._connection.commit()
 
         cursor.close()
+
+    def get_students(self):
+        cursor = self._connection.cursor()
+        cursor.execute('SELECT userid, firstname, lastname FROM students')
+        row = cursor.fetchone()
+        output = []
+        while row is not None:
+            output.append(row)
+            row = cursor.fetchone()
+
+        cursor.close()
+        return output
 
     def disconnect(self):
         self._connection.close()
