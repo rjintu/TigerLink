@@ -19,3 +19,21 @@ def index():
 
     response = make_response(html)
     return response
+
+@app.route('/getstudents', methods=['GET'])
+def getstudents():
+    try:
+        db = Database()
+        db.connect()
+        students = db.get_students()
+        db.disconnect()
+
+        html = ""
+        for row in students:
+            html += str(row) + "<br>"
+    except Exception as e:
+        html = "error occurred: " + str(e)
+        print(e)
+
+    response = make_response(html)
+    return response
