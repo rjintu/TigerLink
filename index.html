@@ -48,28 +48,28 @@
       <div class="col-4">
         <strong>Are you a student or alumnus?</strong>
         <div class="form-check">
-          <input class="form-check-input" type="radio" name="ugrad">
-          <label class="form-check-label" for="flexRadioDefault1"> Undergraduate Student </label>
+          <input class="form-check-input" id="ugrad" type="radio" name="role">
+          <label class="form-check-label" for="ugrad"> Undergraduate Student </label>
         </div>
         <div class="form-check">
-          <input class="form-check-input" type="radio" name="grad">
-          <label class="form-check-label" for="flexRadioDefault2"> Graduate Student </label>
+          <input class="form-check-input" id="grad" type="radio" name="role">
+          <label class="form-check-label" for="grad"> Graduate Student </label>
         </div>
         <div class="form-check">
-          <input class="form-check-input" type="radio" name="alum">
-          <label class="form-check-label" for="flexRadioDefault2"> Alumnus </label>
+          <input class="form-check-input" id="alum" type="radio" name="role">
+          <label class="form-check-label" for="alum"> Alumnus </label>
         </div>
         <br>
         <strong>Class Year</strong>
-        <select class="form-select" aria-label="Default select example">
+        <select class="form-select" aria-label="Default select example" name="classYear">
           <option value="" selected disabled>Please select</option>
-          <option value="1">1963</option>
-          <option value="2">1998</option>
-          <option value="3">2023</option>
+          <option value="1963">1963</option>
+          <option value="1998">1998</option>
+          <option value="2023">2023</option>
         </select>
         <br>
         <div class="custom-control custom-switch">
-          <input type="checkbox" class="custom-control-input" id="customSwitch1">
+          <input type="checkbox" class="custom-control-input" id="customSwitch1" name="matchBool">
           <label class="custom-control-label" for="customSwitch1">I would like to be matched with a mentor or
             mentee</label>
         </div>
@@ -77,7 +77,7 @@
         <br>
 
         <strong>How many matches would you like?</strong>
-        <select class="form-select" aria-label="Default select example" id="nummatches" name="nummatches">
+        <select class="form-select" aria-label="Default select example" id="numMatches" name="numMatches">
           <option value="" selected disabled>Please select</option>
           <option value="1">1</option>
           <option value="2">2</option>
@@ -170,7 +170,7 @@
         <div class="form-group">
           <label for="exampleFormControlSelect2"><strong>Select the industries you're interested in or work
               in.</strong></label>
-          <select multiple class="form-control" id="exampleFormControlSelect2">
+          <select multiple class="form-control" id="exampleFormControlSelect2" name="industry">
             <option>Software Engineering</option>
             <option>Product Management</option>
             <option>Consulting</option>
@@ -192,7 +192,7 @@
   <div class="container">
     <div class="row justify-content-center">
       <div class="col-1">
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <button type="submit" name="submit" class="btn btn-primary">Submit</button>
       </div>
     </div>
   </div>
