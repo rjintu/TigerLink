@@ -1,55 +1,202 @@
-<html>
-  <head>
-    <link rel='stylesheet' type='text/css' href='{{ url_for('static', filename='style.css') }}'>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans">
+<!doctype html>
+<html lang="en">
 
-  </head>
-  <body>
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- heading -->
-     
-    <h2 style="text-align: center;">Welcome to TigerLink!</h2>
-    <h4 style="text-align: center;">
-      Please fill out the questions below to create your profile.
-    </h4>
-  </body>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans">
+
+  <link rel='stylesheet' type='text/css' href='static/style.css'>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans">
+</head>
+
+<body>
+
+  <!-- heading -->
+  <h2 style="text-align: center;">Welcome to TigerLink!</h2>
+  <h4 style="text-align: center;">
+    <small class="text-muted">Please fill out the questions below to create your profile.</small>
+  </h4>
+</body>
+
+<body>
+  <!-- Optional JavaScript; choose one of the two! -->
+
+  <!-- Option 1: Bootstrap Bundle with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+    crossorigin="anonymous"></script>
+
+  <!-- Option 2: Separate Popper and Bootstrap JS -->
+  <!--
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js" integrity="sha384-SR1sx49pcuLnqZUnnPwx6FCym0wLsk5JZuNx2bPPENzswTNFaQU1RDvt3wT4gWFG" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.min.js" integrity="sha384-j0CNLUeiqtyaRmlzUHCPZ+Gy5fQu0dQ6eZ/xAww941Ai1SxSY+0EQqNXNE6DZiVc" crossorigin="anonymous"></script>
+    -->
+</body>
 
 
-    <body id="sahil">
-    <!-- undergrad/grad input form -->
+<body>
+  <br>
+  <div class="container">
+    <div class="row justify-content-start">
+      <!-- col 1 -->
+      <div class="col-4">
+        <strong>Are you a student or alumnus?</strong>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="ugrad">
+          <label class="form-check-label" for="flexRadioDefault1"> Undergraduate Student </label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="grad">
+          <label class="form-check-label" for="flexRadioDefault2"> Graduate Student </label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="alum">
+          <label class="form-check-label" for="flexRadioDefault2"> Alumnus </label>
+        </div>
+        <br>
+        <strong>Class Year</strong>
+        <select class="form-select" aria-label="Default select example">
+          <option value="" selected disabled>Please select</option>
+          <option value="1">1963</option>
+          <option value="2">1998</option>
+          <option value="3">2023</option>
+        </select>
+        <br>
+        <div class="custom-control custom-switch">
+          <input type="checkbox" class="custom-control-input" id="customSwitch1">
+          <label class="custom-control-label" for="customSwitch1">I would like to be matched with a mentor or
+            mentee</label>
+        </div>
 
-    <form>
-      <strong>Are you an alum or a student? *</strong>
-      <br>
-      <br>
-      <input type="radio" id="ugrad" name="type" value="ugrad">
-      <label for="ugrad">Undergraduate Student</label><br>
-      <input type="radio" id="grad" name="type" value="grad">
-      <label for="grad">Grad Student</label><br>
-      <input type="radio" id="alum" name="type" value="alum">
-      <label for="alum">Alum</label>
-    </form>
-    
+        <br>
 
-    <!-- end of the form -->
+        <strong>How many matches would you like?</strong>
+        <select class="form-select" aria-label="Default select example" id="nummatches" name="nummatches">
+          <option value="" selected disabled>Please select</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+        </select>
 
-    <!-- drop down menu for the class year -->
+        <br>
 
-    <label>Class Year:
-      <br>
-      <br>
-      <input list="classyear" name="classyear" /></label>
-      <datalist id="classyear">
-        <option value="2021">
-        <option value="2022">
-        <option value="2023">
-        <option value="2024">
-        <option value="2025">
-        <option value="Grad Student">
-        <option value="Alum"></option>
-      </datalist>
-      
+        <strong>Country of Residence</strong>
+        <select class="form-select" id="country" name="country">
+          <option value="">N/A</option>
+          <option value="USA">USA</option>
+          <option value="Canada">Canada</option>
+          <option value="Mexico">Mexico</option>
+          <option value="India">India</option>
+          <option value="Italy">Italy</option>
+        </select>
 
-    </body>
+        <br>
+
+        <strong>State of Residence</strong>
+        <select class="form-select" id="state" name="state">
+          <option value="">N/A</option>
+          <option value="AK">Alaska</option>
+          <option value="AL">Alabama</option>
+          <option value="AR">Arkansas</option>
+          <option value="AZ">Arizona</option>
+          <option value="CA">California</option>
+          <option value="CO">Colorado</option>
+          <option value="CT">Connecticut</option>
+          <option value="DC">District of Columbia</option>
+          <option value="DE">Delaware</option>
+          <option value="FL">Florida</option>
+          <option value="GA">Georgia</option>
+          <option value="HI">Hawaii</option>
+          <option value="IA">Iowa</option>
+          <option value="ID">Idaho</option>
+          <option value="IL">Illinois</option>
+          <option value="IN">Indiana</option>
+          <option value="KS">Kansas</option>
+          <option value="KY">Kentucky</option>
+          <option value="LA">Louisiana</option>
+          <option value="MA">Massachusetts</option>
+          <option value="MD">Maryland</option>
+          <option value="ME">Maine</option>
+          <option value="MI">Michigan</option>
+          <option value="MN">Minnesota</option>
+          <option value="MO">Missouri</option>
+          <option value="MS">Mississippi</option>
+          <option value="MT">Montana</option>
+          <option value="NC">North Carolina</option>
+          <option value="ND">North Dakota</option>
+          <option value="NE">Nebraska</option>
+          <option value="NH">New Hampshire</option>
+          <option value="NJ">New Jersey</option>
+          <option value="NM">New Mexico</option>
+          <option value="NV">Nevada</option>
+          <option value="NY">New York</option>
+          <option value="OH">Ohio</option>
+          <option value="OK">Oklahoma</option>
+          <option value="OR">Oregon</option>
+          <option value="PA">Pennsylvania</option>
+          <option value="PR">Puerto Rico</option>
+          <option value="RI">Rhode Island</option>
+          <option value="SC">South Carolina</option>
+          <option value="SD">South Dakota</option>
+          <option value="TN">Tennessee</option>
+          <option value="TX">Texas</option>
+          <option value="UT">Utah</option>
+          <option value="VA">Virginia</option>
+          <option value="VT">Vermont</option>
+          <option value="WA">Washington</option>
+          <option value="WI">Wisconsin</option>
+          <option value="WV">West Virginia</option>
+          <option value="WY">Wyoming</option>
+        </select>
+      </div>
+
+
+      <!-- ghost spacing column -->
+      <div class="col-1">
+
+      </div>
+
+
+      <!-- col 2 -->
+      <div class="col-4">
+        <div class="form-group">
+          <label for="exampleFormControlSelect2"><strong>Select the industries you're interested in or work
+              in.</strong></label>
+          <select multiple class="form-control" id="exampleFormControlSelect2">
+            <option>Software Engineering</option>
+            <option>Product Management</option>
+            <option>Consulting</option>
+            <option>Private Equity</option>
+            <option>Investment Banking</option>
+            <option>Theater Performance</option>
+            <option>Politics</option>
+            <option>Researcher</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+
+<body>
+  <br>
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-1">
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </div>
+    </div>
+  </div>
+</body>
+
 
 </html>
