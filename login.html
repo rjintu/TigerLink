@@ -1,0 +1,27 @@
+<html>
+  <head>
+    <link rel='stylesheet' type='text/css' href='{{ url_for('static', filename='style.css') }}'>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans">
+    <script src="{{ url_for('static', filename='main.js') }}"></script>
+
+  </head>
+  <body>
+
+    <!-- heading -->
+     
+    <h2 style="text-align: center;">Welcome to TigerLink!</h2>
+    <h4 style="text-align: center;">
+      Please login below.
+    </h4>
+
+
+    <!-- login button -->
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <meta name="google-signin-client_id" content="194740801025-kgpkca41khaesu6brekpp84pdc7bpjab.apps.googleusercontent.com">
+
+    <div class="g-signin2" data-onsuccess="onSignIn">    </div>
+
+    </body>
+
+
+</html>

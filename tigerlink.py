@@ -13,11 +13,16 @@ def index():
         db.connect()
         db.create_students()
         db.disconnect()
-        html = "database ran successfully!"
     except Exception as e:
-        html = "error occurred: " + str(e)
         print(e)
 
+    html = render_template('index.html')
+    response = make_response(html)
+    return response
+
+@app.route('/login', methods=['GET'])
+def login():
+    html = render_template('login.html')
     response = make_response(html)
     return response
 
