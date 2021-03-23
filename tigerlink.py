@@ -5,6 +5,7 @@ from database import Database
 
 app = Flask(__name__, template_folder='.')
 
+@app.route('/index', methods=['GET'])
 @app.route('/', methods=['GET'])
 def index():
     try:
@@ -17,6 +18,24 @@ def index():
         html = "error occurred: " + str(e)
         print(e)
 
+    response = make_response(html)
+    return response
+
+@app.route('/createstudent', methods=['GET'])
+def index():
+    try:
+        userid = request.args.get('userid', '')
+        firstname = request.args.get('firstname', '')
+        lastname = request.args.get('lastname', '')
+        db = Database()
+        db.connect()
+        db.create_student()
+        db.disconnect()
+        html = f"user {firstname} {lastname} created successfully!"
+    except Exception as e:
+        html = "error occurred: " + str(e)
+        print(e)
+    
     response = make_response(html)
     return response
 

@@ -30,6 +30,16 @@ class Database:
         self._connection.commit()
 
         cursor.close()
+    
+    # add a new student to the database (i.e. new account created)
+    def create_student(self, userid, firstname, lastname):
+        cursor = self._connection.cursor()
+        stmtStr = 'INSERT INTO students (userid, firstname, lastname) ' + 'VALUES ?'
+        args = ['%' + (userid, firstname, lastname) + '%']
+        cursor.execute(stmtStr, args)
+        self._connection.commit()
+
+        cursor.close()
 
     def get_students(self):
         cursor = self._connection.cursor()
