@@ -63,10 +63,10 @@ def createstudent():
         html = "error occurred: " + str(e)
         print(e)
     
-    # redirect to getstudents after the name is added
-    return redirect(url_for('getstudents'))
-    # response = make_response(html)
-    # return response
+    # redirect to getstudents after the name is added, make sure to uncomment this
+    # return redirect(url_for('getstudents'))
+    response = make_response(html)
+    return response
 
 @app.route('/getstudents', methods=['GET'])
 def getstudents():
