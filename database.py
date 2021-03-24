@@ -34,9 +34,9 @@ class Database:
     def addStudent(student):
         cursor.execute('INSERT INTO students(userid, firstname, lastname, classyear, email ' +
         'major, country, zip, numMatch, career) ' + 
-        'VALUES ('student[0] + ", " + student[1] + ", " + student[2] + ", " +  student[3]+ ", " + 
+        'VALUES (' + student[0] + ", " + student[1] + ", " + student[2] + ", " +  student[3]+ ", " + 
         student[4] + ", " + student[5] + ", " + student[6] + ", " + student[7] + ", " + 
-        student[8] + ", " + student[9] + ')'
+        student[8] + ", " + student[9] + ')')
 
     def get_students(self):
         cursor = self._connection.cursor()
