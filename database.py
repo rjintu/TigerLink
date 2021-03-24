@@ -26,17 +26,17 @@ class Database:
 
     def create_students(self, students):
         for student in students:
-            addStudent(student)
+            create_student(student)
         self._connection.commit()
 
         cursor.close()
     
-    def addStudent(student):
+    def create_student(student):
         cursor.execute('INSERT INTO students(userid, firstname, lastname, classyear, email ' +
-        'major, country, zip, numMatch, career) ' + 
+        'major, zip, numMatch, career) ' + 
         'VALUES (' + student[0] + ", " + student[1] + ", " + student[2] + ", " +  student[3]+ ", " + 
         student[4] + ", " + student[5] + ", " + student[6] + ", " + student[7] + ", " + 
-        student[8] + ", " + student[9] + ')')
+        student[8] + ')')
 
     def get_students(self):
         cursor = self._connection.cursor()
