@@ -1,4 +1,4 @@
-from flask import Flask, request, make_response, redirect
+from flask import Flask, request, make_response, redirect, url_for
 from flask import render_template
 
 from database import Database
@@ -43,6 +43,7 @@ def createstudent():
         acct_info = request.form
 
         # TODO: how to retrieve the name, email of the person from Google?
+        # TODO: tokenize the name into first and last
         role = acct_info.get('role')
         classyear = acct_info.get('classYear')
         matchbool = acct_info.get('matchBool')
@@ -53,17 +54,19 @@ def createstudent():
         # TODO: verify this step
         student = ['1', 'firstname', 'lastname', classyear, 'email', 'major', zipcode, nummatches, industry]
 
-        db = Database()
-        db.connect()
-        db.create_student(student)
-        db.disconnect()
+        # db = Database()
+        # db.connect()
+        # db.create_student(student)
+        # db.disconnect()
         html = f"fields: {role} {classyear} {matchbool} {nummatches} {zipcode} {industry}"
     except Exception as e:
         html = "error occurred: " + str(e)
         print(e)
     
-    response = make_response(html)
-    return response
+    # redirect to getstudents after the name is added
+    return redirect(url_for('getstudents'))
+    # response = make_response(html)
+    # return response
 
 @app.route('/getstudents', methods=['GET'])
 def getstudents():
