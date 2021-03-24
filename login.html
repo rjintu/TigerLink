@@ -55,7 +55,8 @@
         console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
     
         document.getElementById('profileinfo').innerHTML = profile.getName();
-        localStorage.setItem("sahil", "sahil");
+        localStorage.setItem("name", profile.getName());
+        localStorage.setItem("email", profile.getEmail());
         window.location.href = "index";
       }
     </script>
