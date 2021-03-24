@@ -6,7 +6,6 @@ from database import Database
 app = Flask(__name__, template_folder='.')
 
 
-@app.route('/', methods=['GET'])
 @app.route('/index', methods=['GET'])
 def index():
     try:
@@ -30,7 +29,7 @@ def index():
     response = make_response(html)
     return response
 
-
+@app.route('/', methods=['GET'])
 @app.route('/login', methods=['GET'])
 def login():
     html = render_template('login.html')
