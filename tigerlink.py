@@ -42,31 +42,32 @@ def createstudent():
     try:
         acct_info = request.form
 
-        # TODO: how to retrieve the name, email of the person from Google?
-        # TODO: tokenize the name into first and last
-        role = acct_info.get('role')
-        classyear = acct_info.get('classYear')
-        matchbool = acct_info.get('matchBool')
-        nummatches = acct_info.get('numMatches')
-        zipcode = acct_info.get('zipcode')
-        industry = acct_info.get('industry')
+        firstname, lastname = acct_info.get('name', 'test student').split()
+        email = acct_info.get('email', '')
+        role = acct_info.get('role', '')
+        major = acct_info.get('major', '')
+        classyear = acct_info.get('classYear', '')
+        matchbool = acct_info.get('matchBool', '')
+        nummatches = acct_info.get('numMatches', '')
+        zipcode = acct_info.get('zipcode', '')
+        industry = acct_info.get('industry', '')
 
         # TODO: verify this step
-        student = ['1', 'firstname', 'lastname', classyear, 'email', 'major', zipcode, nummatches, industry]
+        student = ['1', firstname, lastname, classyear, email, major, zipcode, nummatches, industry]
 
-        # db = Database()
-        # db.connect()
-        # db.create_student(student)
-        # db.disconnect()
+        db = Database()
+        db.connect()
+        db.create_students([student])
+        db.disconnect()
         html = f"fields: {role} {classyear} {matchbool} {nummatches} {zipcode} {industry}"
     except Exception as e:
         html = "error occurred: " + str(e)
         print(e)
     
     # redirect to getstudents after the name is added, make sure to uncomment this
-    # return redirect(url_for('getstudents'))
-    response = make_response(html)
-    return response
+    return redirect(url_for('getstudents'))
+    # response = make_response(html)
+    # return response
 
 @app.route('/getstudents', methods=['GET'])
 def getstudents():
