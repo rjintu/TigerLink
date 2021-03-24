@@ -121,6 +121,21 @@
               <option>Researcher</option>
             </select>
           </div>
+
+          <!-- hidden input -->
+          <div class="col-0">
+            <input type="hidden" id="email" name="email" value="">
+            <input type="hidden" id="name" name="name" value="">
+          </div>
+
+          <script>
+            function setHidden() {
+              document.getElementById("email").value = localStorage.getItem("email");
+              document.getElementById("name").value = localStorage.getItem("name");
+            }
+            setHidden();
+          </script>
+
         </div>
       </div>
     </div>
