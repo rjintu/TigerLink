@@ -8,6 +8,7 @@ app = Flask(__name__, template_folder='.')
 @app.route('/index', methods=['GET'])
 @app.route('/', methods=['GET'])
 def index():
+    ''' DB TESTING
     try:
         db = Database()
         db.connect()
@@ -24,6 +25,7 @@ def index():
         db.disconnect()
     except Exception as e:
         print(e)
+    '''
 
     html = render_template('index.html')
     response = make_response(html)
