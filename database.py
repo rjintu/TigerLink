@@ -23,6 +23,8 @@ class Database:
                 '(userid INTEGER, firstname TEXT, lastname TEXT, classyear TEXT, \
                     email TEXT, major TEXT, country TEXT, zip INTEGER, numMatch INTEGER, \
                     career TEXT)')
+        self._connection.commit()
+        cursor.close()
 
     def create_students(self, students):
         for student in students:
