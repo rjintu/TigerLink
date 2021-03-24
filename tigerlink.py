@@ -5,6 +5,7 @@ from database import Database
 
 app = Flask(__name__, template_folder='.')
 
+
 @app.route('/', methods=['GET'])
 def index():
     try:
@@ -19,11 +20,13 @@ def index():
     response = make_response(html)
     return response
 
+
 @app.route('/login', methods=['GET'])
 def login():
     html = render_template('login.html')
     response = make_response(html)
     return response
+
 
 @app.route('/getstudents', methods=['GET'])
 def getstudents():
@@ -32,10 +35,11 @@ def getstudents():
         db.connect()
         students = db.get_students()
         db.disconnect()
+        html = render_template('getstudents.html', students=students)
 
-        html = ""
-        for row in students:
-            html += str(row) + "<br>"
+        # html = ""
+        # for row in students:
+        #     html += str(row) + "<br>"
     except Exception as e:
         html = "error occurred: " + str(e)
         print(e)
