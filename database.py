@@ -35,6 +35,7 @@ class Database:
         cursor.close()
     
     def _add_student(self, cursor, student):
+        student = [str(x) for x in student] # convert everything to strings
         cursor.execute('INSERT INTO students(userid, firstname, lastname, classyear, email, ' +
         'major, zip, numMatch, career) ' + 
         'VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)', student)

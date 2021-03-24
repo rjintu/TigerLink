@@ -39,7 +39,7 @@
     -->
 </body>
 
-<form action="getstudents" method="get">
+<form action="createstudent" method="post">
 
   <body>
     <br>
@@ -69,6 +69,14 @@
             <option value="2023">2023</option>
           </select>
           <br>
+          <strong>Major</strong>
+          <select class="form-select" aria-label="Default select example" name="major">
+            <option value="" selected disabled>Please select</option>
+            <option value="COS">COS</option>
+            <option value="ORF">ORF</option>
+            <option value="MAT">MAT</option>
+          </select>
+          <br>
           <div class="custom-control custom-switch">
             <input type="checkbox" class="custom-control-input" id="customSwitch1" name="matchBool">
             <label class="custom-control-label" for="customSwitch1">I would like to be matched with a mentor or
@@ -91,7 +99,7 @@
 
           <div class="form-group">
             <label for="Zip Code"><strong>Zip Code</strong></label>
-            <input type="zipcode" class="form-control" id="zipcode" aria-describedby="emailHelp"
+            <input type="zipcode" class="form-control" name="zipcode" id="zipcode" aria-describedby="emailHelp"
               placeholder="Ex: 08554">
             <small id="emailHelp" class="form-text text-muted">We'll never share your data with anyone.</small>
           </div>
