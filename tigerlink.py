@@ -53,7 +53,7 @@ def createstudent():
         industry = acct_info.get('industry', '')
 
         # TODO: verify this step
-        student = ['1', firstname, lastname, classyear, email, major, zipcode, nummatches, industry]
+        student = [4, firstname, lastname, classyear, email, major, zipcode, nummatches, industry]
 
         db = Database()
         db.connect()
