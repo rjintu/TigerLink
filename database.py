@@ -16,30 +16,27 @@ class Database:
             print('Using deployed database')
             self._connection = connect(self._url, sslmode='require')
 
-    def create_students(self):
+    def init(self):
         cursor = self._connection.cursor()
         cursor.execute('DROP TABLE IF EXISTS students')
         cursor.execute('CREATE TABLE students ' +
-                '(userid INTEGER, firstname TEXT, lastname TEXT)')
-        cursor.execute('INSERT INTO students (userid, firstname, lastname) ' +
-                'VALUES (1, \'Devon\', \'Ulrich\')')
-        cursor.execute('INSERT INTO students (userid, firstname, lastname) ' +
-                'VALUES (2, \'Ayush\', \'Alag\')')
-        cursor.execute('INSERT INTO students (userid, firstname, lastname) ' +
-                'VALUES (3, \'Rohan\', \'Jinturkar\')')
+                '(userid INTEGER, firstname TEXT, lastname TEXT, classyear TEXT, \
+                    email TEXT, major TEXT, country TEXT, zip INTEGER, numMatch INTEGER, \
+                    career TEXT)')
+
+    def create_students(self, students):
+        for student in students:
+            addStudent(student)
         self._connection.commit()
 
         cursor.close()
     
-    # add a new student to the database (i.e. new account created)
-    def create_student(self, userid, firstname, lastname):
-        cursor = self._connection.cursor()
-        stmtStr = 'INSERT INTO students (userid, firstname, lastname) ' + 'VALUES ?'
-        args = ['%' + (userid, firstname, lastname) + '%']
-        cursor.execute(stmtStr, args)
-        self._connection.commit()
-
-        cursor.close()
+    def addStudent(student):
+        cursor.execute('INSERT INTO students(userid, firstname, lastname, classyear, email ' +
+        'major, country, zip, numMatch, career) ' + 
+        'VALUES (' + student[0] + ", " + student[1] + ", " + student[2] + ", " +  student[3]+ ", " + 
+        student[4] + ", " + student[5] + ", " + student[6] + ", " + student[7] + ", " + 
+        student[8] + ", " + student[9] + ')')
 
     def get_students(self):
         cursor = self._connection.cursor()
