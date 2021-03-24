@@ -42,7 +42,7 @@ class Database:
 
     def get_students(self):
         cursor = self._connection.cursor()
-        cursor.execute('SELECT userid, firstname, lastname FROM students')
+        cursor.execute('SELECT firstname, lastname, major, classyear FROM students')
         row = cursor.fetchone()
         output = []
         while row is not None:
