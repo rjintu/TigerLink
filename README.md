@@ -30,4 +30,4 @@ local server, you have to use port 8888.**
 
 ***Note: the site won't fully work until all the database tables are
 initialized. There isn't a way to do this automatically yet, but I'll
-work on something to fix that soon. ***
+work on something to fix that soon.***
