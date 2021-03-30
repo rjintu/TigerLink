@@ -18,7 +18,8 @@ class Database:
 
     def init(self):
         cursor = self._connection.cursor()
-        cursor.execute('DROP TABLE IF EXISTS students')
+
+        cursor.execute('DROP TABLE IF EXISTS students, alumni, prof, groups, interests, matches')
         cursor.execute('CREATE TABLE students ' +
                 '(userid INTEGER, firstname TEXT, lastname TEXT, classyear TEXT, \
                     email TEXT, major TEXT, zip INTEGER, numMatch INTEGER, \
@@ -31,7 +32,6 @@ class Database:
         for student in students:
             self._add_student(cursor, student)
         self._connection.commit()
-
         cursor.close()
     
     def _add_student(self, cursor, student):
