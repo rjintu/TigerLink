@@ -31,3 +31,13 @@ local server, you have to use port 8888.**
 ***Note: the site won't fully work until all the database tables are
 initialized. There isn't a way to do this automatically yet, but I'll
 work on something to fix that soon.***
+If you get some database errors while running on our main branch,
+chances are your tables aren't configured yet. To create the tables,
+you can run the following code:
+```python
+from database import Database
+db = Database()
+db.connect()
+db.init()
+db.disconnect()
+```
