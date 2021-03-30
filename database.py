@@ -19,7 +19,7 @@ class Database:
     def init(self):
         cursor = self._connection.cursor()
 
-        cursor.execute('DROP TABLE IF EXISTS students, alumni, prof, groups, interests, matches')
+        cursor.execute('DROP TABLE IF EXISTS students')
         cursor.execute('CREATE TABLE students ' +
                 '(userid INTEGER, firstname TEXT, lastname TEXT, classyear TEXT, \
                     email TEXT, major TEXT, zip INTEGER, numMatch INTEGER, \
