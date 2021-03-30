@@ -22,39 +22,27 @@ class Database:
         cursor.execute('DROP TABLE IF EXISTS students, alumni, prof, groups, interests, matches')
         cursor.execute('CREATE TABLE students ' +
                 '(userid INTEGER, firstname TEXT, lastname TEXT, classyear TEXT, \
-                email TEXT, major TEXT, zip INTEGER, numMatch INTEGER, career TEXT)')
-
-        cursor.execute('CREATE TABLE alumni ' +
-                '(userid INTEGER, firstname TEXT, lastname TEXT, gradYear TEXT, ' +
-                    'email TEXT, major TEXT, country TEXT, zip INTEGER, numMatch INTEGER, ' +
-                    'career TEXT)')
-
-        cursor.execute('CREATE TABLE prof (userid INTEGER, profPic TEXT)')
-
-        cursor.execute('CREATE TABLE groups (userid INTEGER, groupid TEXT)')
-
-        cursor.execute('CREATE TABLE interests (userid INTEGER, interest TEXT)')
-
-        cursor.execute('CREATE TABLE matches (studId INTEGER, alumId INTEGER)')
+                    email TEXT, major TEXT, zip INTEGER, numMatch INTEGER, \
+                    career TEXT)')
         self._connection.commit()
+        cursor.close()
 
     def create_students(self, students):
+        cursor = self._connection.cursor()
         for student in students:
-            create_student(student)
+            self._add_student(cursor, student)
         self._connection.commit()
         cursor.close()
     
-    def create_student(student):
-        cursor = self._connection.cursor()
-        cursor.execute('INSERT INTO students(userid, firstname, lastname, classyear, email \
-        major, zip, numMatch, career) ' + 
-        'VALUES (' + student[0] + ", " + student[1] + ", " + student[2] + ", " +  student[3]+ ", " + 
-        student[4] + ", " + student[5] + ", " + student[6] + ", " + student[7] + ", " + 
-        student[8] +')')
+    def _add_student(self, cursor, student):
+        student = [str(x) for x in student] # convert everything to strings
+        cursor.execute('INSERT INTO students(userid, firstname, lastname, classyear, email, ' +
+        'major, zip, numMatch, career) ' + 
+        'VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)', student)
 
     def get_students(self):
         cursor = self._connection.cursor()
-        cursor.execute('SELECT userid, firstname, lastname, classyear, email, major, zip, numMatch, career FROM students')
+        cursor.execute('SELECT firstname, lastname, major, classyear FROM students')
         row = cursor.fetchone()
         output = []
         while row is not None:
