@@ -3,29 +3,10 @@ from flask import render_template
 
 from database import Database
 
-app = Flask(__name__, template_folder='.')
+app = Flask(__name__)
 
 @app.route('/index', methods=['GET'])
 def index():
-    ''' DB TESTING
-    try:
-        db = Database()
-        db.connect()
-        db.init()
-
-        u1 = [1, 'Devon', 'Ulrich', 2023, 'dulrich@princton.edu', 'COS',
-              '93981', '2', 'SWE']
-        u2 = [2, 'Ayush', 'Alag', 1998, 'aalag@princton.edu', 'COS',
-              '95050', '5', 'Finance']
-        u3 = [3, 'Rohan', 'Jinturkar', 2023, 'rjintu@microsoft.org', 'ECE',
-              '99999', '1', 'PM']
-
-        db.create_students([u1, u2, u3])
-        db.disconnect()
-    except Exception as e:
-        print(e)
-    '''
-
     html = render_template('index.html')
     response = make_response(html)
     return response
