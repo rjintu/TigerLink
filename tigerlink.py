@@ -21,7 +21,6 @@ def login():
 
 @app.route('/createstudent', methods=['POST'])
 def createstudent():
-    print('here')
     try:
         acct_info = request.form
 
@@ -42,15 +41,13 @@ def createstudent():
         db.connect()
         db.create_students([student])
         db.disconnect()
-        html = f"fields: {role} {classyear} {matchbool} {nummatches} {zipcode} {industry}"
     except Exception as e:
         html = "error occurred: " + str(e)
         print(e)
+        return make_response(html)
     
     # redirect to getstudents after the name is added, make sure to uncomment this
     return redirect(url_for('getstudents'))
-    # response = make_response(html)
-    # return response
 
 @app.route('/getstudents', methods=['GET'])
 def getstudents():
@@ -60,10 +57,6 @@ def getstudents():
         students = db.get_students()
         db.disconnect()
         html = render_template('getstudents.html', students=students)
-
-        # html = ""
-        # for row in students:
-        #     html += str(row) + "<br>"
     except Exception as e:
         html = "error occurred: " + str(e)
         print(e)
