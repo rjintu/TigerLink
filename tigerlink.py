@@ -6,22 +6,9 @@ from cookiemonster import CookieMonster
 
 app = Flask(__name__)
 
-# create an index.html
 @app.route('/index', methods=['GET'])
 def index():
-    # check if user exists TODO: add the code to query database with user info
-
-    # if the user exists
-    html = render_template('getstudents.html') # TODO: change this to a landing page
-    response = make_response(html)
-    return response
-
-    # if the user does not exist yet
-    return redirect(url_for('newuser'))
-
-@app.route('/newuser', methods=['GET'])
-def index():
-    html = render_template('newuser.html')
+    html = render_template('index.html')
     response = make_response(html)
     return response
 
