@@ -20,7 +20,11 @@ class Database:
         cursor = self._connection.cursor()
         cursor.execute('DROP TABLE IF EXISTS students')
         cursor.execute('CREATE TABLE students ' +
-                '(userid INTEGER, firstname TEXT, lastname TEXT, classyear TEXT, \
+                '(profileid TEXT, firstname TEXT, lastname TEXT, classyear TEXT, \
+                    email TEXT, major TEXT, zip INTEGER, numMatch INTEGER, \
+                    career TEXT)')
+        cursor.execute('CREATE TABLE alumni ' +
+                '(profileid TEXT, firstname TEXT, lastname TEXT, classyear TEXT, \
                     email TEXT, major TEXT, zip INTEGER, numMatch INTEGER, \
                     career TEXT)')
         self._connection.commit()
