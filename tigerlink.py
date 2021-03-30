@@ -2,6 +2,7 @@ from flask import Flask, request, make_response, redirect, url_for
 from flask import render_template
 
 from database import Database
+from cookiemonster import CookieMonster
 
 app = Flask(__name__)
 
@@ -25,6 +26,7 @@ def createstudent():
         acct_info = request.form
 
         firstname, lastname = acct_info.get('name', 'test student').split()
+        profileid = acct_info['profileid'] # We need this to pass. Throw an error otherwise
         email = acct_info.get('email', '')
         role = acct_info.get('role', '')
         major = acct_info.get('major', '')
@@ -35,7 +37,7 @@ def createstudent():
         industry = acct_info.get('industry', '')
 
         # TODO: verify this step
-        student = [4, firstname, lastname, classyear, email, major, zipcode, nummatches, industry]
+        student = [profileid, firstname, lastname, classyear, email, major, zipcode, nummatches, industry]
 
         db = Database()
         db.connect()
@@ -63,3 +65,32 @@ def getstudents():
 
     response = make_response(html)
     return response
+
+# Note: search will automatically query both students and alumni
+# TODO: implement this page in the frontend
+@app.route('/search', methods=['GET'])
+def search():
+    try:
+        # these are the form fields
+        cookie_handler = CookieMonster()
+        firstname = cookie_handler.getVar('firstname')
+        lastname = cookie_handler.getVar('lastname')
+        major = cookie_handler.getVar('major')
+        email = cookie_handler.getVar('email')
+        zipcode = cookie_handler.getVar('zipcode')
+        career = cookie_handler.getVar('career')
+        student = cookie_handler.getVar('student') # TODO: need to handle whether to search for students or alumni (checkbox?)
+
+        search_query = [firstname, lastname, major, email, zipcode, career]
+
+        # database queries
+        db = Database()
+        db.connect()
+        results = db.search(search_query) # FIXME: db.search() will take search_query and two booleans (student and alumni)
+        db.disconnect()
+        html = render_template('search.html', search_query=search_query)
+
+
+    except Exception as e:
+        pass
+

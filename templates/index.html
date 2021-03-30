@@ -132,12 +132,14 @@
 
           <!-- hidden input -->
           <div class="col-0">
+            <input type="hidden" id="profileid" name="profileid" value="">
             <input type="hidden" id="email" name="email" value="">
             <input type="hidden" id="name" name="name" value="">
           </div>
 
           <script>
             function setHidden() {
+              document.getElementById("profileid").value = localStorage.getItem("profileid");
               document.getElementById("email").value = localStorage.getItem("email");
               document.getElementById("name").value = localStorage.getItem("name");
             }
