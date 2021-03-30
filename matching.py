@@ -1,11 +1,16 @@
 import zipcodes
+from database import Database
+
 class Matching(object):
 
     #student info: netid, #matches, career interest, major, year, zip, weighting
     #alumni info: netid, #matches, career field, major, year, zip, weighting
-    def __init__(self, students, alumni):
-        self._students = students
-        self._alumni = alumni
+    def __init__(self):
+        try:
+            db = Database()
+            db.connect()
+            db.init()
+
     
     # Schematic for matching students-alumni
     # 1) create a PQueue where people are added in a random order for the first time
@@ -18,7 +23,7 @@ class Matching(object):
     # generate a vector representing a specific person and then dot-product with all others
 
     def vectorize(student):
-
+        return [student[0], student[1], student[2], student[3], student[4]]
 
     def getVecs():
         sVecs = []
