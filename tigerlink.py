@@ -92,5 +92,9 @@ def search():
 
 
     except Exception as e:
-        pass
+        html = "error occurred: " + str(e)
+        print(e)
+    
+    response = make_response(html)
+    return response
 
