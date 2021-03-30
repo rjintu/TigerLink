@@ -57,7 +57,7 @@
         document.getElementById('profileinfo').innerHTML = profile.getName();
         localStorage.setItem("name", profile.getName());
         localStorage.setItem("email", profile.getEmail());
-        localStorage.setItem("profileid", profileid);
+        localStorage.setItem("profileid", profile.getId());
         window.location.href = "index";
       }
     </script>
