@@ -28,6 +28,7 @@ class Matching(object):
             print(e)
             make_response(html)
     
+    # convert to a student object
     def studentize(students):
         newS = []
         for student in students:
@@ -37,6 +38,7 @@ class Matching(object):
             newS.append(s)
         return newS
 
+    # convert to an alumni object
     def alumnize(alumni):
         newA = []
         for alum in alumni:
