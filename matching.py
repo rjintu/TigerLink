@@ -1,16 +1,29 @@
 import zipcodes
 from database import Database
+from flask import Flask, request, make_response, redirect, url_for
+from flask import render_template
+import random
 
+''' HOW TO RUN MATCHING
+1) create a Matching object 
+2) call match method on that, which will return pairings
+'''
 class Matching(object):
 
-    #student info: netid, #matches, career interest, major, year, zip, weighting
-    #alumni info: netid, #matches, career field, major, year, zip, weighting
+    #student info: gauth, netid, fname, lname, year, email,
+    #           major, zipp, numMatch, grad = None, career = None, organizations = None
+    #alumni info: gauth, netid, fname, lname, year, email,
+    #           major, zipp, numMatch, career = None, organizations = None
     def __init__(self):
         try:
             db = Database()
             db.connect()
-            db.init()
-
+            self._students = db.get_students()
+            self._alumni = db.get_alumni()
+        except Exception as e:
+            html = "error occurred: " + str(e)
+            print(e)
+            return make_response(html)
     
     # Schematic for matching students-alumni
     # 1) create a PQueue where people are added in a random order for the first time
@@ -22,54 +35,58 @@ class Matching(object):
     # 1) Career Interest 2) Zip 3) Major
     # generate a vector representing a specific person and then dot-product with all others
 
-    def vectorize(student):
-        return [student[0], student[1], student[2], student[3], student[4]]
+    def match(self):
+        students = self._students
+        alumni = self._alumni
+        random.shuffle(students)
 
-    def getVecs():
-        sVecs = []
-        aVecs = []
-        for student in self._students:
-            sVecs.append(vectorize(student))
-        for alum in self._alumni:
-            aVecs.append(vectorize(alum))
-        return sVecs, aVecs
-
-
-    def match():
-        sVecs, aVecs = getVecs()
         matches = []
-        for svec in sVecs:
+        for svec in students:
+            # check ending condition
+            if len(alumni) == 0:
+                return matches
+
             bestSim = 0
             bestIdx = 0
-            for idx, avec in enumerate(aVecs):
+            for idx, avec in enumerate(alumni):
+                sim = dotProduct(svec, avec)
                 if sim > bestSim:
                     bestSim = sim
                     bestIdx = idx
             alum = avec[bestIdx]
             aVecs.remove(alum)
-            matches.append((svec[0], alum[0], bestSim))
+            #TODO: change to a student
+            matches.append((svec, avec, bestSim))
+
+            # assign more matches
+            if svec._numMatch > 1:
+                svec._numMatch -= 1
+                students.append(svec)
+
         return matches
 
-    def careerDiff(sC, aC):
-        if sC == aC:
-            return 1
-        return 0
 
-    def majorDiff(sM, aM):
-        if sM == aM:
-            return 1
-        return 0
-
-
-    #svec[0] = id (ignore)
-    #svec[1] = careeer (on a scale of 1 - 30)
-    #svec[2] = major (on a scale of 1 - 25)
-    #svec[3] = year (not needed rn)
-    #svec[4] = zip (free form, find the distance)
+    #sprefs = weightings for career, major, and organizations
     def dotProduct(svec, avec):
-        c = careerDiff(svec[1], avec[1])
-        m = majorDiff(svec[2], avec[2])
+        m = 0
+        if (svec._major == avec._major):
+            m = 1
 
+        carS = 0
+        for career in svec._careers:
+            if career in avec._careers:
+                carS += 1
+                
+        orgS = 0
+        for org in svec._organizations:
+            if org in avec._organizations:
+                orgS += 1
+        
+        vals = [m, carS, orgS]
 
-
-    def similarity():
+        sim = 0
+        #TODO: add spref to the student class
+        for i, weight in enumerate(svec._sprefs):
+            sim += vals[i] * weight
+        
+        return sim

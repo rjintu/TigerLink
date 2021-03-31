@@ -3,7 +3,8 @@ class Student(object):
     
     # grad is a boolean whether its a grad student or not
     def __init__(self, gauth, netid, fname, lname, year, email,
-    major, zipp, numMatch, grad = None, career = None, organizations = None):
+    major, zipp, numMatch, spref = [1/3, 1/3, 1/3], grad = None, 
+    careers = None, organizations = None):
         self._gauth = gauth
         self._netid = netid
         self._fname = fname
@@ -13,8 +14,9 @@ class Student(object):
         self._email = email
         self._major = major
         self._zip = zipp
+        self._spref = spref
         self._numMatch = numMatch
-        self._career = career
+        self._careers = careers
         self._organizations = organizations
 
     def addField(self, fieldName, fieldVal):
