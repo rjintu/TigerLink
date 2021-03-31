@@ -116,7 +116,7 @@ class Database:
         profileid = str(profileid)
         cursor = self._connection.cursor()
         cursor.execute('SELECT firstname, lastname, classyear, email, major, zip, ' +
-                'nummatch, career FROM students WHERE profileid=%s', [profileid])
+                'nummatch FROM students WHERE profileid=%s', [profileid])
         return cursor.fetchone()
 
     # contents must be array of [firstname, lastname, classyear, email, major,
@@ -148,7 +148,7 @@ class Database:
         cursor = self._connection.cursor()
 
         if students:
-            stmtStr = "SELECT firstname, lastname, major, career FROM students WHERE firstname LIKE %s " + \
+            stmtStr = "SELECT firstname, lastname, major FROM students WHERE firstname LIKE %s " + \
             "AND lastname LIKE %s AND email LIKE %s AND major LIKE %s"
             cursor.execute(stmtStr, [firstname, lastname, email, major])
             row = cursor.fetchone()
@@ -158,7 +158,7 @@ class Database:
                 row = cursor.fetchone()
         
         if alumni:
-            cursor.execute('SELECT firstname, lastname, major, email, zip, career FROM alumni' +
+            cursor.execute('SELECT firstname, lastname, major, email, zip FROM alumni' +
             'VALUES (%s, %s, %s, %s, %s, %s)', search_values)
             row = cursor.fetchone()
 
