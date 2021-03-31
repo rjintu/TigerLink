@@ -71,10 +71,9 @@ def getstudents():
 @app.route('/search', methods=['GET'])
 def search():
     search_query = None
+    search_form = None
     try:
         # search form
-        search_form = request.form
-
         # these are the form fields
         # cookie_handler = CookieMonster(request.form)
         # firstname = cookie_handler.getVar('firstname')
@@ -84,13 +83,12 @@ def search():
         # zipcode = cookie_handler.getVar('zipcode')
         # career = cookie_handler.getVar('career')
         # student = cookie_handler.getVar('student') # TODO: need to handle whether to search for students or alumni (checkbox?)
-        firstname = search_form.get('firstname', '')
-        lastname = search_form.get('lastname', '')
-        email = search_form.get('email', '')
-        major = search_form.get('major', '')
-        zipcode = search_form.get('zipcode', '')
-        career = search_form.get('industry', '')
-        print("made it this far")
+        firstname = request.args.get('firstname', '*')
+        lastname = request.args.get('lastname', '*')
+        email = request.args.get('email', '*')
+        major = request.args.get('major', '')
+        zipcode = request.args.get('zipcode', '*')
+        career = request.args.get('industry', '*')
         search_query = [firstname, lastname, major, email, zipcode, career]
         print(search_query)
         # database queries
@@ -101,7 +99,7 @@ def search():
         html = render_template('search.html')
 
     except Exception as e:
-        html = str(search_query)
+        html = str(search_query) 
         print(e)
     
     response = make_response(html)
