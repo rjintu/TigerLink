@@ -86,7 +86,7 @@ def search():
         firstname = request.args.get('firstname', '*')
         lastname = request.args.get('lastname', '*')
         email = request.args.get('email', '*')
-        major = request.args.get('major', '')
+        major = request.args.get('major', '*')
         zipcode = request.args.get('zipcode', '*')
         career = request.args.get('industry', '*')
         search_query = [firstname, lastname, major, email, zipcode, career]
