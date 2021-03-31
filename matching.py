@@ -13,23 +13,8 @@ import random
 '''
 class Matching(object):
 
-    #student info: gauth, netid, fname, lname, year, email,
-    #           major, zipp, numMatch, grad = None, career = None, organizations = None
-    #alumni info: gauth, netid, fname, lname, year, email,
-    #           major, zipp, numMatch, career = None, organizations = None
-    def __init__(self):
-        try:
-            db = Database()
-            db.connect()
-            self._students = studentize(db.get_students())
-            self._alumni = alumnize(db.get_alumni())
-        except Exception as e:
-            html = "error occurred: " + str(e)
-            print(e)
-            make_response(html)
-    
     # convert to a student object
-    def studentize(students, careers, organizations=None):
+    def studentize(self, students, careers, organizations=None):
         newS = []
         #TODO: a little inefficient
         for student in students:
@@ -38,7 +23,7 @@ class Matching(object):
             for row in careers:
                 if row[0] == pid:
                     cs.append(row[1])
-                    
+
             s = Student(pid, student[1], student[2], student[3],
             student[4], student[5], student[6], student[7], careers=cs,
             organizations=organizations)
@@ -46,7 +31,7 @@ class Matching(object):
         return newS
 
     # convert to an alumni object
-    def alumnize(alumni, careers, organizations=None):
+    def alumnize(self, alumni, careers, organizations=None):
         newA = []
         for alum in alumni:
             pid = alum[0]
@@ -60,6 +45,24 @@ class Matching(object):
             organizations=organizations)
             newA.append(a)
         return newA
+
+    #student info: gauth, netid, fname, lname, year, email,
+    #           major, zipp, numMatch, grad = None, career = None, organizations = None
+    #alumni info: gauth, netid, fname, lname, year, email,
+    #           major, zipp, numMatch, career = None, organizations = None
+    def __init__(self):
+        try:
+            db = Database()
+            db.connect()
+            s, c = db.get_students()
+            self._students = self.studentize(s, c)
+            s2, c2 = db.get_alumni()
+            self._alumni = self.alumnize(s2, c2)
+        except Exception as e:
+            html = "error occurred: " + str(e)
+            print(e)
+            make_response(html)
+    
     
     # Schematic for matching students-alumni
     # 1) create a PQueue where people are added in a random order for the first time
@@ -99,7 +102,7 @@ class Matching(object):
             if svec._numMatch > 1:
                 svec._numMatch -= 1
                 students.append(svec)
-
+        print(matches)
         return matches
 
 
