@@ -29,22 +29,35 @@ class Matching(object):
             make_response(html)
     
     # convert to a student object
-    def studentize(students):
+    def studentize(students, careers, organizations=None):
         newS = []
+        #TODO: a little inefficient
         for student in students:
-            s = Student(student[0], student[1], student[2], student[3],
-            student[4], student[5], student[6], student[7], careers=student[8],
-            organizations=student[9])
+            pid = student[0]
+            cs = []
+            for row in careers:
+                if row[0] == pid:
+                    cs.append(row[1])
+                    
+            s = Student(pid, student[1], student[2], student[3],
+            student[4], student[5], student[6], student[7], careers=cs,
+            organizations=organizations)
             newS.append(s)
         return newS
 
     # convert to an alumni object
-    def alumnize(alumni):
+    def alumnize(alumni, careers, organizations=None):
         newA = []
         for alum in alumni:
-            a = Alum(alum[0], alum[1], alum[2], alum[3],
-            alum[4], alum[5], alum[6], alum[7], careers=alum[8],
-            organizations=alum[9])
+            pid = alum[0]
+            cs = []
+            for row in careers:
+                if row[0] == pid:
+                    cs.append(row[1])
+
+            a = Alum(pid, alum[1], alum[2], alum[3],
+            alum[4], alum[5], alum[6], alum[7], careers=cs,
+            organizations=organizations)
             newA.append(a)
         return newA
     
