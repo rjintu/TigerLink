@@ -70,31 +70,47 @@ def getstudents():
 # TODO: implement this page in the frontend
 @app.route('/search', methods=['GET'])
 def search():
+    search_query = None
     try:
+        # search form
+        search_form = request.form
+
         # these are the form fields
-        cookie_handler = CookieMonster()
-        firstname = cookie_handler.getVar('firstname')
-        lastname = cookie_handler.getVar('lastname')
-        major = cookie_handler.getVar('major')
-        email = cookie_handler.getVar('email')
-        zipcode = cookie_handler.getVar('zipcode')
-        career = cookie_handler.getVar('career')
-        student = cookie_handler.getVar('student') # TODO: need to handle whether to search for students or alumni (checkbox?)
-
+        # cookie_handler = CookieMonster(request.form)
+        # firstname = cookie_handler.getVar('firstname')
+        # lastname = cookie_handler.getVar('lastname')
+        # major = cookie_handler.getVar('major')
+        # email = cookie_handler.getVar('email')
+        # zipcode = cookie_handler.getVar('zipcode')
+        # career = cookie_handler.getVar('career')
+        # student = cookie_handler.getVar('student') # TODO: need to handle whether to search for students or alumni (checkbox?)
+        firstname = search_form.get('firstname', '')
+        lastname = search_form.get('lastname', '')
+        email = search_form.get('email', '')
+        major = search_form.get('major', '')
+        zipcode = search_form.get('zipcode', '')
+        career = search_form.get('industry', '')
+        print("made it this far")
         search_query = [firstname, lastname, major, email, zipcode, career]
-
+        print(search_query)
         # database queries
         db = Database()
         db.connect()
         results = db.search(search_query) # FIXME: db.search() will take search_query and two booleans (student and alumni)
         db.disconnect()
-        html = render_template('search.html', search_query=search_query)
-
+        html = render_template('search.html')
 
     except Exception as e:
-        html = "error occurred: " + str(e)
+        html = str(search_query)
         print(e)
     
+    response = make_response(html)
+    return response
+
+
+@app.route('/dosearch', methods=['GET'])
+def dosearch():
+    html = render_template('dosearch.html')
     response = make_response(html)
     return response
 
