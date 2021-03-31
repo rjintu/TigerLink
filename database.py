@@ -77,8 +77,12 @@ class Database:
     # TODO: career in diff table
     def search(self, search_query, students=True, alumni=False):
         search_values = [str(x) for x in search_query] # convert everything to strings
+        for i in range(0, len(search_values)):
+            if (search_values[i] == ''):
+                search_values[i] = '%%%%'
+            
         print(search_values)
-        # firstname, lastname, email, major, zipcode, career = search_values
+        firstname, lastname, email, major, zipcode, career = search_values
         output = []
 
         cursor = self._connection.cursor()
@@ -87,9 +91,11 @@ class Database:
             # stmtStr = 'SELECT * from students'
             # cursor.execute(stmtStr)
             # FIXME: broken sql statement
-            stmtStr = 'SELECT firstname, lastname, major, email, zip, career FROM students ' + \
-                'WHERE firstname LIKE rohan'
-            cursor.execute(stmtStr)
+            # stmtStr = "SELECT firstname, lastname FROM students WHERE firstname LIKE %s AND " + \
+            # "lastname LIKE %s AND email LIKE %s AND major LIKE %s"
+            stmtStr = "SELECT firstname, lastname, major, career FROM students WHERE firstname LIKE %s " + \
+            "AND lastname LIKE %s AND email LIKE %s AND major LIKE %s"
+            cursor.execute(stmtStr, [firstname, lastname, email, major])
             row = cursor.fetchone()
             
             while row is not None:
