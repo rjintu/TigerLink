@@ -27,7 +27,7 @@ def createstudent():
 
         firstname, lastname = acct_info.get('name', 'test student').split()
         email = acct_info.get('email', '')
-        role = acct_info.get('role', '')
+        role = acct_info.get('role', '') # FIXME 
         major = acct_info.get('major', '')
         classyear = acct_info.get('classYear', '')
         matchbool = acct_info.get('matchBool', '')
@@ -36,8 +36,7 @@ def createstudent():
         industry = acct_info.get('industry', '')
 
         # TODO: verify this step
-        student = [4, firstname, lastname, classyear, email, major, zipcode, nummatches, industry]
-
+        student = [profileid, firstname, lastname, classyear, email, major, zipcode, nummatches, industry]
         db = Database()
         db.connect()
         db.create_students([student])
