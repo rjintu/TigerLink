@@ -50,8 +50,15 @@ class Database:
         self._connection.commit()
 
         cursor.close()
+
+    def create_alumni(self, alumni):
+        cursor = self._connection.cursor()
+        for alum in alumni:
+            self._add_alum(cursor, alum)
+        self._connection.commit()
+
+        cursor.close()
     
-    # TODO: add google ID
     # TODO: separate careers
     def _add_student(self, cursor, student):
         student = [str(x) for x in student] # convert everything to strings
@@ -61,7 +68,6 @@ class Database:
         for elem in student[7]:
             cursor.execute('INSERT INTO careers(profileid, career) ' + 'VALUES (%s, %s)', student[0], elem)
 
-    # TODO: add google ID
     def _add_alum(self, cursor, alum):
         alum = [str(x) for x in alum] # convert everything to strings
         cursor.execute('INSERT INTO alumni(profileid, firstname, lastname, classyear, email, ' + 
@@ -69,6 +75,12 @@ class Database:
         'VALUES (%s, %s, %s, %s, %s, %s, %s, %s)', alum)
         for elem in alum[7]:
             cursor.execute('INSERT INTO careers(profileid, career) ' + 'VALUES (%s, %s)', alum[0], elem)
+
+    def _add_alum(self, cursor, alum):
+        alum = [str(x) for x in alum] # convert everything to strings
+        cursor.execute('INSERT INTO alumni(profileid, firstname, lastname, classyear, email, ' + 
+        'major, zip, numMatch, career) ' + 
+        'VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)', alum)
 
     def get_students(self):
         cursor = self._connection.cursor()
@@ -86,8 +98,12 @@ class Database:
     # TODO: career in diff table
     def search(self, search_query, students=True, alumni=False):
         search_values = [str(x) for x in search_query] # convert everything to strings
+        for i in range(0, len(search_values)):
+            if (search_values[i] == ''):
+                search_values[i] = '%%%%'
+            
         print(search_values)
-        # firstname, lastname, email, major, zipcode, career = search_values
+        firstname, lastname, email, major, zipcode, career = search_values
         output = []
 
         cursor = self._connection.cursor()
@@ -95,10 +111,12 @@ class Database:
         if students:
             # stmtStr = 'SELECT * from students'
             # cursor.execute(stmtStr)
-            stmtStr = 'SELECT firstname, lastname, major, email, zip, career FROM students ' + \
-                'WHERE firstname = ? AND lastname LIKE ? AND email LIKE ? AND zipcode LIKE ?' + \
-                'AND career LIKE ?'
-            cursor.execute(stmtStr, ['rohan'])
+            # FIXME: broken sql statement
+            # stmtStr = "SELECT firstname, lastname FROM students WHERE firstname LIKE %s AND " + \
+            # "lastname LIKE %s AND email LIKE %s AND major LIKE %s"
+            stmtStr = "SELECT firstname, lastname, major, career FROM students WHERE firstname LIKE %s " + \
+            "AND lastname LIKE %s AND email LIKE %s AND major LIKE %s"
+            cursor.execute(stmtStr, [firstname, lastname, email, major])
             row = cursor.fetchone()
             
             while row is not None:
