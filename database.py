@@ -19,6 +19,7 @@ class Database:
     def init(self):
         cursor = self._connection.cursor()
         cursor.execute('DROP TABLE IF EXISTS students')
+        cursor.execute('DROP TABLE IF EXISTS alumni')
         cursor.execute('CREATE TABLE students ' +
                 '(profileid TEXT, firstname TEXT, lastname TEXT, classyear TEXT, \
                     email TEXT, major TEXT, zip TEXT, numMatch TEXT)')
@@ -110,6 +111,27 @@ class Database:
 
         cursor.close()
         return output, careers
+
+    def get_student_by_id(self, profileid):
+        profileid = str(profileid)
+        cursor = self._connection.cursor()
+        cursor.execute('SELECT firstname, lastname, classyear, email, major, zip, ' +
+                'nummatch, career FROM students WHERE profileid=%s', [profileid])
+        return cursor.fetchone()
+
+    # contents must be array of [firstname, lastname, classyear, email, major,
+    # zip, nummatch, career]
+    def update_student(self, profileid, contents):
+        cursor = self._connection.cursor()
+        args = contents.copy() # dont modify list given to us
+        args.append(profileid)
+        args = [str(x) for x in args] # just convert everything to strings
+        cursor.execute('UPDATE students SET firstname=%s, lastname=%s, ' +
+                'classyear=%s, email=%s, major=%s, zip=%s, nummatch=%s, ' +
+                'career=%s WHERE profileid=%s', args)
+        self._connection.commit()
+        cursor.close()
+
 
     # can search students or alumni
     # TODO: career in diff table (need to fix)
