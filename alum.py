@@ -1,10 +1,9 @@
 
 class Alum(object):
 
-    def __init__(self, gauth, netid, fname, lname, year, email,
+    def __init__(self, profid, fname, lname, year, email,
     major, zipp, numMatch, careers = None, organizations = None):
-        self._gauth = gauth
-        self._netid = netid
+        self._profid = profid
         self._fname = fname
         self._lname = lname
         self._year = year
@@ -12,7 +11,8 @@ class Alum(object):
         self._major = major
         self._zip = zipp
         self._numMatch = numMatch
-        self._career = career
+        self._careers = careers
+        self._organizations = organizations
 
     def addField(fieldName, fieldVal):
         setattr(self, fieldName, fieldVal)
