@@ -2,6 +2,7 @@ from flask import Flask, request, make_response, redirect, url_for
 from flask import render_template
 
 from database import Database
+from matching import Matching
 
 app = Flask(__name__)
 
@@ -57,6 +58,20 @@ def getstudents():
         students = db.get_students()
         db.disconnect()
         html = render_template('getstudents.html', students=students)
+    except Exception as e:
+        html = "error occurred: " + str(e)
+        print(e)
+
+    response = make_response(html)
+    return response
+
+@app.route('/displaymatches', methods=['GET'])
+def getmatches():
+    try:
+        # creates matches from matching.py file. returns a list of tuples.
+        m = Matching()
+        matches = m.match()
+        html = render_template('displaymatches.html', matches=matches)
     except Exception as e:
         html = "error occurred: " + str(e)
         print(e)
