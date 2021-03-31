@@ -72,6 +72,18 @@ class Database:
 
         cursor.close()
         return output
+    
+     def get_students(self):
+        cursor = self._connection.cursor()
+        cursor.execute('SELECT firstname, lastname, major, classyear FROM alumni')
+        row = cursor.fetchone()
+        output = []
+        while row is not None:
+            output.append(row)
+            row = cursor.fetchone()
+
+        cursor.close()
+        return output
 
     def disconnect(self):
         self._connection.close()
