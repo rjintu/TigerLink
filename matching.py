@@ -23,7 +23,7 @@ class Matching(object):
         except Exception as e:
             html = "error occurred: " + str(e)
             print(e)
-            return make_response(html)
+            make_response(html)
     
     # Schematic for matching students-alumni
     # 1) create a PQueue where people are added in a random order for the first time

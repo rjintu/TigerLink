@@ -18,10 +18,13 @@ class Database:
 
     def init(self):
         cursor = self._connection.cursor()
-
         cursor.execute('DROP TABLE IF EXISTS students')
         cursor.execute('CREATE TABLE students ' +
-                '(userid INTEGER, firstname TEXT, lastname TEXT, classyear TEXT, \
+                '(profileid TEXT, firstname TEXT, lastname TEXT, classyear TEXT, \
+                    email TEXT, major TEXT, zip INTEGER, numMatch INTEGER, \
+                    career TEXT)')
+        cursor.execute('CREATE TABLE alumni ' +
+                '(profileid TEXT, firstname TEXT, lastname TEXT, classyear TEXT, \
                     email TEXT, major TEXT, zip INTEGER, numMatch INTEGER, \
                     career TEXT)')
         self._connection.commit()
@@ -32,13 +35,31 @@ class Database:
         for student in students:
             self._add_student(cursor, student)
         self._connection.commit()
+
+        cursor.close()
+
+    def create_alumni(self, alumni):
+        cursor = self._connection.cursor()
+        for alum in alumni:
+            self._add_alum(cursor, alum)
+        self._connection.commit()
+
         cursor.close()
     
+    # TODO: add google ID
+    # TODO: separate careers
     def _add_student(self, cursor, student):
         student = [str(x) for x in student] # convert everything to strings
-        cursor.execute('INSERT INTO students(userid, firstname, lastname, classyear, email, ' +
+        cursor.execute('INSERT INTO students(profileid, firstname, lastname, classyear, email, ' +
         'major, zip, numMatch, career) ' + 
         'VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)', student)
+
+    # TODO: add google ID
+    def _add_alum(self, cursor, alum):
+        alum = [str(x) for x in alum] # convert everything to strings
+        cursor.execute('INSERT INTO alumni(profileid, firstname, lastname, classyear, email, ' + 
+        'major, zip, numMatch, career) ' + 
+        'VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)', alum)
 
     def get_students(self):
         cursor = self._connection.cursor()
