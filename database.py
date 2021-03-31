@@ -73,27 +73,43 @@ class Database:
 
     def get_students(self):
         cursor = self._connection.cursor()
-        cursor.execute('SELECT firstname, lastname, major, classyear FROM students')
+        cursor.execute('SELECT profileid, firstname, lastname, classyear, email, \
+        major, zip, numMatch FROM students')
         row = cursor.fetchone()
         output = []
         while row is not None:
             output.append(row)
             row = cursor.fetchone()
+        
+        cursor.execute('SELECT profileid, career FROM careers')
+        row = cursor.fetchone()
+        careers = []
+        while row is not None:
+            careers.append(row)
+            row = cursor.fetchone()
 
         cursor.close()
-        return output
+        return output, careers
     
     def get_alumni(self):
         cursor = self._connection.cursor()
-        cursor.execute('SELECT firstname, lastname, major, classyear FROM alumni')
+        cursor.execute('SELECT profileid, firstname, lastname, classyear, email, \
+        major, zip, numMatch FROM alumni')
         row = cursor.fetchone()
         output = []
         while row is not None:
             output.append(row)
             row = cursor.fetchone()
 
+        cursor.execute('SELECT profileid, career FROM careers')
+        row = cursor.fetchone()
+        careers = []
+        while row is not None:
+            careers.append(row)
+            row = cursor.fetchone()
+
         cursor.close()
-        return output
+        return output, careers
 
     # can search students or alumni
     # TODO: career in diff table (need to fix)
