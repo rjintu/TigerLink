@@ -21,17 +21,17 @@ class Database:
         cursor.execute('DROP TABLE IF EXISTS students')
         cursor.execute('CREATE TABLE students ' +
                 '(profileid TEXT, firstname TEXT, lastname TEXT, classyear TEXT, \
-                    email TEXT, major TEXT, zip TEXT, numMatch TEXT')
+                    email TEXT, major TEXT, zip TEXT, numMatch TEXT)')
         cursor.execute('DROP TABLE IF EXISTS alumni')
         cursor.execute('CREATE TABLE alumni ' +
                 '(profileid TEXT, firstname TEXT, lastname TEXT, classyear TEXT, \
                     email TEXT, major TEXT, zip TEXT, numMatch TEXT)')
         cursor.execute('DROP TABLE IF EXISTS careers')
         cursor.execute('CREATE TABLE careers ' + 
-                '(profileid TEXT, career TEXT')
+                '(profileid TEXT, career TEXT)')
         cursor.execute('DROP TABLE IF EXISTS interests')
         cursor.execute('CREATE TABLE interests ' + 
-                '(profileid TEXT, interest TEXT')
+                '(profileid TEXT, interest TEXT)')
         self._connection.commit()
         cursor.close()
 
@@ -50,23 +50,18 @@ class Database:
         self._connection.commit()
 
         cursor.close()
-
-    def create_alumni(self, alumni):
-        cursor = self._connection.cursor()
-        for alum in alumni:
-            self._add_alum(cursor, alum)
-        self._connection.commit()
-
-        cursor.close()
     
     # TODO: separate careers
     def _add_student(self, cursor, student):
         student = [str(x) for x in student] # convert everything to strings
+        student_elems = student[:-1]
+        last_elem = student[-1]
         cursor.execute('INSERT INTO students(profileid, firstname, lastname, classyear, email, ' +
         'major, zip, numMatch) ' + 
-        'VALUES (%s, %s, %s, %s, %s, %s, %s, %s)', student)
-        for elem in student[7]:
-            cursor.execute('INSERT INTO careers(profileid, career) ' + 'VALUES (%s, %s)', student[0], elem)
+        'VALUES (%s, %s, %s, %s, %s, %s, %s, %s)', student_elems)
+        print('got here')
+        for elem in last_elem:
+            cursor.execute('INSERT INTO careers(profileid, career) ' + 'VALUES (%s, %s)', (student[0], elem))
 
     def _add_alum(self, cursor, alum):
         alum = [str(x) for x in alum] # convert everything to strings
@@ -75,12 +70,6 @@ class Database:
         'VALUES (%s, %s, %s, %s, %s, %s, %s, %s)', alum)
         for elem in alum[7]:
             cursor.execute('INSERT INTO careers(profileid, career) ' + 'VALUES (%s, %s)', alum[0], elem)
-
-    def _add_alum(self, cursor, alum):
-        alum = [str(x) for x in alum] # convert everything to strings
-        cursor.execute('INSERT INTO alumni(profileid, firstname, lastname, classyear, email, ' + 
-        'major, zip, numMatch, career) ' + 
-        'VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)', alum)
 
     def get_students(self):
         cursor = self._connection.cursor()
@@ -93,9 +82,21 @@ class Database:
 
         cursor.close()
         return output
+    
+    def get_alumni(self):
+        cursor = self._connection.cursor()
+        cursor.execute('SELECT firstname, lastname, major, classyear FROM alumni')
+        row = cursor.fetchone()
+        output = []
+        while row is not None:
+            output.append(row)
+            row = cursor.fetchone()
+
+        cursor.close()
+        return output
 
     # can search students or alumni
-    # TODO: career in diff table
+    # TODO: career in diff table (need to fix)
     def search(self, search_query, students=True, alumni=False):
         search_values = [str(x) for x in search_query] # convert everything to strings
         for i in range(0, len(search_values)):
@@ -103,17 +104,12 @@ class Database:
                 search_values[i] = '%%%%'
             
         print(search_values)
-        firstname, lastname, email, major, zipcode, career = search_values
+        firstname, lastname, email, major, zip, career = search_values
         output = []
 
         cursor = self._connection.cursor()
 
         if students:
-            # stmtStr = 'SELECT * from students'
-            # cursor.execute(stmtStr)
-            # FIXME: broken sql statement
-            # stmtStr = "SELECT firstname, lastname FROM students WHERE firstname LIKE %s AND " + \
-            # "lastname LIKE %s AND email LIKE %s AND major LIKE %s"
             stmtStr = "SELECT firstname, lastname, major, career FROM students WHERE firstname LIKE %s " + \
             "AND lastname LIKE %s AND email LIKE %s AND major LIKE %s"
             cursor.execute(stmtStr, [firstname, lastname, email, major])
@@ -132,7 +128,6 @@ class Database:
                 output.append(row)
                 row = cursor.fetchone()
 
-        print('hi')
         cursor.close()
         return output
 
