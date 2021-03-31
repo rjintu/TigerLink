@@ -2,6 +2,7 @@ from flask import Flask, request, make_response, redirect, url_for
 from flask import render_template
 
 from database import Database
+from matching import Matching
 from cookiemonster import CookieMonster
 
 app = Flask(__name__)
@@ -14,8 +15,6 @@ def index():
     return response
 
 # Note: when testing locally, must use port 8888 for Google SSO
-
-
 @app.route('/', methods=['GET'])
 @app.route('/login', methods=['GET'])
 def login():
@@ -25,8 +24,6 @@ def login():
 
 # for checking if user exists already, setting a session cookie,
 # and redirecting to the next page
-
-
 @app.route('/login/auth', methods=['POST'])
 def login_auth():
     profileid = request.form['profileid']
@@ -53,19 +50,13 @@ def createstudent():
         # We need this to pass. Throw an error otherwise
         profileid = acct_info['profileid']
         email = acct_info.get('email', '')
-        role = acct_info.get('role', '')
+        role = acct_info.get('role', '') # FIXME 
         major = acct_info.get('major', '')
         classyear = acct_info.get('classYear', '')
         matchbool = acct_info.get('matchBool', '')
         nummatches = acct_info.get('numMatches', '')
         zipcode = acct_info.get('zipcode', '')
-        industry = acct_info.get('industry', '')
-
-        print(role)
-        # TODO: verify this step
-        student = [profileid, firstname, lastname, classyear,
-                   email, major, zipcode, nummatches, industry]
-
+        industry = acct_info.getlist('industry')
         student = [profileid, firstname, lastname, classyear, email, major, zipcode, nummatches, industry]
         print(student)
         db = Database()
@@ -96,6 +87,13 @@ def getstudents():
     response = make_response(html)
     return response
 
+@app.route('/displaymatches', methods=['GET'])
+def getmatches():
+    try:
+        # creates matches from matching.py file. returns a list of tuples.
+        m = Matching()
+        matches = m.match()
+        html = render_template('displaymatches.html', matches=matches)
 
 @app.route('/editprofile', methods=['GET'])
 def getprofile():
@@ -113,9 +111,7 @@ def getprofile():
     response = make_response(html)
     return response
 
-# updates profile on save click
-
-
+  # updates profile on save click
 @app.route('/updateprofile', methods=['POST'])
 def changeprofile():
     info = []
@@ -161,8 +157,6 @@ def changeprofile():
 
 # Note: search will automatically query both students and alumni
 # TODO: implement this page in the frontend
-
-
 @app.route('/search', methods=['GET'])
 def search():
     search_query = None
