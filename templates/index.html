@@ -91,12 +91,10 @@
 
           <strong>How many matches would you like?</strong>
           <select class="form-select" aria-label="Default select example" id="numMatches" name="numMatches">
-            <option value="" selected disabled>Please select</option>
+            <option value="0">0</option>
             <option value="1">1</option>
             <option value="2">2</option>
             <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
           </select>
 
           <br>
@@ -116,23 +114,94 @@
 
         </div>
 
-
         <!-- col 2 -->
-        <div class="col-4">
+        <div class="col-5">
           <div class="form-group">
-            <label for="exampleFormControlSelect2"><strong>Select the industries you're interested in or work
+            <label for="careerForm"><strong>Select the industries you're interested in or work
                 in.</strong></label>
-            <select multiple class="form-control" id="exampleFormControlSelect2" name="industry">
+            <select class="form-control" id="industry" multiple>
               <option>Software Engineering</option>
               <option>Product Management</option>
+              <option>Accounting</option>
+              <option>Marketing</option>
+              <option>Architecture</option>
               <option>Consulting</option>
+              <option>Energy Resources</option>
+              <option>Chemical Engineering</option>
+              <option>Civil Engineering</option>
+              <option>Electrical Engineering</option>
+              <option>Mechanical Engineering</option>
+              <option>Aerospace Engineering</option>
+              <option>Environmental Affairs</option>
+              <option>Asset Management</option>
+              <option>Corporate Finance</option>
+              <option>Hedge Funds</option>
               <option>Private Equity</option>
+              <option>Commercial Banking</option>
+              <option>Financial Planning</option>
               <option>Investment Banking</option>
-              <option>Theater Performance</option>
-              <option>Politics</option>
-              <option>Researcher</option>
+              <option>Security/Commodities</option>
+              <option>Venture Capital</option>
+              <option>Foreign Service</option>
+              <option>Government</option>
+              <option>Policy Analysis</option>
+              <option>Health Care</option>
+              <option>Human Resources</option>
+              <option>Insurance</option>
+              <option>Law</option>
+              <option>Management</option>
+              <option>Military</option>
+              <option>Performing Arts</option>
+              <option>Public Relations</option>
+              <option>Real Estate</option>
+              <option>Radio/TV</option>
+              <option>Research & Development</option>
+              <option>Social Work</option>
+              <option>Teaching</option>
+              <option>Veterinary Medicine</option>
+              <option>Fine Arts</option>
             </select>
           </div>
+
+          <br>
+
+          <div class="form-group">
+            <label for="groupsForm"><strong>Select the organizations you're involved in.</strong></label>
+            <select multiple class="form-control" id="groupsForm" name="groups">
+
+              <option>Christian Fellowship</option>
+              <option>ROTC</option>
+              <option>Engineering Society</option>
+              <option>Whig-Cliosophic Society</option>
+              <option>Athletic Organization</option>
+              <option>Dance Group</option>
+              <option>Business Today</option>
+              <option>Cannon</option>
+              <option>Cap & Gown</option>
+              <option>Choir & Chorus</option>
+              <option>Academic Club</option>
+              <option>Women Empowerment</option>
+              <option>Minority Advocacy</option>
+
+            </select>
+          </div>
+
+          <!-- hidden input -->
+          <div class="col-0">
+            <input type="hidden" id="profileid" name="profileid" value="">
+            <input type="hidden" id="email" name="email" value="">
+            <input type="hidden" id="name" name="name" value="">
+          </div>
+
+          <script>
+            function setHidden() {
+              document.getElementById("profileid").value = localStorage.getItem("profileid");
+              document.getElementById("email").value = localStorage.getItem("email");
+              document.getElementById("name").value = localStorage.getItem("name");
+            }
+            setHidden();
+          </script>
+
         </div>
       </div>
     </div>
