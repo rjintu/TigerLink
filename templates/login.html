@@ -58,9 +58,16 @@
         localStorage.setItem("name", profile.getName());
         localStorage.setItem("email", profile.getEmail());
         localStorage.setItem("profileid", profile.getId());
-        window.location.href = "index";
+        // window.location.href = "index";
+        // use a form to POST our profileid
+        document.getElementById("profileid").value = profile.getId();
+        document.getElementById("authform").submit();
       }
     </script>
+
+    <form id="authform" action="/login/auth" method="POST">
+        <input type="hidden" id="profileid" name="profileid" value="">
+    </form>
 
     <div class="g-signin2" data-onsuccess="onSignIn">
     </div>
