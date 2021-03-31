@@ -45,7 +45,9 @@
         <br>
         <div class="container">
             <div class="row justify-content-start">
-                <text>{{ students }}</text>
+                {% for stud in students: %}
+                    {{ stud }} <br>
+                {% endfor %}
             </div>
         </div>
     </body>

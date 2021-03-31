@@ -57,21 +57,29 @@
         document.getElementById('profileinfo').innerHTML = profile.getName();
         localStorage.setItem("name", profile.getName());
         localStorage.setItem("email", profile.getEmail());
-        window.location.href = "index";
+        localStorage.setItem("profileid", profile.getId());
+        // window.location.href = "index";
+        // use a form to POST our profileid
+        document.getElementById("profileid").value = profile.getId();
+        document.getElementById("authform").submit();
       }
     </script>
+
+    <form id="authform" action="/login/auth" method="POST">
+        <input type="hidden" id="profileid" name="profileid" value="">
+    </form>
 
     <div class="g-signin2" data-onsuccess="onSignIn">
     </div>
     <button type="button" class="btn btn-danger" onclick="signOut();">Sign out</button>
     <script>
-                function signOut() {
-                   var auth2 = gapi.auth2.getAuthInstance();
-                   auth2.signOut().then(function () {
-                     console.log('User signed out.');
-                   });
-                   document.getElementById('profileinfo').innerHTML = "";
-                }
+      function signOut() {
+          var auth2 = gapi.auth2.getAuthInstance();
+          auth2.signOut().then(function () {
+            console.log('User signed out.');
+          });
+          document.getElementById('profileinfo').innerHTML = "";
+      }
     </script> 
     </body>
 </html>
