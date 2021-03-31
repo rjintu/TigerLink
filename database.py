@@ -18,7 +18,9 @@ class Database:
 
     def init(self):
         cursor = self._connection.cursor()
+
         cursor.execute('DROP TABLE IF EXISTS students')
+        cursor.execute('DROP TABLE IF EXISTS alumni')
         cursor.execute('CREATE TABLE students ' +
                 '(profileid TEXT, firstname TEXT, lastname TEXT, classyear TEXT, \
                     email TEXT, major TEXT, zip INTEGER, numMatch INTEGER, \
@@ -35,7 +37,6 @@ class Database:
         for student in students:
             self._add_student(cursor, student)
         self._connection.commit()
-
         cursor.close()
 
     def create_alumni(self, alumni):
@@ -96,15 +97,27 @@ class Database:
 
     # can search students or alumni
     # TODO: career in diff table
-    def search(self, search_query, students=True, alumni=True):
+    def search(self, search_query, students=True, alumni=False):
         search_values = [str(x) for x in search_query] # convert everything to strings
+        for i in range(0, len(search_values)):
+            if (search_values[i] == ''):
+                search_values[i] = '%%%%'
+            
+        print(search_values)
+        firstname, lastname, email, major, zipcode, career = search_values
         output = []
 
         cursor = self._connection.cursor()
 
         if students:
-            cursor.execute('SELECT firstname, lastname, major, email, zipcode, career FROM students' +
-            'VALUES (%s, %s, %s, %s, %s, %s)', search_values)
+            # stmtStr = 'SELECT * from students'
+            # cursor.execute(stmtStr)
+            # FIXME: broken sql statement
+            # stmtStr = "SELECT firstname, lastname FROM students WHERE firstname LIKE %s AND " + \
+            # "lastname LIKE %s AND email LIKE %s AND major LIKE %s"
+            stmtStr = "SELECT firstname, lastname, major, career FROM students WHERE firstname LIKE %s " + \
+            "AND lastname LIKE %s AND email LIKE %s AND major LIKE %s"
+            cursor.execute(stmtStr, [firstname, lastname, email, major])
             row = cursor.fetchone()
             
             while row is not None:
@@ -112,7 +125,7 @@ class Database:
                 row = cursor.fetchone()
         
         if alumni:
-            cursor.execute('SELECT firstname, lastname, major, email, zipcode, career FROM alumni' +
+            cursor.execute('SELECT firstname, lastname, major, email, zip, career FROM alumni' +
             'VALUES (%s, %s, %s, %s, %s, %s)', search_values)
             row = cursor.fetchone()
 
@@ -120,6 +133,7 @@ class Database:
                 output.append(row)
                 row = cursor.fetchone()
 
+        print('hi')
         cursor.close()
         return output
 
