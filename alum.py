@@ -2,7 +2,7 @@
 class Alum(object):
 
     def __init__(self, gauth, netid, fname, lname, year, email,
-    major, zipp, numMatch, career = None, organizations = None):
+    major, zipp, numMatch, careers = None, organizations = None):
         self._gauth = gauth
         self._netid = netid
         self._fname = fname
