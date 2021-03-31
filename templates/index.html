@@ -39,7 +39,7 @@
     -->
 </body>
 
-<form action="createstudent" method="post">
+<form action="createuser" method="post">
 
   <body>
     <br>
@@ -49,21 +49,16 @@
         <div class="col-4">
           <strong>Are you a student or alum?</strong>
           <div class="form-check">
-            <input class="form-check-input" id="student" type="radio" name="role">
+            <input class="form-check-input" id="student" value="student" type="radio" name="role" required>
             <label class="form-check-label" for="student"> Student </label>
-          </div>
-          <!--<div class="form-check">
-            <input class="form-check-input" id="grad" type="radio" name="role">
-            <label class="form-check-label" for="grad"> Graduate Student </label>
-          </div>-->
-          <div class="form-check">
-            <input class="form-check-input" id="alum" type="radio" name="role">
+            <br>
+            <input class="form-check-input" id="alum" value="alum" type="radio" name="role" required>
             <label class="form-check-label" for="alum"> Alum </label>
           </div>
           <br>
           <strong>Class Year</strong>
           <div class="form-group">
-              <input type="classYear" class="form-control" name="classYear" id="classYear">
+              <input type="classYear" class="form-control" name="classYear" id="classYear" required>
           </div>
           <!--<select class="form-select" aria-label="Default select example" name="classYear">
             
@@ -74,7 +69,7 @@
           </select>-->
           <br>
           <strong>Major</strong>
-          <select class="form-select" aria-label="Default select example" name="major">
+          <select class="form-select" aria-label="Default select example" name="major" required>
             <option value="" selected disabled>Please select</option>
             <option value="COS">COS</option>
             <option value="ORF">ORF</option>
@@ -119,7 +114,7 @@
           <div class="form-group">
             <label for="careerForm"><strong>Select the industries you're interested in or work
                 in.</strong></label>
-            <select class="form-control" id="industry" multiple>
+            <select class="form-control" id="industry" name="industry" multiple>
               <option>Software Engineering</option>
               <option>Product Management</option>
               <option>Accounting</option>
