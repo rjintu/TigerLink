@@ -31,9 +31,8 @@ class Matching(object):
     # 3) etc, etc such that no person will have more than one match over anyone else who had
     # 4) the same preference of people
 
-    # next, the way the matching works is as follows (in terms of priority)
-    # 1) Career Interest 2) Zip 3) Major
     # generate a vector representing a specific person and then dot-product with all others
+    # according to a specific set of preferences
 
     def match(self):
         students = self._students
