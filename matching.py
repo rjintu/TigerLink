@@ -1,8 +1,11 @@
 # import zipcodes
 from database import Database
+from student import Student
+from alum import Alum
 from flask import Flask, request, make_response, redirect, url_for
 from flask import render_template
 import random
+
 
 ''' HOW TO RUN MATCHING
 1) create a Matching object 
@@ -18,12 +21,30 @@ class Matching(object):
         try:
             db = Database()
             db.connect()
-            self._students = db.get_students()
-            self._alumni = db.get_alumni()
+            self._students = studentize(db.get_students())
+            self._alumni = alumnize(db.get_alumni())
         except Exception as e:
             html = "error occurred: " + str(e)
             print(e)
             make_response(html)
+    
+    def studentize(students):
+        newS = []
+        for student in students:
+            s = Student(student[0], student[1], student[2], student[3],
+            student[4], student[5], student[6], student[7], careers=student[8],
+            organizations=student[9])
+            newS.append(s)
+        return newS
+
+    def alumnize(alumni):
+        newA = []
+        for alum in alumni:
+            a = Alum(alum[0], alum[1], alum[2], alum[3],
+            alum[4], alum[5], alum[6], alum[7], careers=alum[8],
+            organizations=alum[9])
+            newA.append(a)
+        return newA
     
     # Schematic for matching students-alumni
     # 1) create a PQueue where people are added in a random order for the first time
