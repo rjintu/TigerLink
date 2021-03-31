@@ -45,7 +45,8 @@ class Matching(object):
             # check ending condition
             if len(alumni) == 0:
                 return matches
-
+            students.remove(svec)
+            
             bestSim = 0
             bestIdx = 0
             for idx, avec in enumerate(alumni):
@@ -55,6 +56,7 @@ class Matching(object):
                     bestIdx = idx
             alum = avec[bestIdx]
             aVecs.remove(alum)
+            
             #TODO: change to a student
             matches.append((svec, avec, bestSim))
 
