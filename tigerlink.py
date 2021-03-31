@@ -35,10 +35,10 @@ def createstudent():
         matchbool = acct_info.get('matchBool', '')
         nummatches = acct_info.get('numMatches', '')
         zipcode = acct_info.get('zipcode', '')
-        industry = acct_info.get('industry', '')
+        industry = acct_info.getlist('industry')
 
-        print(role)
-        # TODO: verify this step
+        # student = Student(profileid, firstname, lastname, classyear, email, major, zip, nummatches)
+        
         student = [profileid, firstname, lastname, classyear, email, major, zipcode, nummatches, industry]
         print(student)
         db = Database()
