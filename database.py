@@ -75,15 +75,21 @@ class Database:
 
     # can search students or alumni
     # TODO: career in diff table
-    def search(self, search_query, students=True, alumni=True):
+    def search(self, search_query, students=True, alumni=False):
         search_values = [str(x) for x in search_query] # convert everything to strings
+        print(search_values)
+        # firstname, lastname, email, major, zipcode, career = search_values
         output = []
 
         cursor = self._connection.cursor()
 
         if students:
-            cursor.execute('SELECT firstname, lastname, major, email, zipcode, career FROM students' +
-            'VALUES (%s, %s, %s, %s, %s, %s)', search_values)
+            # stmtStr = 'SELECT * from students'
+            # cursor.execute(stmtStr)
+            # FIXME: broken sql statement
+            stmtStr = 'SELECT firstname, lastname, major, email, zip, career FROM students ' + \
+                'WHERE firstname LIKE rohan'
+            cursor.execute(stmtStr)
             row = cursor.fetchone()
             
             while row is not None:
@@ -91,7 +97,7 @@ class Database:
                 row = cursor.fetchone()
         
         if alumni:
-            cursor.execute('SELECT firstname, lastname, major, email, zipcode, career FROM alumni' +
+            cursor.execute('SELECT firstname, lastname, major, email, zip, career FROM alumni' +
             'VALUES (%s, %s, %s, %s, %s, %s)', search_values)
             row = cursor.fetchone()
 
@@ -99,6 +105,7 @@ class Database:
                 output.append(row)
                 row = cursor.fetchone()
 
+        print('hi')
         cursor.close()
         return output
 

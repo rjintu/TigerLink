@@ -25,7 +25,7 @@ def createstudent():
     try:
         acct_info = request.form
 
-        firstname, lastname = acct_info.get('name', 'test student').split()
+        firstname, lastname = acct_info.get('name', 'test user').split()
         profileid = acct_info['profileid'] # We need this to pass. Throw an error otherwise
         email = acct_info.get('email', '')
         role = acct_info.get('role', '')
@@ -36,9 +36,10 @@ def createstudent():
         zipcode = acct_info.get('zipcode', '')
         industry = acct_info.get('industry', '')
 
+        print(role)
         # TODO: verify this step
         student = [profileid, firstname, lastname, classyear, email, major, zipcode, nummatches, industry]
-
+        print(student)
         db = Database()
         db.connect()
         db.create_students([student])
@@ -83,20 +84,22 @@ def search():
         # zipcode = cookie_handler.getVar('zipcode')
         # career = cookie_handler.getVar('career')
         # student = cookie_handler.getVar('student') # TODO: need to handle whether to search for students or alumni (checkbox?)
-        firstname = request.args.get('firstname', '*')
-        lastname = request.args.get('lastname', '*')
-        email = request.args.get('email', '*')
-        major = request.args.get('major', '*')
-        zipcode = request.args.get('zipcode', '*')
-        career = request.args.get('industry', '*')
+        firstname = request.args.get('firstname', '%')
+        lastname = request.args.get('lastname', '%')
+        email = request.args.get('email', '%')
+        major = request.args.get('major', '%')
+        zipcode = request.args.get('zipcode', '%')
+        career = request.args.get('industry', '%')
         search_query = [firstname, lastname, major, email, zipcode, career]
         print(search_query)
         # database queries
         db = Database()
         db.connect()
+        print('here')
         results = db.search(search_query) # FIXME: db.search() will take search_query and two booleans (student and alumni)
+        print(results)
         db.disconnect()
-        html = render_template('search.html')
+        html = render_template('search.html', results=results)
 
     except Exception as e:
         html = str(search_query) 
