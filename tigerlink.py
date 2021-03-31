@@ -20,6 +20,23 @@ def login():
     response = make_response(html)
     return response
 
+# for checking if user exists already, setting a session cookie,
+# and redirecting to the next page
+@app.route('/login/auth', methods=['POST'])
+def login_auth():
+    profileid = request.form['profileid']
+    
+    db = Database()
+    db.connect()
+    student_profile = db.get_student_by_id(profileid) # TODO: do same for alums
+    if student_profile is None:
+        return redirect(url_for('index'))
+    else:
+        # set the cookie!
+        response = redirect(url_for('getstudents'))
+        response.set_cookie('profileid', profileid)
+        return response
+
 @app.route('/createstudent', methods=['POST'])
 def createstudent():
     try:
