@@ -1,5 +1,5 @@
 from sys import argv, exit, stderr
-from tigerlink import app
+from server.tigerlink import app
 
 def main(argv):
     try:
