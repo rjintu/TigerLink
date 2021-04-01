@@ -83,14 +83,17 @@ class Database:
 
     # contents must be array of [firstname, lastname, classyear, email, major,
     # zip, nummatch, career]
+    # FIXME: handle the career table updates
     def update_student(self, profileid, contents):
         cursor = self._connection.cursor()
         args = contents.copy() # dont modify list given to us
+        career = args[-1]
+        args = args[:-1] # drop career arg at the end, handle separate
         args.append(profileid)
         args = [str(x) for x in args] # just convert everything to strings
         cursor.execute('UPDATE students SET firstname=%s, lastname=%s, ' +
-                'classyear=%s, email=%s, major=%s, zip=%s, nummatch=%s, ' +
-                'career=%s WHERE profileid=%s', args)
+                'classyear=%s, email=%s, major=%s, zip=%s, nummatch=%s ' +
+                'WHERE profileid=%s', args)
         self._connection.commit()
         cursor.close()
 
