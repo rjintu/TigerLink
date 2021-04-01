@@ -1,11 +1,11 @@
 from flask import Flask, request, make_response, redirect, url_for
 from flask import render_template
 
-from database import Database
-from matching import Matching
-from cookiemonster import CookieMonster
+from .database import Database
+from .matching import Matching
+from .cookiemonster import CookieMonster
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder="../templates")
 
 
 @app.route('/index', methods=['GET'])
