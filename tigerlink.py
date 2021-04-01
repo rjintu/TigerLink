@@ -114,8 +114,7 @@ def getprofile():
     return response
 
 # updates profile on save click
-
-
+# TODO: update the career associated with the profile
 @app.route('/updateprofile', methods=['POST'])
 def changeprofile():
     info = []
@@ -133,7 +132,7 @@ def changeprofile():
         major = acct_info.get('major', '')
         zipcode = acct_info.get('zipcode', '')
         nummatches = acct_info.get('numMatches', '')
-        career = acct_info.get('career', '')
+        career = acct_info.getlist('career') # FIXME: verify this works
 
         new_info = [firstname, lastname, classyear,
                     email, major, zipcode, nummatches, career]
