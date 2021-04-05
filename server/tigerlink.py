@@ -36,7 +36,7 @@ def login_auth():
         return redirect(url_for('index'))
     else:
         # set the cookie!
-        response = redirect(url_for('getstudents'))
+        response = redirect(url_for('timeline'))
         response.set_cookie('profileid', profileid)
         return response
 
@@ -75,7 +75,7 @@ def createuser():
         return make_response(html)
 
     # redirect to getstudents after the name is added, make sure to uncomment this
-    return redirect(url_for('getstudents')) # TODO: change the redirect to the right page
+    return redirect(url_for('timeline')) # TODO: change the redirect to the right page
 
 
 @app.route('/getstudents', methods=['GET'])
@@ -144,9 +144,6 @@ def changeprofile():
         new_info = [firstname, lastname, classyear,
                     email, major, zipcode, nummatches, career]
 
-        for i in new_info:
-            print(i)
-
         db = Database()
         db.connect()
         db.update_student(temp_id, new_info)
@@ -173,19 +170,16 @@ def search():
     search_form = None
     try:
         firstname = request.args.get('firstname', '%')
-        lastname = request.args.get('lastname', '%')
         email = request.args.get('email', '%')
         major = request.args.get('major', '%')
         zipcode = request.args.get('zipcode', '%')
         career = request.args.get('industry', '%')
-        search_query = [firstname, lastname, major, email, zipcode, career]
+        search_query = [firstname, major, email, zipcode, career]
         print(search_query)
         # database queries
         db = Database()
         db.connect()
-        print('here')
         results = db.search(search_query) # FIXME: db.search() will take search_query and two booleans (student and alumni)
-        print(results)
         db.disconnect()
         html = render_template('search.html', results=results)
 
