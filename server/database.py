@@ -162,7 +162,6 @@ class Database:
             if (search_values[i] == ''):
                 search_values[i] = '%%%%'
             
-        print(search_values)
         name, email, major, zip, career = search_values
         output = []
 
