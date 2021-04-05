@@ -60,17 +60,18 @@ class Database:
         cursor.execute('INSERT INTO students(profileid, firstname, lastname, classyear, email, ' +
         'major, zip, numMatch) ' + 
         'VALUES (%s, %s, %s, %s, %s, %s, %s, %s)', student_elems)
-        print('got here')
         for elem in last_elem:
             cursor.execute('INSERT INTO careers(profileid, career) ' + 'VALUES (%s, %s)', (student[0], elem))
 
     def _add_alum(self, cursor, alum):
         alum = [str(x) for x in alum] # convert everything to strings
+        alum_elems = alum[:-1]
+        last_elem = alum[-1]
         cursor.execute('INSERT INTO alumni(profileid, firstname, lastname, classyear, email, ' + 
         'major, zip, numMatch) ' + 
-        'VALUES (%s, %s, %s, %s, %s, %s, %s, %s)', alum)
-        for elem in alum[7]:
-            cursor.execute('INSERT INTO careers(profileid, career) ' + 'VALUES (%s, %s)', alum[0], elem)
+        'VALUES (%s, %s, %s, %s, %s, %s, %s, %s)', alum_elems)
+        for elem in last_elem:
+            cursor.execute('INSERT INTO careers(profileid, career) ' + 'VALUES (%s, %s)', (alum[0], elem))
 
     def get_students(self):
         cursor = self._connection.cursor()
