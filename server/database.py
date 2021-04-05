@@ -162,7 +162,7 @@ class Database:
             if (search_values[i] == ''):
                 search_values[i] = '%%%%'
             
-        firstname, major, email, zip, career = search_values
+        name, email, major, zipcode, career = search_values
         output = []
 
         cursor = self._connection.cursor()
