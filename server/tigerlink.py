@@ -64,8 +64,8 @@ def login_auth():
     except Exception as e:
         return make_response('Failed to login: ' + str(e))
 
-@app.route('/createstudent', methods=['POST'])
-def createstudent():
+@app.route('/createuser', methods=['POST'])
+def createuser():
     try:
         acct_info = request.form
 
@@ -76,18 +76,25 @@ def createstudent():
         # We need this to pass. Throw an error otherwise
         profileid = session['profileid']
         email = session['email']
-        role = acct_info.get('role', '') # FIXME 
+        role = acct_info.get('role', '')
         major = acct_info.get('major', '')
         classyear = acct_info.get('classYear', '')
         matchbool = acct_info.get('matchBool', '')
         nummatches = acct_info.get('numMatches', '')
         zipcode = acct_info.get('zipcode', '')
         industry = acct_info.getlist('industry')
-        student = [profileid, firstname, lastname, classyear, email, major, zipcode, nummatches, industry]
-        print(student)
+        interests = acct_info.getlist('interests')
+        user = [profileid, firstname, lastname, classyear, email, major, zipcode, nummatches, industry, interests]
+
         db = Database()
         db.connect()
-        db.create_students([student])
+
+        if role == 'student':
+            db.create_students([user])
+
+        else:
+            db.create_alumni([user])
+
         db.disconnect()
     except Exception as e:
         html = "error occurred: " + str(e)
@@ -95,7 +102,7 @@ def createstudent():
         return make_response(html)
 
     # redirect to getstudents after the name is added, make sure to uncomment this
-    return redirect(url_for('getstudents'))
+    return redirect(url_for('getstudents')) # TODO: change the redirect to the right page
 
 
 @app.route('/getstudents', methods=['GET'])
@@ -124,6 +131,9 @@ def getmatches():
     except Exception as e:
         html = "error occurred: " + str(e)
         print(e)
+    
+    response = make_response(html)
+    return response
 
 @app.route('/editprofile', methods=['GET'])
 def getprofile():
@@ -192,16 +202,6 @@ def search():
     search_query = None
     search_form = None
     try:
-        # search form
-        # these are the form fields
-        # cookie_handler = CookieMonster(request.form)
-        # firstname = cookie_handler.getVar('firstname')
-        # lastname = cookie_handler.getVar('lastname')
-        # major = cookie_handler.getVar('major')
-        # email = cookie_handler.getVar('email')
-        # zipcode = cookie_handler.getVar('zipcode')
-        # career = cookie_handler.getVar('career')
-        # student = cookie_handler.getVar('student') # TODO: need to handle whether to search for students or alumni (checkbox?)
         firstname = request.args.get('firstname', '%')
         lastname = request.args.get('lastname', '%')
         email = request.args.get('email', '%')
@@ -230,6 +230,18 @@ def search():
 @app.route('/dosearch', methods=['GET'])
 def dosearch():
     html = render_template('dosearch.html')
+    response = make_response(html)
+    return response
+
+@app.route('/timeline', methods=['GET'])
+def timeline():
+    html = render_template('timeline.html')
+    response = make_response(html)
+    return response
+
+@app.route('/groups', methods=['GET'])
+def groups():
+    html = render_template('groups.html')
     response = make_response(html)
     return response
 
