@@ -96,14 +96,13 @@ class Matching(object):
             alumni.remove(alum)
             
             #TODO: change to a student
-            matches.append((svec, avec, svec._fname, svec._year, svec._careers, avec._fname, avec._year, avec._careers, bestSim))
+            matches.append((svec, avec, svec._fname, svec._year, avec._fname, avec._year, bestSim))
 
             # assign more matches
             svec._numMatch = int(svec._numMatch)
             if svec._numMatch > 1:
                 svec._numMatch -= 1
                 students.append(svec)
-        print(matches)
         return matches
 
 
@@ -126,6 +125,7 @@ class Matching(object):
                     orgS += 1
         
         vals = [m, carS, orgS]
+        print(vals)
 
         sim = 0
         for i, weight in enumerate(svec._spref):
