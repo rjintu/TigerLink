@@ -72,8 +72,7 @@ def createuser():
         if session.get('profileid') is None:
             return redirect('/index')
 
-        firstname, lastname = session['fullname'].split()
-        # We need this to pass. Throw an error otherwise
+        name = session['fullname']
         profileid = session['profileid']
         email = session['email']
         role = acct_info.get('role', '')
@@ -84,7 +83,7 @@ def createuser():
         zipcode = acct_info.get('zipcode', '')
         industry = acct_info.getlist('industry')
         interests = acct_info.getlist('interests')
-        user = [profileid, firstname, lastname, classyear, email, major, zipcode, nummatches, industry, interests]
+        user = [profileid, name, classyear, email, major, zipcode, nummatches, industry, interests]
 
         db = Database()
         db.connect()
@@ -158,12 +157,11 @@ def changeprofile():
     try:
         profileid = session['profileid']
         # first update the entry in the database
-        # contents of array must be array of [firstname, lastname, classyear, email, major,
+        # contents of array must be array of [name, classyear, email, major,
         # zip, nummatch, career]
         acct_info = request.form
 
-        firstname = acct_info.get('firstname', '')
-        lastname = acct_info.get('lastname', '')
+        name = acct_info.get('name', '')
         classyear = acct_info.get('classYear', '')
         email = acct_info.get('email', '')
         major = acct_info.get('major', '')
@@ -171,7 +169,7 @@ def changeprofile():
         nummatches = acct_info.get('numMatches', '')
         career = acct_info.get('career', '')
 
-        new_info = [firstname, lastname, classyear,
+        new_info = [name, classyear,
                     email, major, zipcode, nummatches, career]
 
         db = Database()
@@ -198,12 +196,12 @@ def search():
     search_query = None
     search_form = None
     try:
-        firstname = request.args.get('firstname', '%')
-        email = request.args.get('email', '%')
+        name = request.args.get('namesearch', '%')
+        email = request.args.get('email-address', '%')
         major = request.args.get('major', '%')
         zipcode = request.args.get('zipcode', '%')
         career = request.args.get('industry', '%')
-        search_query = [firstname, major, email, zipcode, career]
+        search_query = [name, email, major, zipcode, career]
         print(search_query)
         # database queries
         db = Database()
