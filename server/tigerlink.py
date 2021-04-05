@@ -15,6 +15,19 @@ login_manager = loginutil.GoogleLogin(keychain)
 @app.route('/', methods=['GET'])
 @app.route('/index', methods=['GET'])
 def index():
+    profileid = session['profileid']
+    if profileid is None:
+        # user is not logged in
+        return redirect('/login')
+
+    db = Database()
+    db.connect()
+    user = db.get_student_by_id(profileid)
+    db.disconnect()
+    if user is not None:
+        # profile is already created
+        return redirect('/getstudents')
+
     html = render_template('index.html')
     response = make_response(html)
     return response
@@ -32,7 +45,22 @@ def login():
 def login_auth():
     try:
         profileid, email, fullname = login_manager.authorize(request)
-        return make_response(profileid + ": " + fullname)
+
+        # set session!
+        session['profileid'] = profileid
+        session['email'] = email
+        session['fullname'] = fullname
+
+        # check where to redirect user
+        db = Database()
+        db.connect()
+        user = db.get_student_by_id(profileid)
+        db.disconnect()
+        if user is None:
+            return redirect('/index')
+        else:
+            return redirect('/getstudents')
+
     except Exception as e:
         return make_response('Failed to login: ' + str(e))
 
@@ -41,10 +69,13 @@ def createstudent():
     try:
         acct_info = request.form
 
-        firstname, lastname = acct_info.get('name', 'test student').split()
+        if session['profileid'] is None:
+            return redirect('/index')
+
+        firstname, lastname = session['fullname'].split()
         # We need this to pass. Throw an error otherwise
-        profileid = acct_info['profileid']
-        email = acct_info.get('email', '')
+        profileid = session['profileid']
+        email = session['email']
         role = acct_info.get('role', '') # FIXME 
         major = acct_info.get('major', '')
         classyear = acct_info.get('classYear', '')
