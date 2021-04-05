@@ -172,16 +172,6 @@ def search():
     search_query = None
     search_form = None
     try:
-        # search form
-        # these are the form fields
-        # cookie_handler = CookieMonster(request.form)
-        # firstname = cookie_handler.getVar('firstname')
-        # lastname = cookie_handler.getVar('lastname')
-        # major = cookie_handler.getVar('major')
-        # email = cookie_handler.getVar('email')
-        # zipcode = cookie_handler.getVar('zipcode')
-        # career = cookie_handler.getVar('career')
-        # student = cookie_handler.getVar('student') # TODO: need to handle whether to search for students or alumni (checkbox?)
         firstname = request.args.get('firstname', '%')
         lastname = request.args.get('lastname', '%')
         email = request.args.get('email', '%')
@@ -210,6 +200,18 @@ def search():
 @app.route('/dosearch', methods=['GET'])
 def dosearch():
     html = render_template('dosearch.html')
+    response = make_response(html)
+    return response
+
+@app.route('/timeline', methods=['GET'])
+def timeline():
+    html = render_template('timeline.html')
+    response = make_response(html)
+    return response
+
+@app.route('/groups', methods=['GET'])
+def groups():
+    html = render_template('groups.html')
     response = make_response(html)
     return response
 
