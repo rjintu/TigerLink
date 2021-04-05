@@ -52,26 +52,32 @@ class Database:
 
         cursor.close()
     
-    # TODO: separate careers
     def _add_student(self, cursor, student):
-        student = [str(x) for x in student] # convert everything to strings
-        student_elems = student[:-1]
-        last_elem = student[-1]
+        student_elems = student[:-2]
+        student_elems = [str(x) for x in student_elems] # convert everything to strings
+        industry = student[-2]
+        interests = student[-1]
         cursor.execute('INSERT INTO students(profileid, firstname, lastname, classyear, email, ' +
         'major, zip, numMatch) ' + 
         'VALUES (%s, %s, %s, %s, %s, %s, %s, %s)', student_elems)
-        for elem in last_elem:
+        for elem in industry:
             cursor.execute('INSERT INTO careers(profileid, career) ' + 'VALUES (%s, %s)', (student[0], elem))
+        
+        for elem in interests:
+            cursor.execute('INSERT INTO interests(profileid, interest) ' + 'VALUES (%s, %s)', (student[0], elem))
 
     def _add_alum(self, cursor, alum):
-        alum = [str(x) for x in alum] # convert everything to strings
-        alum_elems = alum[:-1]
-        last_elem = alum[-1]
+        alum_elems = alum[:-2]
+        alum_elems = [str(x) for x in alum_elems] # convert everything to strings
+        industry = alum[-2]
+        interests = alum[-1]
         cursor.execute('INSERT INTO alumni(profileid, firstname, lastname, classyear, email, ' + 
         'major, zip, numMatch) ' + 
         'VALUES (%s, %s, %s, %s, %s, %s, %s, %s)', alum_elems)
-        for elem in last_elem:
+        for elem in industry:
             cursor.execute('INSERT INTO careers(profileid, career) ' + 'VALUES (%s, %s)', (alum[0], elem))
+        for elem in interests:
+            cursor.execute('INSERT INTO interests(profileid, interest) ' + 'VALUES (%s, %s)', (alum[0], elem))
 
     def get_students(self):
         cursor = self._connection.cursor()
@@ -89,9 +95,16 @@ class Database:
         while row is not None:
             careers.append(row)
             row = cursor.fetchone()
+        
+        cursor.execute('SELECT profileid, interest FROM interests')
+        row = cursor.fetchone()
+        interests = []
+        while row is not None:
+            interests.append(row)
+            row = cursor.fetchone()
 
         cursor.close()
-        return output, careers
+        return output, careers, interests
     
     def get_alumni(self):
         cursor = self._connection.cursor()
@@ -110,8 +123,15 @@ class Database:
             careers.append(row)
             row = cursor.fetchone()
 
+        cursor.execute('SELECT profileid, interest FROM interests')
+        row = cursor.fetchone()
+        interests = []
+        while row is not None:
+            interests.append(row)
+            row = cursor.fetchone()
+
         cursor.close()
-        return output, careers
+        return output, careers, interests
 
     def get_student_by_id(self, profileid):
         profileid = str(profileid)
