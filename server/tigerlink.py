@@ -196,12 +196,12 @@ def search():
     search_query = None
     search_form = None
     try:
-        name = request.args.get('name', '%')
-        email = request.args.get('email', '%')
+        name = request.args.get('namesearch', '%')
+        email = request.args.get('email-address', '%')
         major = request.args.get('major', '%')
         zipcode = request.args.get('zipcode', '%')
         career = request.args.get('industry', '%')
-        search_query = [name, major, email, zipcode, career]
+        search_query = [name, email, major, zipcode, career]
         print(search_query)
         # database queries
         db = Database()
