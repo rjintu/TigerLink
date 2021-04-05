@@ -1,7 +1,7 @@
 # import zipcodes
-from database import Database
-from student import Student
-from alum import Alum
+from .database import Database
+from .student import Student
+from .alum import Alum
 from flask import Flask, request, make_response, redirect, url_for
 from flask import render_template
 import random
