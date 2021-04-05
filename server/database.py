@@ -162,16 +162,15 @@ class Database:
             if (search_values[i] == ''):
                 search_values[i] = '%%%%'
             
-        print(search_values)
-        firstname, lastname, email, major, zip, career = search_values
+        firstname, major, email, zip, career = search_values
         output = []
 
         cursor = self._connection.cursor()
 
         if students:
-            stmtStr = "SELECT firstname, lastname, major FROM students WHERE firstname LIKE %s " + \
-            "AND lastname LIKE %s AND email LIKE %s AND major LIKE %s"
-            cursor.execute(stmtStr, [firstname, lastname, email, major])
+            stmtStr = "SELECT name, major FROM students WHERE name LIKE %s " + \
+            "AND email LIKE %s AND major LIKE %s"
+            cursor.execute(stmtStr, [name, email, major])
             row = cursor.fetchone()
             
             while row is not None:
@@ -179,7 +178,7 @@ class Database:
                 row = cursor.fetchone()
         
         if alumni:
-            cursor.execute('SELECT firstname, lastname, major, email, zip FROM alumni' +
+            cursor.execute('SELECT name, major, email, zip FROM alumni' +
             'VALUES (%s, %s, %s, %s, %s, %s)', search_values)
             row = cursor.fetchone()
 
