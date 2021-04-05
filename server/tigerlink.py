@@ -138,10 +138,10 @@ def getmatches():
 @app.route('/editprofile', methods=['GET'])
 def getprofile():
     try:
-        temp_id = request.cookies.get('profileid')
+        profileid = session['profileid']
         db = Database()
         db.connect()
-        info = db.get_student_by_id(temp_id)
+        info = db.get_student_by_id(profileid)
         db.disconnect()
         html = render_template('editprofile.html', info=info)
     except Exception as e:
@@ -156,7 +156,7 @@ def getprofile():
 def changeprofile():
     info = []
     try:
-        temp_id = request.cookies.get('profileid')
+        profileid = session['profileid']
         # first update the entry in the database
         # contents of array must be array of [firstname, lastname, classyear, email, major,
         # zip, nummatch, career]
@@ -179,14 +179,13 @@ def changeprofile():
 
         db = Database()
         db.connect()
-        db.update_student(temp_id, new_info)
+        db.update_student(profileid, new_info)
         db.disconnect()
 
         # reload the editprofile page
-        temp_id = request.cookies.get('profileid')
         db = Database()
         db.connect()
-        info = db.get_student_by_id(temp_id)
+        info = db.get_student_by_id(profileid)
         db.disconnect()
         # return redirect(url_for('editprofile', info=info))
     except Exception as e:
