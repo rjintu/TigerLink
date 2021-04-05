@@ -15,7 +15,7 @@ login_manager = loginutil.GoogleLogin(keychain)
 @app.route('/', methods=['GET'])
 @app.route('/index', methods=['GET'])
 def index():
-    profileid = session['profileid']
+    profileid = session.get('profileid')
     if profileid is None:
         # user is not logged in
         return redirect('/login')
@@ -69,7 +69,7 @@ def createuser():
     try:
         acct_info = request.form
 
-        if session['profileid'] is None:
+        if session.get('profileid') is None:
             return redirect('/index')
 
         firstname, lastname = session['fullname'].split()
