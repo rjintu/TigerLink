@@ -5,7 +5,8 @@ from .database import Database
 from .matching import Matching
 from .cookiemonster import CookieMonster
 
-app = Flask(__name__, template_folder="../templates", static_folder="../static")
+app = Flask(__name__, template_folder="../templates",
+            static_folder="../static")
 
 
 @app.route('/index', methods=['GET'])
@@ -15,6 +16,8 @@ def index():
     return response
 
 # Note: when testing locally, must use port 8888 for Google SSO
+
+
 @app.route('/', methods=['GET'])
 @app.route('/login', methods=['GET'])
 def login():
@@ -24,6 +27,8 @@ def login():
 
 # for checking if user exists already, setting a session cookie,
 # and redirecting to the next page
+
+
 @app.route('/login/auth', methods=['POST'])
 def login_auth():
     profileid = request.form['profileid']
@@ -58,7 +63,8 @@ def createuser():
         zipcode = acct_info.get('zipcode', '')
         industry = acct_info.getlist('industry')
         interests = acct_info.getlist('interests')
-        user = [profileid, firstname, lastname, classyear, email, major, zipcode, nummatches, industry, interests]
+        user = [profileid, firstname, lastname, classyear, email,
+                major, zipcode, nummatches, industry, interests]
 
         db = Database()
         db.connect()
@@ -76,7 +82,8 @@ def createuser():
         return make_response(html)
 
     # redirect to getstudents after the name is added, make sure to uncomment this
-    return redirect(url_for('getstudents')) # TODO: change the redirect to the right page
+    # TODO: change the redirect to the right page
+    return redirect(url_for('getstudents'))
 
 
 @app.route('/getstudents', methods=['GET'])
@@ -94,6 +101,7 @@ def getstudents():
     response = make_response(html)
     return response
 
+
 @app.route('/displaymatches', methods=['GET'])
 def getmatches():
     try:
@@ -101,10 +109,11 @@ def getmatches():
         m = Matching()
         matches = m.match()
         html = render_template('displaymatches.html', matches=matches)
-    
+
     except Exception as e:
         html = "error occurred: " + str(e)
         print(e)
+
 
 @app.route('/editprofile', methods=['GET'])
 def getprofile():
@@ -112,9 +121,13 @@ def getprofile():
         temp_id = request.cookies.get('profileid')
         db = Database()
         db.connect()
-        info = db.get_student_by_id(temp_id)
+        info, careers, interests = db.get_student_by_id(temp_id)
+        # print(info)
+        # print(careers)
+        # print(interests)
         db.disconnect()
-        html = render_template('editprofile.html', info=info)
+        html = render_template('editprofile.html', info=info,
+                               careers=careers, interests=interests)
     except Exception as e:
         html = "error occurred: " + str(e)
         print(e)
@@ -123,6 +136,8 @@ def getprofile():
     return response
 
   # updates profile on save click
+
+
 @app.route('/updateprofile', methods=['POST'])
 def changeprofile():
     info = []
@@ -140,17 +155,20 @@ def changeprofile():
         major = acct_info.get('major', '')
         zipcode = acct_info.get('zipcode', '')
         nummatches = acct_info.get('numMatches', '')
-        career = acct_info.getlist('career') # FIXME: verify this works
+        careers = acct_info.getlist('career')  # FIXME: verify this works
+        interests = acct_info.getlist('interests')  # FIXME: verify this works
+        print(careers)
+        print(interests)
 
         new_info = [firstname, lastname, classyear,
-                    email, major, zipcode, nummatches, career]
+                    email, major, zipcode, nummatches]
 
-        for i in new_info:
-            print(i)
+        # for i in new_info:
+        #     print(i)
 
         db = Database()
         db.connect()
-        db.update_student(temp_id, new_info)
+        db.update_student(temp_id, new_info, careers, interests)
         db.disconnect()
 
         # reload the editprofile page
@@ -168,6 +186,8 @@ def changeprofile():
 
 # Note: search will automatically query both students and alumni
 # TODO: implement this page in the frontend
+
+
 @app.route('/search', methods=['GET'])
 def search():
     search_query = None
@@ -185,13 +205,14 @@ def search():
         db = Database()
         db.connect()
         print('here')
-        results = db.search(search_query) # FIXME: db.search() will take search_query and two booleans (student and alumni)
+        # FIXME: db.search() will take search_query and two booleans (student and alumni)
+        results = db.search(search_query)
         print(results)
         db.disconnect()
         html = render_template('search.html', results=results)
 
     except Exception as e:
-        html = str(search_query) 
+        html = str(search_query)
         print(e)
 
     response = make_response(html)
@@ -204,15 +225,16 @@ def dosearch():
     response = make_response(html)
     return response
 
+
 @app.route('/timeline', methods=['GET'])
 def timeline():
     html = render_template('timeline.html')
     response = make_response(html)
     return response
 
+
 @app.route('/groups', methods=['GET'])
 def groups():
     html = render_template('groups.html')
     response = make_response(html)
     return response
-
