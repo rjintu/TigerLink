@@ -21,11 +21,11 @@ class Database:
         cursor.execute('DROP TABLE IF EXISTS students')
         cursor.execute('DROP TABLE IF EXISTS alumni')
         cursor.execute('CREATE TABLE students ' +
-                '(profileid TEXT, firstname TEXT, lastname TEXT, classyear TEXT, \
+                '(profileid TEXT, name TEXT, classyear TEXT, \
                     email TEXT, major TEXT, zip TEXT, numMatch TEXT)')
         cursor.execute('DROP TABLE IF EXISTS alumni')
         cursor.execute('CREATE TABLE alumni ' +
-                '(profileid TEXT, firstname TEXT, lastname TEXT, classyear TEXT, \
+                '(profileid TEXT, name TEXT, classyear TEXT, \
                     email TEXT, major TEXT, zip TEXT, numMatch TEXT)')
         cursor.execute('DROP TABLE IF EXISTS careers')
         cursor.execute('CREATE TABLE careers ' + 
@@ -57,9 +57,9 @@ class Database:
         student_elems = [str(x) for x in student_elems] # convert everything to strings
         industry = student[-2]
         interests = student[-1]
-        cursor.execute('INSERT INTO students(profileid, firstname, lastname, classyear, email, ' +
+        cursor.execute('INSERT INTO students(profileid, name, classyear, email, ' +
         'major, zip, numMatch) ' + 
-        'VALUES (%s, %s, %s, %s, %s, %s, %s, %s)', student_elems)
+        'VALUES (%s, %s, %s, %s, %s, %s, %s)', student_elems)
         for elem in industry:
             cursor.execute('INSERT INTO careers(profileid, career) ' + 'VALUES (%s, %s)', (student[0], elem))
         
@@ -71,9 +71,9 @@ class Database:
         alum_elems = [str(x) for x in alum_elems] # convert everything to strings
         industry = alum[-2]
         interests = alum[-1]
-        cursor.execute('INSERT INTO alumni(profileid, firstname, lastname, classyear, email, ' + 
+        cursor.execute('INSERT INTO alumni(profileid, name, classyear, email, ' + 
         'major, zip, numMatch) ' + 
-        'VALUES (%s, %s, %s, %s, %s, %s, %s, %s)', alum_elems)
+        'VALUES (%s, %s, %s, %s, %s, %s, %s)', alum_elems)
         for elem in industry:
             cursor.execute('INSERT INTO careers(profileid, career) ' + 'VALUES (%s, %s)', (alum[0], elem))
         for elem in interests:
@@ -81,7 +81,7 @@ class Database:
 
     def get_students(self):
         cursor = self._connection.cursor()
-        cursor.execute('SELECT profileid, firstname, lastname, classyear, email, \
+        cursor.execute('SELECT profileid, name, classyear, email, \
         major, zip, numMatch FROM students')
         row = cursor.fetchone()
         output = []
@@ -108,7 +108,7 @@ class Database:
     
     def get_alumni(self):
         cursor = self._connection.cursor()
-        cursor.execute('SELECT profileid, firstname, lastname, classyear, email, \
+        cursor.execute('SELECT profileid, name, classyear, email, \
         major, zip, numMatch FROM alumni')
         row = cursor.fetchone()
         output = []
@@ -136,18 +136,18 @@ class Database:
     def get_student_by_id(self, profileid):
         profileid = str(profileid)
         cursor = self._connection.cursor()
-        cursor.execute('SELECT firstname, lastname, classyear, email, major, zip, ' +
+        cursor.execute('SELECT name, classyear, email, major, zip, ' +
                 'nummatch FROM students WHERE profileid=%s', [profileid])
         return cursor.fetchone()
 
-    # contents must be array of [firstname, lastname, classyear, email, major,
+    # contents must be array of [name, classyear, email, major,
     # zip, nummatch, career]
     def update_student(self, profileid, contents):
         cursor = self._connection.cursor()
         args = contents.copy() # dont modify list given to us
         args.append(profileid)
         args = [str(x) for x in args] # just convert everything to strings
-        cursor.execute('UPDATE students SET firstname=%s, lastname=%s, ' +
+        cursor.execute('UPDATE students SET name=%s, ' +
                 'classyear=%s, email=%s, major=%s, zip=%s, nummatch=%s, ' +
                 'career=%s WHERE profileid=%s', args)
         self._connection.commit()
@@ -163,15 +163,15 @@ class Database:
                 search_values[i] = '%%%%'
             
         print(search_values)
-        firstname, lastname, email, major, zip, career = search_values
+        name, email, major, zip, career = search_values
         output = []
 
         cursor = self._connection.cursor()
 
         if students:
-            stmtStr = "SELECT firstname, lastname, major FROM students WHERE firstname LIKE %s " + \
-            "AND lastname LIKE %s AND email LIKE %s AND major LIKE %s"
-            cursor.execute(stmtStr, [firstname, lastname, email, major])
+            stmtStr = "SELECT name, major FROM students WHERE name LIKE %s " + \
+            "AND email LIKE %s AND major LIKE %s"
+            cursor.execute(stmtStr, [name, email, major])
             row = cursor.fetchone()
             
             while row is not None:
@@ -179,8 +179,8 @@ class Database:
                 row = cursor.fetchone()
         
         if alumni:
-            cursor.execute('SELECT firstname, lastname, major, email, zip FROM alumni' +
-            'VALUES (%s, %s, %s, %s, %s, %s)', search_values)
+            cursor.execute('SELECT name, major, email, zip FROM alumni' +
+            'VALUES (%s, %s, %s, %s, %s)', search_values)
             row = cursor.fetchone()
 
             while row is not None:
