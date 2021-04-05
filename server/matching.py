@@ -96,7 +96,7 @@ class Matching(object):
             alumni.remove(alum)
             
             #TODO: change to a student
-            matches.append((svec, avec, svec._fname, avec._fname, bestSim))
+            matches.append((svec, avec, svec._fname, svec._year, svec._careers, avec._fname, avec._year, avec._careers, bestSim))
 
             # assign more matches
             svec._numMatch = int(svec._numMatch)
