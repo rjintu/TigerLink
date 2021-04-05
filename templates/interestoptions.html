@@ -1,0 +1,27 @@
+{% set myList = ['Christian Fellowship', 'ROTC', 'Engineering Society', 'Whig-Cliosophic Society', 'Athletic
+Organization', 'Cap and Gown', 'Minority Advocacy'] %}
+
+
+<!-- commented 
+<option>Christian Fellowship</option>
+<option>ROTC</option>
+<option>Engineering Society</option>
+<option>Whig-Cliosophic Society</option>
+<option>Athletic Organization</option>
+<option>Dance Group</option>
+<option>Business Today</option>
+<option>Cannon</option>
+<option>Cap & Gown</option>
+<option>Choir & Chorus</option>
+<option>Academic Club</option>
+<option>Women Empowerment</option>
+<option>Minority Advocacy</option>
+-->
+
+{% for i in selected: %}
+{{myList.remove(i)}}
+{% endfor %}
+
+{% for i in myList: %}
+<option>{{ i }}</option>
+{% endfor %}
