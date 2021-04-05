@@ -28,16 +28,8 @@ same way as in our 333 assignments (or you can use something different
 like `gunicorn`). **Note: to get Google authentication working on your
 local server, you have to use port 8888.**
 
-If you get some database errors while running on our main branch,
-chances are your tables aren't configured yet. To create the tables,
-you can run the following code:
-```python
-from database import Database
-db = Database()
-db.connect()
-db.init()
-db.disconnect()
-```
+If you get database errors while using the main branch, you may need to configure
+your tables. To do this, simply run `python utils/dbschema.py` from the TigerLink folder. 
 
 ### Using Secret Keys & HTTPS Locally
 Our secret keys for Flask and Google OAuth have to not be shared anywhere
