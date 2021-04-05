@@ -94,6 +94,9 @@ def getmatches():
         m = Matching()
         matches = m.match()
         html = render_template('displaymatches.html', matches=matches)
+    except Exception as e:
+        html = "error occurred: " + str(e)
+        print(e)
 
 @app.route('/editprofile', methods=['GET'])
 def getprofile():
