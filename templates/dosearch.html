@@ -29,9 +29,6 @@
 <header>
 {% include 'navbar.html' %}
 </header>
-<br>
-<br>
-<br>
 <body>
     <form action="search" method="get">
         <body>
@@ -43,8 +40,8 @@
 
                 <!-- enter the name of the person you wish to search up -->
                 <div class="form-group">
-                    <label for="name-search"><strong>Name</strong></label>
-                    <input type="name-search" class="form-control" name="name-search" id="name-search" aria-describedby="name-search"
+                    <label for="namesearch"><strong>Name</strong></label>
+                    <input type="namesearch" class="form-control" name="namesearch" id="namesearch" aria-describedby="namesearch"
                       placeholder="FirstName LastName">
                 </div>
                 <br>
@@ -55,12 +52,8 @@
                   <label class="form-check-label" for="ugrad"> Undergraduate Student </label>
                 </div>
                 <div class="form-check">
-                  <input class="form-check-input" id="grad" type="radio" name="student">
-                  <label class="form-check-label" for="grad"> Graduate Student </label>
-                </div>
-                <div class="form-check">
                   <input class="form-check-input" id="alum" type="radio" name="student">
-                  <label class="form-check-label" for="alum"> Alumnus </label>
+                  <label class="form-check-label" for="alum"> Both </label>
                 </div>
                 <div class="form-check">
                     <input class="form-check-input" id="all3" type="radio" name="student">

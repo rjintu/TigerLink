@@ -157,20 +157,23 @@ class Database:
     # can search students or alumni
     # TODO: career in diff table (need to fix)
     def search(self, search_query, students=True, alumni=False):
+        print(search_query)
         search_values = [str(x) for x in search_query] # convert everything to strings
         for i in range(0, len(search_values)):
             if (search_values[i] == ''):
                 search_values[i] = '%%%%'
             
-        name, email, major, zip, career = search_values
+        name, email, major, zipcode, career = search_values
         output = []
+
+        print("name: " + str(name))
 
         cursor = self._connection.cursor()
 
         if students:
             stmtStr = "SELECT name, major FROM students WHERE name LIKE %s " + \
-            "AND email LIKE %s AND major LIKE %s"
-            cursor.execute(stmtStr, [name, email, major])
+            "AND email LIKE %s AND major LIKE %s AND zip LIKE %s"
+            cursor.execute(stmtStr, [name, email, major, zipcode])
             row = cursor.fetchone()
             
             while row is not None:
