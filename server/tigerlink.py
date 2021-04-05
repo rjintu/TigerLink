@@ -1,10 +1,11 @@
 from flask import Flask, request, make_response, redirect, url_for
 from flask import render_template
 
-from database import Database
-from cookiemonster import CookieMonster
+from .database import Database
+from .matching import Matching
+from .cookiemonster import CookieMonster
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder="../templates", static_folder="../static")
 
 
 @app.route('/index', methods=['GET'])
@@ -14,8 +15,6 @@ def index():
     return response
 
 # Note: when testing locally, must use port 8888 for Google SSO
-
-
 @app.route('/', methods=['GET'])
 @app.route('/login', methods=['GET'])
 def login():
@@ -25,8 +24,6 @@ def login():
 
 # for checking if user exists already, setting a session cookie,
 # and redirecting to the next page
-
-
 @app.route('/login/auth', methods=['POST'])
 def login_auth():
     profileid = request.form['profileid']
@@ -44,8 +41,8 @@ def login_auth():
         return response
 
 
-@app.route('/createstudent', methods=['POST'])
-def createstudent():
+@app.route('/createuser', methods=['POST'])
+def createuser():
     try:
         acct_info = request.form
 
@@ -59,18 +56,18 @@ def createstudent():
         matchbool = acct_info.get('matchBool', '')
         nummatches = acct_info.get('numMatches', '')
         zipcode = acct_info.get('zipcode', '')
-        industry = acct_info.get('industry', '')
+        industry = acct_info.getlist('industry')
+        user = [profileid, firstname, lastname, classyear, email, major, zipcode, nummatches, industry]
 
-        print(role)
-        # TODO: verify this step
-        student = [profileid, firstname, lastname, classyear,
-                   email, major, zipcode, nummatches, industry]
-
-        student = [profileid, firstname, lastname, classyear, email, major, zipcode, nummatches, industry]
-        print(student)
         db = Database()
         db.connect()
-        db.create_students([student])
+
+        if role == 'student':
+            db.create_students([user])
+
+        else:
+            db.create_alumni([user])
+
         db.disconnect()
     except Exception as e:
         html = "error occurred: " + str(e)
@@ -78,7 +75,7 @@ def createstudent():
         return make_response(html)
 
     # redirect to getstudents after the name is added, make sure to uncomment this
-    return redirect(url_for('getstudents'))
+    return redirect(url_for('getstudents')) # TODO: change the redirect to the right page
 
 
 @app.route('/getstudents', methods=['GET'])
@@ -96,6 +93,17 @@ def getstudents():
     response = make_response(html)
     return response
 
+@app.route('/displaymatches', methods=['GET'])
+def getmatches():
+    try:
+        # creates matches from matching.py file. returns a list of tuples.
+        m = Matching()
+        matches = m.match()
+        html = render_template('displaymatches.html', matches=matches)
+    
+    except Exception as e:
+        html = "error occurred: " + str(e)
+        print(e)
 
 @app.route('/editprofile', methods=['GET'])
 def getprofile():
@@ -113,8 +121,7 @@ def getprofile():
     response = make_response(html)
     return response
 
-# updates profile on save click
-# TODO: update the career associated with the profile
+  # updates profile on save click
 @app.route('/updateprofile', methods=['POST'])
 def changeprofile():
     info = []
@@ -160,23 +167,11 @@ def changeprofile():
 
 # Note: search will automatically query both students and alumni
 # TODO: implement this page in the frontend
-
-
 @app.route('/search', methods=['GET'])
 def search():
     search_query = None
     search_form = None
     try:
-        # search form
-        # these are the form fields
-        # cookie_handler = CookieMonster(request.form)
-        # firstname = cookie_handler.getVar('firstname')
-        # lastname = cookie_handler.getVar('lastname')
-        # major = cookie_handler.getVar('major')
-        # email = cookie_handler.getVar('email')
-        # zipcode = cookie_handler.getVar('zipcode')
-        # career = cookie_handler.getVar('career')
-        # student = cookie_handler.getVar('student') # TODO: need to handle whether to search for students or alumni (checkbox?)
         firstname = request.args.get('firstname', '%')
         lastname = request.args.get('lastname', '%')
         email = request.args.get('email', '%')
@@ -205,6 +200,18 @@ def search():
 @app.route('/dosearch', methods=['GET'])
 def dosearch():
     html = render_template('dosearch.html')
+    response = make_response(html)
+    return response
+
+@app.route('/timeline', methods=['GET'])
+def timeline():
+    html = render_template('timeline.html')
+    response = make_response(html)
+    return response
+
+@app.route('/groups', methods=['GET'])
+def groups():
+    html = render_template('groups.html')
     response = make_response(html)
     return response
 
