@@ -4,6 +4,8 @@ from oauthlib.oauth2 import WebApplicationClient
 import requests
 import json
 
+from .keychain import KeyChain
+
 
 GOOGLE_DISCOVERY_URL = (
         "https://accounts.google.com/.well-known/openid-configuration"
@@ -15,22 +17,9 @@ def get_google_provider_cfg():
 class GoogleLogin:
 
     # set up keys & the oauth client
-    def __init__(self):
-        self._CLIENT_ID = environ.get('GOOGLE_CLIENT_ID')
-        self._CLIENT_SECRET = environ.get('GOOGLE_CLIENT_SECRET')
-        if self._CLIENT_ID is None:
-            print('Could not load keys from environment variables')
-            print('Loading keys through keys.py...')
-            try:
-                from . import keys
-                self._CLIENT_ID = keys.GOOGLE_CLIENT_ID
-                self._CLIENT_SECRET = keys.GOOGLE_CLIENT_SECRET
-            except Exception as e:
-                print("Error: could not load secret keys!", file=stderr)
-                print("Do you have keys.py in the 'server' folder?", file=stderr)
-                print("More info: " + str(e))
-                exit(1)
-
+    def __init__(self, keychain):
+        self._CLIENT_ID = keychain.CLIENT_ID
+        self._CLIENT_SECRET = keychain.CLIENT_SECRET
         self._oauth_cl = WebApplicationClient(self._CLIENT_ID)
 
     def get_login_redirect(self, request):

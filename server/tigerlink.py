@@ -1,18 +1,16 @@
-from flask import Flask, request, make_response, redirect, url_for
+from flask import Flask, request, make_response, redirect, url_for, session
 from flask import render_template
-from os import environ
-import json
-
-from oauthlib.oauth2 import WebApplicationClient
-import requests
 
 from .database import Database
 from .matching import Matching
 from .cookiemonster import CookieMonster
 from . import loginutil
+from .keychain import KeyChain
 
+keychain = KeyChain()
 app = Flask(__name__, template_folder="../templates", static_folder="../static")
-login_manager = loginutil.GoogleLogin()
+app.secret_key = keychain.FLASK_SECRET
+login_manager = loginutil.GoogleLogin(keychain)
 
 @app.route('/', methods=['GET'])
 @app.route('/index', methods=['GET'])
@@ -32,8 +30,11 @@ def login():
 # and redirecting to the next page
 @app.route('/login/auth', methods=['GET'])
 def login_auth():
-    profileid, email, fullname = login_manager.authorize(request)
-    return make_response(profileid + ": " + fullname)
+    try:
+        profileid, email, fullname = login_manager.authorize(request)
+        return make_response(profileid + ": " + fullname)
+    except Exception as e:
+        return make_response('Failed to login: ' + str(e))
 
 @app.route('/createstudent', methods=['POST'])
 def createstudent():
