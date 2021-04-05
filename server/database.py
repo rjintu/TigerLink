@@ -20,13 +20,16 @@ class Database:
         cursor = self._connection.cursor()
         cursor.execute('DROP TABLE IF EXISTS students')
         cursor.execute('DROP TABLE IF EXISTS alumni')
+        cursor.execute('DROP TABLE IF EXISTS roles')
         cursor.execute('CREATE TABLE students ' +
-                '(profileid TEXT, firstname TEXT, lastname TEXT, classyear TEXT, \
+                '(profileid TEXT, name TEXT, classyear TEXT, \
                     email TEXT, major TEXT, zip TEXT, numMatch TEXT)')
         cursor.execute('DROP TABLE IF EXISTS alumni')
         cursor.execute('CREATE TABLE alumni ' +
-                '(profileid TEXT, firstname TEXT, lastname TEXT, classyear TEXT, \
+                '(profileid TEXT, name TEXT, classyear TEXT, \
                     email TEXT, major TEXT, zip TEXT, numMatch TEXT)')
+        cursor.execute('CREATE TABLE roles ' + 
+                '(profileid TEXT, role TEXT)')
         cursor.execute('DROP TABLE IF EXISTS careers')
         cursor.execute('CREATE TABLE careers ' + 
                 '(profileid TEXT, career TEXT)')
@@ -55,11 +58,13 @@ class Database:
     def _add_student(self, cursor, student):
         student_elems = student[:-2]
         student_elems = [str(x) for x in student_elems] # convert everything to strings
+        profileid = student_elems[0]
         industry = student[-2]
         interests = student[-1]
-        cursor.execute('INSERT INTO students(profileid, firstname, lastname, classyear, email, ' +
+        cursor.execute('INSERT INTO roles(profileid, role) ' + 'VALUES (%s, %s)', [profileid, 'student'])
+        cursor.execute('INSERT INTO students(profileid, name, classyear, email, ' +
         'major, zip, numMatch) ' + 
-        'VALUES (%s, %s, %s, %s, %s, %s, %s, %s)', student_elems)
+        'VALUES (%s, %s, %s, %s, %s, %s, %s)', student_elems)
         for elem in industry:
             cursor.execute('INSERT INTO careers(profileid, career) ' + 'VALUES (%s, %s)', (student[0], elem))
         
@@ -69,11 +74,13 @@ class Database:
     def _add_alum(self, cursor, alum):
         alum_elems = alum[:-2]
         alum_elems = [str(x) for x in alum_elems] # convert everything to strings
+        profileid = alum_elems[0]
         industry = alum[-2]
         interests = alum[-1]
-        cursor.execute('INSERT INTO alumni(profileid, firstname, lastname, classyear, email, ' + 
+        cursor.execute('INSERT INTO roles(profileid, role) ' + 'VALUES (%s, %s)', [profileid, 'alum'])
+        cursor.execute('INSERT INTO alumni(profileid, name, classyear, email, ' + 
         'major, zip, numMatch) ' + 
-        'VALUES (%s, %s, %s, %s, %s, %s, %s, %s)', alum_elems)
+        'VALUES (%s, %s, %s, %s, %s, %s, %s)', alum_elems)
         for elem in industry:
             cursor.execute('INSERT INTO careers(profileid, career) ' + 'VALUES (%s, %s)', (alum[0], elem))
         for elem in interests:
@@ -81,7 +88,7 @@ class Database:
 
     def get_students(self):
         cursor = self._connection.cursor()
-        cursor.execute('SELECT profileid, firstname, lastname, classyear, email, \
+        cursor.execute('SELECT profileid, name, classyear, email, \
         major, zip, numMatch FROM students')
         row = cursor.fetchone()
         output = []
@@ -108,7 +115,7 @@ class Database:
     
     def get_alumni(self):
         cursor = self._connection.cursor()
-        cursor.execute('SELECT profileid, firstname, lastname, classyear, email, \
+        cursor.execute('SELECT profileid, name, classyear, email, \
         major, zip, numMatch FROM alumni')
         row = cursor.fetchone()
         output = []
@@ -136,18 +143,18 @@ class Database:
     def get_student_by_id(self, profileid):
         profileid = str(profileid)
         cursor = self._connection.cursor()
-        cursor.execute('SELECT firstname, lastname, classyear, email, major, zip, ' +
+        cursor.execute('SELECT name, classyear, email, major, zip, ' +
                 'nummatch FROM students WHERE profileid=%s', [profileid])
         return cursor.fetchone()
 
-    # contents must be array of [firstname, lastname, classyear, email, major,
+    # contents must be array of [name, classyear, email, major,
     # zip, nummatch, career]
     def update_student(self, profileid, contents):
         cursor = self._connection.cursor()
         args = contents.copy() # dont modify list given to us
         args.append(profileid)
         args = [str(x) for x in args] # just convert everything to strings
-        cursor.execute('UPDATE students SET firstname=%s, lastname=%s, ' +
+        cursor.execute('UPDATE students SET name=%s, ' +
                 'classyear=%s, email=%s, major=%s, zip=%s, nummatch=%s, ' +
                 'career=%s WHERE profileid=%s', args)
         self._connection.commit()
@@ -157,20 +164,23 @@ class Database:
     # can search students or alumni
     # TODO: career in diff table (need to fix)
     def search(self, search_query, students=True, alumni=False):
+        print(search_query)
         search_values = [str(x) for x in search_query] # convert everything to strings
         for i in range(0, len(search_values)):
             if (search_values[i] == ''):
                 search_values[i] = '%%%%'
             
-        firstname, major, email, zip, career = search_values
+        name, email, major, zipcode, career = search_values
         output = []
+
+        print("name: " + str(name))
 
         cursor = self._connection.cursor()
 
         if students:
             stmtStr = "SELECT name, major FROM students WHERE name LIKE %s " + \
-            "AND email LIKE %s AND major LIKE %s"
-            cursor.execute(stmtStr, [name, email, major])
+            "AND email LIKE %s AND major LIKE %s AND zip LIKE %s"
+            cursor.execute(stmtStr, [name, email, major, zipcode])
             row = cursor.fetchone()
             
             while row is not None:
@@ -179,7 +189,7 @@ class Database:
         
         if alumni:
             cursor.execute('SELECT name, major, email, zip FROM alumni' +
-            'VALUES (%s, %s, %s, %s, %s, %s)', search_values)
+            'VALUES (%s, %s, %s, %s, %s)', search_values)
             row = cursor.fetchone()
 
             while row is not None:
