@@ -1,1 +1,1 @@
-web: gunicorn tigerlink:app
+web: gunicorn server.tigerlink:app
