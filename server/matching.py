@@ -96,7 +96,7 @@ class Matching(object):
             alumni.remove(alum)
             
             #TODO: change to a student
-            matches.append((svec, avec, bestSim))
+            matches.append((svec, avec, svec._fname, avec._fname, bestSim))
 
             # assign more matches
             svec._numMatch = int(svec._numMatch)
@@ -128,7 +128,6 @@ class Matching(object):
         vals = [m, carS, orgS]
 
         sim = 0
-        #TODO: add spref to the student class
         for i, weight in enumerate(svec._spref):
             sim += vals[i] * weight
         
