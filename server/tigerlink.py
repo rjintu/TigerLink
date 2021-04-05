@@ -105,6 +105,9 @@ def getmatches():
     except Exception as e:
         html = "error occurred: " + str(e)
         print(e)
+    
+    response = make_response(html)
+    return response
 
 @app.route('/editprofile', methods=['GET'])
 def getprofile():
