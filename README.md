@@ -38,3 +38,18 @@ db.connect()
 db.init()
 db.disconnect()
 ```
+
+### Using Secret Keys & HTTPS Locally
+Our secret keys for Flask and Google OAuth have to not be shared anywhere
+accidentally, so we shouldn't add them directly to this GitHub. Instead,
+the Heroku deployment has the keys as an environemnt variable, and our
+local test servers can use a `keys.py` file to import the required keys.
+To get these keys working locally:
+* Download keys.py from our Drive folder
+* Move keys.py into the "server/" folder in our repository, i.e. exactly
+where tigerlink.py is.
+
+Additionally, you might run into trouble when using https://localhost:8888,
+since web browsers won't find a verified certificate for the test server.
+To ignore this error in Chrome, you can go to 
+`chrome://flags/#allow-insecure-localhost` and Enable that option.
