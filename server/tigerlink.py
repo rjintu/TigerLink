@@ -1,55 +1,81 @@
-from flask import Flask, request, make_response, redirect, url_for
+from flask import Flask, request, make_response, redirect, url_for, session
 from flask import render_template
 
 from .database import Database
 from .matching import Matching
 from .cookiemonster import CookieMonster
+from . import loginutil
+from .keychain import KeyChain
 
+keychain = KeyChain()
 app = Flask(__name__, template_folder="../templates", static_folder="../static")
+app.secret_key = keychain.FLASK_SECRET
+login_manager = loginutil.GoogleLogin(keychain)
 
-
+@app.route('/', methods=['GET'])
 @app.route('/index', methods=['GET'])
 def index():
+    profileid = session['profileid']
+    if profileid is None:
+        # user is not logged in
+        return redirect('/login')
+
+    db = Database()
+    db.connect()
+    user = db.get_student_by_id(profileid)
+    db.disconnect()
+    if user is not None:
+        # profile is already created
+        return redirect('/getstudents')
+
     html = render_template('index.html')
     response = make_response(html)
     return response
 
 # Note: when testing locally, must use port 8888 for Google SSO
-@app.route('/', methods=['GET'])
 @app.route('/login', methods=['GET'])
 def login():
-    html = render_template('login.html')
-    response = make_response(html)
-    return response
+    # redirect the user to Google's login page
+    request_uri = login_manager.get_login_redirect(request)
+    return redirect(request_uri)
 
 # for checking if user exists already, setting a session cookie,
 # and redirecting to the next page
-@app.route('/login/auth', methods=['POST'])
+@app.route('/login/auth', methods=['GET'])
 def login_auth():
-    profileid = request.form['profileid']
+    try:
+        profileid, email, fullname = login_manager.authorize(request)
 
-    db = Database()
-    db.connect()
-    student_profile = db.get_student_by_id(
-        profileid)  # TODO: do same for alums
-    if student_profile is None:
-        return redirect(url_for('index'))
-    else:
-        # set the cookie!
-        response = redirect(url_for('timeline'))
-        response.set_cookie('profileid', profileid)
-        return response
+        # set session!
+        session['profileid'] = profileid
+        session['email'] = email
+        session['fullname'] = fullname
+        
+        # check where to redirect user
+        db = Database()
+        db.connect()
+        user = db.get_student_by_id(profileid)
+        db.disconnect()
+        if user is None:
+            return redirect('/index')
+        else:
+            return redirect('/getstudents')
 
+    except Exception as e:
+        return make_response('Failed to login: ' + str(e))
 
 @app.route('/createuser', methods=['POST'])
 def createuser():
     try:
         acct_info = request.form
 
-        firstname, lastname = acct_info.get('name', 'test student').split()
+        if session['profileid'] is None:
+            return redirect('/index')
+
+        firstname, lastname = session['fullname'].split()
         # We need this to pass. Throw an error otherwise
-        profileid = acct_info['profileid']
-        email = acct_info.get('email', '')
+        profileid = session['profileid']
+        email = session['email']
         role = acct_info.get('role', '')
         major = acct_info.get('major', '')
         classyear = acct_info.get('classYear', '')
@@ -57,7 +83,8 @@ def createuser():
         nummatches = acct_info.get('numMatches', '')
         zipcode = acct_info.get('zipcode', '')
         industry = acct_info.getlist('industry')
-        user = [profileid, firstname, lastname, classyear, email, major, zipcode, nummatches, industry]
+        interests = acct_info.getlist('interests')
+        user = [profileid, firstname, lastname, classyear, email, major, zipcode, nummatches, industry, interests]
 
         db = Database()
         db.connect()
@@ -104,14 +131,17 @@ def getmatches():
     except Exception as e:
         html = "error occurred: " + str(e)
         print(e)
+    
+    response = make_response(html)
+    return response
 
 @app.route('/editprofile', methods=['GET'])
 def getprofile():
     try:
-        temp_id = request.cookies.get('profileid')
+        profileid = session['profileid']
         db = Database()
         db.connect()
-        info = db.get_student_by_id(temp_id)
+        info = db.get_student_by_id(profileid)
         db.disconnect()
         html = render_template('editprofile.html', info=info)
     except Exception as e:
@@ -126,7 +156,7 @@ def getprofile():
 def changeprofile():
     info = []
     try:
-        temp_id = request.cookies.get('profileid')
+        profileid = session['profileid']
         # first update the entry in the database
         # contents of array must be array of [firstname, lastname, classyear, email, major,
         # zip, nummatch, career]
@@ -146,14 +176,13 @@ def changeprofile():
 
         db = Database()
         db.connect()
-        db.update_student(temp_id, new_info)
+        db.update_student(profileid, new_info)
         db.disconnect()
 
         # reload the editprofile page
-        temp_id = request.cookies.get('profileid')
         db = Database()
         db.connect()
-        info = db.get_student_by_id(temp_id)
+        info = db.get_student_by_id(profileid)
         db.disconnect()
         # return redirect(url_for('editprofile', info=info))
     except Exception as e:
