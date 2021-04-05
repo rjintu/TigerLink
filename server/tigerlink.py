@@ -57,7 +57,8 @@ def createuser():
         nummatches = acct_info.get('numMatches', '')
         zipcode = acct_info.get('zipcode', '')
         industry = acct_info.getlist('industry')
-        user = [profileid, firstname, lastname, classyear, email, major, zipcode, nummatches, industry]
+        interests = acct_info.getlist('interests')
+        user = [profileid, firstname, lastname, classyear, email, major, zipcode, nummatches, industry, interests]
 
         db = Database()
         db.connect()
