@@ -315,6 +315,12 @@ def timeline():
     if not loginutil.is_logged_in(session):
         return redirect('/login')
 
+    db = Database()
+    db.connect()
+
+    output = db.create_timeline()
+    print(output)
+    db.disconnect()
     html = render_template('timeline.html')
     response = make_response(html)
     return response
