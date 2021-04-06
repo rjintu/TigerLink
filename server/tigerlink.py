@@ -112,7 +112,6 @@ def createuser():
         role = acct_info.get('role', '')
         major = acct_info.get('major', '')
         classyear = acct_info.get('classYear', '')
-        matchbool = acct_info.get('matchBool', '')
         nummatches = acct_info.get('numMatches', '')
         zipcode = acct_info.get('zipcode', '')
         industry = acct_info.getlist('industry')
