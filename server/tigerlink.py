@@ -61,12 +61,13 @@ def login_redirect():
 @app.route('/login/auth', methods=['GET'])
 def login_auth():
     try:
-        profileid, email, fullname = login_manager.authorize(request)
+        profileid, email, fullname, picture = login_manager.authorize(request)
 
         # set session!
         session['profileid'] = profileid
         session['email'] = email
         session['fullname'] = fullname
+        session['picture'] = picture
         
         # check where to redirect user
         db = Database()
@@ -87,6 +88,7 @@ def logout():
     session.pop('profileid', None)
     session.pop('email', None)
     session.pop('fullname', None)
+    session.pop('picture', None)
 
     return redirect('/')
 
@@ -267,7 +269,7 @@ def timeline():
     if not loginutil.is_logged_in(session):
         return redirect('/login')
 
-    html = render_template('timeline.html')
+    html = render_template('timeline.html', picture=session['picture'])
     response = make_response(html)
     return response
 
