@@ -1,5 +1,6 @@
 from flask import Flask, request, make_response, redirect, url_for, session
 from flask import render_template
+from flask_talisman import Talisman
 
 from .database import Database
 from .matching import Matching
@@ -12,13 +13,18 @@ app = Flask(__name__, template_folder="../templates", static_folder="../static")
 app.secret_key = keychain.FLASK_SECRET
 login_manager = loginutil.GoogleLogin(keychain)
 
+# for forcing HTTPS and adding other security features
+# CSP is disabled cause it messes with bootstrap
+Talisman(app, content_security_policy=None)
+
 @app.route('/', methods=['GET'])
 @app.route('/index', methods=['GET'])
 def index():
-    profileid = session.get('profileid')
-    if profileid is None:
+    if not loginutil.is_logged_in(session):
         # user is not logged in
         return redirect('/login')
+
+    profileid = session['profileid']
 
     db = Database()
     db.connect()
@@ -32,9 +38,20 @@ def index():
     response = make_response(html)
     return response
 
-# Note: when testing locally, must use port 8888 for Google SSO
+# general welcome/login page
 @app.route('/login', methods=['GET'])
 def login():
+    if loginutil.is_logged_in(session):
+        # no need to be here
+        return redirect('/timeline')
+
+    html = render_template('login.html')
+    response = make_response(html)
+    return response
+
+# Note: when testing locally, must use port 8888 for Google SSO
+@app.route('/login/redirect', methods=['GET'])
+def login_redirect():
     # redirect the user to Google's login page
     request_uri = login_manager.get_login_redirect(request)
     return redirect(request_uri)
@@ -59,10 +76,19 @@ def login_auth():
         if user is None:
             return redirect('/index')
         else:
-            return redirect('/getstudents')
+            return redirect('/timeline')
 
     except Exception as e:
         return make_response('Failed to login: ' + str(e))
+
+@app.route('/logout', methods=['GET'])
+def logout():
+    # simply clear the user's session
+    session.pop('profileid')
+    session.pop('email')
+    session.pop('fullname')
+
+    return redirect('/')
 
 @app.route('/createuser', methods=['POST'])
 def createuser():
@@ -120,6 +146,9 @@ def getstudents():
 
 @app.route('/displaymatches', methods=['GET'])
 def getmatches():
+    if not loginutil.is_logged_in(session):
+        return redirect('/login')
+
     try:
         # creates matches from matching.py file. returns a list of tuples.
         m = Matching()
@@ -135,6 +164,9 @@ def getmatches():
 
 @app.route('/editprofile', methods=['GET'])
 def getprofile():
+    if not loginutil.is_logged_in(session):
+        return redirect('/login')
+
     try:
         profileid = session['profileid']
         db = Database()
@@ -192,6 +224,9 @@ def changeprofile():
 # TODO: implement this page in the frontend
 @app.route('/search', methods=['GET'])
 def search():
+    if not loginutil.is_logged_in(session):
+        return redirect('/login')
+
     search_query = None
     search_form = None
     try:
@@ -218,18 +253,27 @@ def search():
 
 @app.route('/dosearch', methods=['GET'])
 def dosearch():
+    if not loginutil.is_logged_in(session):
+        return redirect('/login')
+
     html = render_template('dosearch.html')
     response = make_response(html)
     return response
 
 @app.route('/timeline', methods=['GET'])
 def timeline():
+    if not loginutil.is_logged_in(session):
+        return redirect('/login')
+
     html = render_template('timeline.html')
     response = make_response(html)
     return response
 
 @app.route('/groups', methods=['GET'])
 def groups():
+    if not loginutil.is_logged_in(session):
+        return redirect('/login')
+
     html = render_template('groups.html')
     response = make_response(html)
     return response
