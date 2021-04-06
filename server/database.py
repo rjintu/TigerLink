@@ -49,7 +49,7 @@ class Database:
                 '(postid TEXT, authorid TEXT, posttime TEXT, postcontent TEXT)')
         cursor.execute('DROP TABLE IF EXISTS postgraphics')
         cursor.execute('CREATE TABLE postgraphics ' +
-                '(postid TEXT, postgraphic TEXT')
+                '(postid TEXT, postgraphic TEXT)')
 
         self._connection.commit()
         cursor.close()

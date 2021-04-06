@@ -1,0 +1,51 @@
+{% set allMajors = ['AAR',
+'ANT',
+'ARC',
+'AST',
+'CEE',
+'CBE',
+'CHM',
+'CLA',
+'COL',
+'COS',
+'EAS',
+'ECO',
+'EEB',
+'ECE',
+'ENG',
+'FIT',
+'GEO',
+'GLL',
+'GRE',
+'HIS',
+'HUM',
+'LAT',
+'LIN',
+'MAT',
+'MOL',
+'MAE',
+'MOL',
+'MUS',
+'NES',
+'OAS',
+'ORF',
+'ORS',
+'PHI',
+'PHY',
+'POL',
+'PSY',
+'REL',
+'SLL',
+'SOC',
+'SPI',
+'THE',
+'VIS',
+'WWS'] %}
+
+{% if prevMajor|string is in allMajors %}
+{{allMajors.remove(prevMajor|string)}}
+{% endif %}
+
+{% for m in allMajors: %}
+<option value="{{ m }}">{{ m }}</option>
+{% endfor %}
