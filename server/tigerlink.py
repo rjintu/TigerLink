@@ -190,7 +190,14 @@ def getprofile():
         profileid = session['profileid']
         db = Database()
         db.connect()
-        info, careers, interests = db.get_student_by_id(profileid)
+        role = db.get_role(profileid)
+
+        info, careers, interests = None, None, None
+        print(role)
+        if role == 'student':
+            info, careers, interests = db.get_student_by_id(profileid)
+        elif role == 'alum':
+            info, careers, interests = db.get_alum_by_id(profileid)
         db.disconnect()
         html = render_template('editprofile.html', info=info,
                                careers=careers, interests=interests)
@@ -206,7 +213,6 @@ def getprofile():
 
 @app.route('/updateprofile', methods=['POST'])
 def changeprofile():
-    info = []
     try:
         profileid = session['profileid']
         # first update the entry in the database
@@ -230,7 +236,12 @@ def changeprofile():
 
         db = Database()
         db.connect()
-        db.update_student(profileid, new_info, careers, interests)
+        role = db.get_role(profileid)
+        if role == 'student':
+            db.update_student(profileid, new_info, careers, interests)
+        elif role == 'alum':
+            db.update_alum(profileid, new_info, careers, interests)
+
         db.disconnect()
 
         # reload the editprofile page
