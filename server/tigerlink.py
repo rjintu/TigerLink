@@ -29,10 +29,11 @@ def index():
 
     db = Database()
     db.connect()
-    user = db.get_student_by_id(profileid)
+    user = db.user_exists(profileid)
     db.disconnect()
-    if user is not None:
+    if user is True:
         # profile is already created
+        print(user)
         return redirect('/getstudents')
 
     html = render_template('index.html')
@@ -156,7 +157,7 @@ def getprofile():
         profileid = session['profileid']
         db = Database()
         db.connect()
-        info = db.get_student_by_id(profileid)
+        info, careers, interests = db.get_student_by_id(profileid)
         db.disconnect()
         html = render_template('editprofile.html', info=info,
                                careers=careers, interests=interests)
@@ -192,11 +193,11 @@ def changeprofile():
         print(interests)
 
         new_info = [name, classyear,
-                    email, major, zipcode, nummatches, career]
+                    email, major, zipcode, nummatches]
 
         db = Database()
         db.connect()
-        db.update_student(profileid, new_info)
+        db.update_student(profileid, new_info, careers, interests)
         db.disconnect()
 
         # reload the editprofile page

@@ -29,14 +29,12 @@
 </head>
 
 {% include 'navbar.html' %}
-<br>
-<br>
-<br>
 
 <h4 style="text-align: center;">My Profile</h4>
 <h5 style="text-align: center;">
     <small class="text-muted">Edit your profile below</small>
 </h5>
+<br>
 
 <!--- 
 <body>
@@ -59,26 +57,20 @@
                     </div>
                     <br>
                     <div class="form-group">
-                        <label for="lastname"><strong>Last Name</strong></label>
-                        <input type="lastname" class="form-control" name="lastname" id="lastname"
-                            aria-describedby="emailHelp" value="{{ info[1] }}">
-                    </div>
-                    <br>
-                    <div class="form-group">
                         <label for="email"><strong>Email</strong></label>
                         <input type="email" class="form-control" name="email" id="email" aria-describedby="emailHelp"
-                            value="{{ info[3] }}">
+                            value="{{ info[2] }}">
                     </div>
                     <br>
                     <div class="form-group">
                         <label for="classYear"><strong>Class Year</strong></label>
                         <input type="classYear" class="form-control" name="classYear" id="classYear"
-                            aria-describedby="emailHelp" value="{{ info[2] }}">
+                            aria-describedby="emailHelp" value="{{ info[1] }}">
                     </div>
                     <br>
                     <strong>Major</strong>
                     <select class="form-select" aria-label="Default select example" name="major">
-                        <option value="{{ info[4] }}" selected>{{ info[4] }}</option>
+                        <option value="{{ info[3] }}" selected>{{ info[3] }}</option>
                         <option value="COS">COS</option>
                         <option value="ORF">ORF</option>
                         <option value="MAT">MAT</option>
@@ -87,12 +79,12 @@
                     <div class="form-group">
                         <label for="zipcode"><strong>Zipcode</strong></label>
                         <input type="zipcode" class="form-control" name="zipcode" id="zipcode"
-                            aria-describedby="emailHelp" value="{{ info[5] }}">
+                            aria-describedby="emailHelp" value="{{ info[4] }}">
                     </div>
                     <br>
                     <strong>How many matches would you like?</strong>
                     <select class="form-select" aria-label="Default select example" id="numMatches" name="numMatches">
-                        <option value="{{info[6]}}" selected>{{info[6]}}</option>
+                        <option value="{{info[5]}}" selected>{{info[5]}}</option>
                         <option value=0>0</option>
                         <option value=1>1</option>
                         <option value=2>2</option>
@@ -122,6 +114,7 @@
                             {% endwith %}
                         </select>
                     </div>
+                    <br>
                     <div class="form-group">
                         <label for="groupsForm"><strong>Select the organizations you're involved in.</strong></label>
                         <select multiple class="form-control" id="interests" name="interests">

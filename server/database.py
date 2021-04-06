@@ -23,14 +23,14 @@ class Database:
         cursor.execute('DROP TABLE IF EXISTS alumni')
         cursor.execute('DROP TABLE IF EXISTS roles')
         cursor.execute('CREATE TABLE students ' +
-                '(profileid TEXT, name TEXT, classyear TEXT, \
+                       '(profileid TEXT, name TEXT, classyear TEXT, \
                     email TEXT, major TEXT, zip TEXT, numMatch TEXT)')
         cursor.execute('DROP TABLE IF EXISTS alumni')
         cursor.execute('CREATE TABLE alumni ' +
-                '(profileid TEXT, name TEXT, classyear TEXT, \
+                       '(profileid TEXT, name TEXT, classyear TEXT, \
                     email TEXT, major TEXT, zip TEXT, numMatch TEXT)')
-        cursor.execute('CREATE TABLE roles ' + 
-                '(profileid TEXT, role TEXT)')
+        cursor.execute('CREATE TABLE roles ' +
+                       '(profileid TEXT, role TEXT)')
         cursor.execute('DROP TABLE IF EXISTS careers')
         cursor.execute('CREATE TABLE careers ' +
                        '(profileid TEXT, career TEXT)')
@@ -58,14 +58,16 @@ class Database:
 
     def _add_student(self, cursor, student):
         student_elems = student[:-2]
-        student_elems = [str(x) for x in student_elems] # convert everything to strings
+        # convert everything to strings
+        student_elems = [str(x) for x in student_elems]
         profileid = student_elems[0]
         industry = student[-2]
         interests = student[-1]
-        cursor.execute('INSERT INTO roles(profileid, role) ' + 'VALUES (%s, %s)', [profileid, 'student'])
+        cursor.execute('INSERT INTO roles(profileid, role) ' +
+                       'VALUES (%s, %s)', [profileid, 'student'])
         cursor.execute('INSERT INTO students(profileid, name, classyear, email, ' +
-        'major, zip, numMatch) ' + 
-        'VALUES (%s, %s, %s, %s, %s, %s, %s)', student_elems)
+                       'major, zip, numMatch) ' +
+                       'VALUES (%s, %s, %s, %s, %s, %s, %s)', student_elems)
         for elem in industry:
             cursor.execute('INSERT INTO careers(profileid, career) ' +
                            'VALUES (%s, %s)', [student[0], elem])
@@ -76,14 +78,16 @@ class Database:
 
     def _add_alum(self, cursor, alum):
         alum_elems = alum[:-2]
-        alum_elems = [str(x) for x in alum_elems] # convert everything to strings
+        # convert everything to strings
+        alum_elems = [str(x) for x in alum_elems]
         profileid = alum_elems[0]
         industry = alum[-2]
         interests = alum[-1]
-        cursor.execute('INSERT INTO roles(profileid, role) ' + 'VALUES (%s, %s)', [profileid, 'alum'])
-        cursor.execute('INSERT INTO alumni(profileid, name, classyear, email, ' + 
-        'major, zip, numMatch) ' + 
-        'VALUES (%s, %s, %s, %s, %s, %s, %s)', alum_elems)
+        cursor.execute('INSERT INTO roles(profileid, role) ' +
+                       'VALUES (%s, %s)', [profileid, 'alum'])
+        cursor.execute('INSERT INTO alumni(profileid, name, classyear, email, ' +
+                       'major, zip, numMatch) ' +
+                       'VALUES (%s, %s, %s, %s, %s, %s, %s)', alum_elems)
         for elem in industry:
             cursor.execute('INSERT INTO careers(profileid, career) ' +
                            'VALUES (%s, %s)', (alum[0], elem))
@@ -149,11 +153,9 @@ class Database:
         profileid = str(profileid)
         cursor = self._connection.cursor()
         cursor.execute('SELECT name, classyear, email, major, zip, ' +
-                'nummatch FROM students WHERE profileid=%s', [profileid])
+                       'nummatch FROM students WHERE profileid=%s', [profileid])
         info = cursor.fetchone()
 
-        cursor.execute(
-            'SELECT career FROM careers WHERE profileid=%s', [profileid])
         # getting this user's career interests
         cursor.execute(
             'SELECT career FROM careers WHERE profileid=%s', [profileid])
@@ -172,7 +174,29 @@ class Database:
             interests.append(temp)
             temp = cursor.fetchone()
 
+        cursor.close()
         return info, careers, interests
+
+    def user_exists(self, profileid):
+        profileid = str(profileid)
+
+        cursor = self._connection.cursor()
+        cursor.execute('SELECT name, classyear, email, major, zip, ' +
+                       'nummatch FROM students WHERE profileid=%s', [profileid])
+        info = cursor.fetchone()
+        if info is not None:
+            cursor.close()
+            return True
+
+        cursor.execute('SELECT name, classyear, email, major, zip, ' +
+                       'nummatch FROM alumni WHERE profileid=%s', [profileid])
+        info = cursor.fetchone()
+        if info is not None:
+            cursor.close()
+            return True
+
+        cursor.close()
+        return False
 
     # contents must be array of [name, classyear, email, major,
     # zip, nummatch, career]
@@ -183,8 +207,8 @@ class Database:
         args.append(profileid)
         args = [str(x) for x in args]  # just convert everything to strings
         cursor.execute('UPDATE students SET name=%s, ' +
-                'classyear=%s, email=%s, major=%s, zip=%s, nummatch=%s, ' +
-                'career=%s WHERE profileid=%s', args)
+                       'classyear=%s, email=%s, major=%s, zip=%s, nummatch=%s ' +
+                       'WHERE profileid=%s', args)
 
         # delete previous career entires from database and insert new ones
         cursor.execute('DELETE FROM careers WHERE profileid=%s', [profileid])
@@ -230,11 +254,12 @@ class Database:
 
     def search(self, search_query, students=True, alumni=False):
         print(search_query)
-        search_values = [str(x) for x in search_query] # convert everything to strings
+        # convert everything to strings
+        search_values = [str(x) for x in search_query]
         for i in range(0, len(search_values)):
             if (search_values[i] == ''):
                 search_values[i] = '%%%%'
-            
+
         name, email, major, zipcode, career = search_values
         output = []
 
@@ -244,7 +269,7 @@ class Database:
 
         if students:
             stmtStr = "SELECT name, major FROM students WHERE name LIKE %s " + \
-            "AND email LIKE %s AND major LIKE %s AND zip LIKE %s"
+                "AND email LIKE %s AND major LIKE %s AND zip LIKE %s"
             cursor.execute(stmtStr, [name, email, major, zipcode])
             row = cursor.fetchone()
 
@@ -254,7 +279,7 @@ class Database:
 
         if alumni:
             cursor.execute('SELECT name, major, email, zip FROM alumni' +
-            'VALUES (%s, %s, %s, %s, %s)', search_values)
+                           'VALUES (%s, %s, %s, %s, %s)', search_values)
             row = cursor.fetchone()
 
             while row is not None:
