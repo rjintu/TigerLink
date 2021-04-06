@@ -84,7 +84,8 @@ class Matching(object):
         #random.shuffle(students)
         matches = []
 
-        for svec in students:
+        for i in range(len(students)):
+            svec = students[i]
             # check ending condition
             if len(alumni) == 0:
                 return matches
@@ -92,11 +93,13 @@ class Matching(object):
             
             bestSim = 0
             bestIdx = 0
-            for idx, avec in enumerate(alumni):
+            for idx in range(len(alumni)):
+                avec = alumni[idx]
+                
                 sim = self.dotProduct(svec, avec)
                 if sim > bestSim:
                     bestSim = sim
-                    bestIdx = idx
+                    bestIdx = idxx
 
             alum = alumni[bestIdx]
             alumni.remove(alum)
