@@ -19,9 +19,6 @@
 
     <!-- heading -->
     <h2 style="text-align: center;">Matching Algo Results</h2>
-    <h4 style="text-align: center;">
-        <small class="text-muted">Temporary page that shows all matches.</small>
-    </h4>
 </body>
 
 <body>
@@ -40,7 +37,9 @@
 </body>
 
 <form action="editprofile" method="get">
-    {% include 'navbar.html' %}
+    {% with bold='matches' %}
+    {% include "navbar.html" %}
+    {% endwith %}
     <body>
         <br>
         <div class="container">
