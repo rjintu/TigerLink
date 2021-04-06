@@ -20,6 +20,7 @@ class Database:
         cursor = self._connection.cursor()
         cursor.execute('DROP TABLE IF EXISTS students')
         cursor.execute('DROP TABLE IF EXISTS alumni')
+        cursor.execute('DROP TABLE IF EXISTS roles')
         cursor.execute('CREATE TABLE students ' +
                 '(profileid TEXT, name TEXT, classyear TEXT, \
                     email TEXT, major TEXT, zip TEXT, numMatch TEXT)')
@@ -27,6 +28,8 @@ class Database:
         cursor.execute('CREATE TABLE alumni ' +
                 '(profileid TEXT, name TEXT, classyear TEXT, \
                     email TEXT, major TEXT, zip TEXT, numMatch TEXT)')
+        cursor.execute('CREATE TABLE roles ' + 
+                '(profileid TEXT, role TEXT)')
         cursor.execute('DROP TABLE IF EXISTS careers')
         cursor.execute('CREATE TABLE careers ' + 
                 '(profileid TEXT, career TEXT)')
@@ -55,8 +58,10 @@ class Database:
     def _add_student(self, cursor, student):
         student_elems = student[:-2]
         student_elems = [str(x) for x in student_elems] # convert everything to strings
+        profileid = student_elems[0]
         industry = student[-2]
         interests = student[-1]
+        cursor.execute('INSERT INTO roles(profileid, role) ' + 'VALUES (%s, %s)', [profileid, 'student'])
         cursor.execute('INSERT INTO students(profileid, name, classyear, email, ' +
         'major, zip, numMatch) ' + 
         'VALUES (%s, %s, %s, %s, %s, %s, %s)', student_elems)
@@ -69,8 +74,10 @@ class Database:
     def _add_alum(self, cursor, alum):
         alum_elems = alum[:-2]
         alum_elems = [str(x) for x in alum_elems] # convert everything to strings
+        profileid = alum_elems[0]
         industry = alum[-2]
         interests = alum[-1]
+        cursor.execute('INSERT INTO roles(profileid, role) ' + 'VALUES (%s, %s)', [profileid, 'alum'])
         cursor.execute('INSERT INTO alumni(profileid, name, classyear, email, ' + 
         'major, zip, numMatch) ' + 
         'VALUES (%s, %s, %s, %s, %s, %s, %s)', alum_elems)
