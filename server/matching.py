@@ -101,6 +101,7 @@ class Matching(object):
             if svec._numMatch > 1:
                 svec._numMatch -= 1
                 students.append(svec)
+        print(matches)
         return matches
 
 
