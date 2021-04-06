@@ -156,7 +156,8 @@ def getmatches():
         # creates matches from matching.py file. returns a list of tuples.
         m = Matching()
         matches = m.match()
-        html = render_template('displaymatches.html', matches=matches)
+        html = render_template('displaymatches.html', matches=matches, 
+                picture=session['picture'])
     
     except Exception as e:
         html = "error occurred: " + str(e)
@@ -176,7 +177,8 @@ def getprofile():
         db.connect()
         info = db.get_student_by_id(profileid)
         db.disconnect()
-        html = render_template('editprofile.html', info=info)
+        html = render_template('editprofile.html', info=info,
+                picture=session['picture'])
     except Exception as e:
         html = "error occurred: " + str(e)
         print(e)
@@ -260,7 +262,7 @@ def dosearch():
     if not loginutil.is_logged_in(session):
         return redirect('/login')
 
-    html = render_template('dosearch.html')
+    html = render_template('dosearch.html', picture=session['picture'])
     response = make_response(html)
     return response
 
@@ -278,7 +280,7 @@ def groups():
     if not loginutil.is_logged_in(session):
         return redirect('/login')
 
-    html = render_template('groups.html')
+    html = render_template('groups.html', picture=session['picture'])
     response = make_response(html)
     return response
 
