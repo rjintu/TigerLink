@@ -19,9 +19,6 @@
 
     <!-- heading -->
     <h2 style="text-align: center;">Matching Algo Results</h2>
-    <h4 style="text-align: center;">
-        <small class="text-muted">Temporary page that shows all matches.</small>
-    </h4>
 </body>
 
 <body>
@@ -40,14 +37,35 @@
 </body>
 
 <form action="editprofile" method="get">
-
+    {% with bold='matches' %}
+    {% include "navbar.html" %}
+    {% endwith %}
     <body>
         <br>
         <div class="container">
-            <div class="row justify-content-start">
-                {% for match in matches: %}
-                {{ match }} <br>
-                {% endfor %}
+            <div class="row justify-content-center">
+                <!-- col 1 -->
+                <div class="col-6">
+                  <strong>Matches</strong>
+                  <table class="table table-hover table-responsive">
+                    <thead>
+                      <tr>
+                        <th>Student Name</th>
+                        <th>Student Year</th>
+                        <th>Alumni Name</th>
+                        <th>Alumni Year</th>
+                        <th>Similarity</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                        {% for match in matches: %}
+                            {% for i in range (2, match|length): %} <br>
+                            <td>{{ match[i] }}</td>
+                            {% endfor %}
+                        {% endfor %}
+                    </tbody>
+                    </table>
+                    </div>
             </div>
         </div>
     </body>

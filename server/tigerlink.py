@@ -1,5 +1,6 @@
 from flask import Flask, request, make_response, redirect, url_for, session
 from flask import render_template
+from flask_talisman import Talisman
 
 from .database import Database
 from .matching import Matching
@@ -8,39 +9,62 @@ from . import loginutil
 from .keychain import KeyChain
 
 keychain = KeyChain()
-app = Flask(__name__, template_folder="../templates", static_folder="../static")
+app = Flask(__name__, template_folder="../templates",
+            static_folder="../static")
 app.secret_key = keychain.FLASK_SECRET
 login_manager = loginutil.GoogleLogin(keychain)
+
+# for forcing HTTPS and adding other security features
+# CSP is disabled cause it messes with bootstrap
+Talisman(app, content_security_policy=None)
+
 
 @app.route('/', methods=['GET'])
 @app.route('/index', methods=['GET'])
 def index():
-    profileid = session.get('profileid')
-    if profileid is None:
+    if not loginutil.is_logged_in(session):
         # user is not logged in
         return redirect('/login')
 
+    profileid = session['profileid']
+
     db = Database()
     db.connect()
-    user = db.get_student_by_id(profileid)
+    user = db.user_exists(profileid)
     db.disconnect()
-    if user is not None:
+    if user is True:
         # profile is already created
-        return redirect('/getstudents')
+        return redirect('/timeline')
+    
+    name = session['fullname']
 
-    html = render_template('index.html')
+    html = render_template('index.html', name=name)
     response = make_response(html)
     return response
 
 # Note: when testing locally, must use port 8888 for Google SSO
+# general welcome/login page
 @app.route('/login', methods=['GET'])
 def login():
+    if loginutil.is_logged_in(session):
+        # no need to be here
+        return redirect('/timeline')
+
+    html = render_template('login.html')
+    response = make_response(html)
+    return response
+
+# Note: when testing locally, must use port 8888 for Google SSO
+@app.route('/login/redirect', methods=['GET'])
+def login_redirect():
     # redirect the user to Google's login page
     request_uri = login_manager.get_login_redirect(request)
     return redirect(request_uri)
 
 # for checking if user exists already, setting a session cookie,
 # and redirecting to the next page
+
+
 @app.route('/login/auth', methods=['GET'])
 def login_auth():
     try:
@@ -50,7 +74,7 @@ def login_auth():
         session['profileid'] = profileid
         session['email'] = email
         session['fullname'] = fullname
-        
+
         # check where to redirect user
         db = Database()
         db.connect()
@@ -59,10 +83,20 @@ def login_auth():
         if user is None:
             return redirect('/index')
         else:
-            return redirect('/getstudents')
+            return redirect('/timeline')
 
     except Exception as e:
         return make_response('Failed to login: ' + str(e))
+
+
+@app.route('/logout', methods=['GET'])
+def logout():
+    # simply clear the user's session
+    session.pop('profileid')
+    session.pop('email')
+    session.pop('fullname')
+
+    return redirect('/')
 
 @app.route('/createuser', methods=['POST'])
 def createuser():
@@ -83,7 +117,8 @@ def createuser():
         zipcode = acct_info.get('zipcode', '')
         industry = acct_info.getlist('industry')
         interests = acct_info.getlist('interests')
-        user = [profileid, name, classyear, email, major, zipcode, nummatches, industry, interests]
+        user = [profileid, name, classyear, email, major,
+                zipcode, nummatches, industry, interests]
 
         db = Database()
         db.connect()
@@ -99,8 +134,7 @@ def createuser():
         print(e)
         return make_response(html)
 
-    # redirect to getstudents after the name is added, make sure to uncomment this
-    return redirect(url_for('timeline')) # TODO: change the redirect to the right page
+    return redirect(url_for('timeline'))
 
 
 @app.route('/getstudents', methods=['GET'])
@@ -118,30 +152,39 @@ def getstudents():
     response = make_response(html)
     return response
 
+
 @app.route('/displaymatches', methods=['GET'])
 def getmatches():
+    if not loginutil.is_logged_in(session):
+        return redirect('/login')
+
     try:
         # creates matches from matching.py file. returns a list of tuples.
         m = Matching()
         matches = m.match()
         html = render_template('displaymatches.html', matches=matches)
-    
+
     except Exception as e:
         html = "error occurred: " + str(e)
         print(e)
-    
+
     response = make_response(html)
     return response
 
+
 @app.route('/editprofile', methods=['GET'])
 def getprofile():
+    if not loginutil.is_logged_in(session):
+        return redirect('/login')
+
     try:
         profileid = session['profileid']
         db = Database()
         db.connect()
-        info = db.get_student_by_id(profileid)
+        info, careers, interests = db.get_student_by_id(profileid)
         db.disconnect()
-        html = render_template('editprofile.html', info=info)
+        html = render_template('editprofile.html', info=info,
+                               careers=careers, interests=interests)
     except Exception as e:
         html = "error occurred: " + str(e)
         print(e)
@@ -150,6 +193,8 @@ def getprofile():
     return response
 
   # updates profile on save click
+
+
 @app.route('/updateprofile', methods=['POST'])
 def changeprofile():
     info = []
@@ -166,14 +211,17 @@ def changeprofile():
         major = acct_info.get('major', '')
         zipcode = acct_info.get('zipcode', '')
         nummatches = acct_info.get('numMatches', '')
-        career = acct_info.get('career', '')
+        careers = acct_info.getlist('career')  # FIXME: verify this works
+        interests = acct_info.getlist('interests')  # FIXME: verify this works
+        print(careers)
+        print(interests)
 
         new_info = [name, classyear,
-                    email, major, zipcode, nummatches, career]
+                    email, major, zipcode, nummatches]
 
         db = Database()
         db.connect()
-        db.update_student(profileid, new_info)
+        db.update_student(profileid, new_info, careers, interests)
         db.disconnect()
 
         # reload the editprofile page
@@ -188,10 +236,41 @@ def changeprofile():
 
     return redirect('editprofile')
 
+@app.route('/admin', methods=['GET'])
+def match():
+    try:
+        html = render_template('admin.html')
+        db = Database()
+        db.connect()
+        #db.update_student(profileid, new_info)
+        db.disconnect()
+    except Exception as e:
+        html = "error occurred: " + str(e)
+        print(e)
+
+    response = make_response(html)
+    return response
+
+@app.route('/permissions', methods=['GET'])
+def noAuth():
+    try:
+        html = render_template('permissions.html')
+    except Exception as e:
+        html = "error occurred: " + str(e)
+        print(e)
+
+    response = make_response(html)
+    return response
+
 # Note: search will automatically query both students and alumni
 # TODO: implement this page in the frontend
+
+
 @app.route('/search', methods=['GET'])
 def search():
+    if not loginutil.is_logged_in(session):
+        return redirect('/login')
+
     search_query = None
     search_form = None
     try:
@@ -209,33 +288,43 @@ def search():
         # database queries
         db = Database()
         db.connect()
-        results = db.search(search_query) # FIXME: db.search() will take search_query and two booleans (student and alumni)
+        # FIXME: db.search() will take search_query and two booleans (student and alumni)
+        results = db.search(search_query)
         db.disconnect()
         html = render_template('search.html', results=results)
 
     except Exception as e:
-        html = str(search_query) 
+        html = str(search_query)
         print(e)
 
     response = make_response(html)
     return response
 
-
 @app.route('/dosearch', methods=['GET'])
 def dosearch():
+    if not loginutil.is_logged_in(session):
+        return redirect('/login')
+
     html = render_template('dosearch.html')
     response = make_response(html)
     return response
 
+
 @app.route('/timeline', methods=['GET'])
 def timeline():
+    if not loginutil.is_logged_in(session):
+        return redirect('/login')
+
     html = render_template('timeline.html')
     response = make_response(html)
     return response
 
+
 @app.route('/groups', methods=['GET'])
 def groups():
+    if not loginutil.is_logged_in(session):
+        return redirect('/login')
+
     html = render_template('groups.html')
     response = make_response(html)
     return response
-
