@@ -74,7 +74,7 @@ class Matching(object):
     def match(self):
         students = self._students
         alumni = self._alumni
-        random.shuffle(students)
+        #random.shuffle(students)
 
         matches = []
         for svec in students:
@@ -93,6 +93,8 @@ class Matching(object):
 
             alum = alumni[bestIdx]
             alumni.remove(alum)
+
+            # add alumns back if they have more matches
             alum._numMatch = int(alum._numMatch)
             if alum._numMatch > 1:
                 alum._numMatch -= 1
