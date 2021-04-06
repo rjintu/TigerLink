@@ -1,3 +1,53 @@
+{% set allCareers = ['Accounting',
+'Aerospace Engineering',
+'Architecture',
+'Asset Management',
+'Chemical Engineering',
+'Civil Engineering',
+'Commercial Banking',
+'Consulting',
+'Corporate Finance',
+'Electrical Engineering',
+'Energy Resources',
+'Environmental Affairs',
+'Financial Planning',
+'Fine Arts',
+'Foreign Service',
+'Government',
+'Health Care',
+'Hedge Funds',
+'Human Resources',
+'Insurance',
+'Investment Banking',
+'Law',
+'Management',
+'Marketing',
+'Mechanical Engineering',
+'Military',
+'Performing Arts',
+'Policy Analysis',
+'Private Equity',
+'Product Management',
+'Public Relations',
+'Radio/TV',
+'Real Estate',
+'Research & Development',
+'Security/Commodities',
+'Social Work',
+'Software Engineering',
+'Teaching',
+'Venture Capital',
+'Veterinary Medicine'] %}
+
+{% for i in selectedCareers: %}
+{{allCareers.remove(i)}}
+{% endfor %}
+
+{% for c in allCareers: %}
+<option>{{ c }}</option>
+{% endfor %}
+
+<!-- commented 
 <option>Software Engineering</option>
 <option>Product Management</option>
 <option>Accounting</option>
@@ -38,3 +88,4 @@
 <option>Teaching</option>
 <option>Veterinary Medicine</option>
 <option>Fine Arts</option>
+-->

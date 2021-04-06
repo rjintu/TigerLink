@@ -111,10 +111,15 @@
                         <label for="careerForm"><strong>Select the industries you're interested in or work
                                 in.</strong></label>
                         <select multiple class="form-control" id="careerForm" name="career">
+                            {% set temp_list = [] %}
                             {% for c in careers:%}
                             <option selected>{{ c[0] }}</option>
+                            {{ temp_list.append(c[0]|string)}}
                             {% endfor %}
-                            {% include 'careeroptions.html' %}
+                            <!-- send selected careers to template via Jinja -->
+                            {% with selectedCareers=temp_list %}
+                            {% include "careeroptions.html" %}
+                            {% endwith %}
                         </select>
                     </div>
                     <div class="form-group">
@@ -123,9 +128,10 @@
                             {% set temp_list = [] %}
                             {% for i in interests:%}
                             <option selected>{{ i[0] }}</option>
-                            {{ temp_list.append(i[0]|string) }}
+                            {{ temp_list.append(i[0]|string)}}
                             {% endfor %}
-                            {% with selected=temp_list %}
+                            <!-- send selected interests to template via Jinja -->
+                            {% with selectedInterests=temp_list %}
                             {% include "interestoptions.html" %}
                             {% endwith %}
                         </select>

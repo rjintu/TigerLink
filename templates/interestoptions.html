@@ -1,5 +1,19 @@
-{% set myList = ['Christian Fellowship', 'ROTC', 'Engineering Society', 'Whig-Cliosophic Society', 'Athletic
-Organization', 'Cap and Gown', 'Minority Advocacy'] %}
+{% set allInterests = ['Christian Fellowship',
+'ROTC',
+'Engineering Society',
+'Whig-Cliosophic Society',
+'Athletic Organization',
+'Cap and Gown',
+'Minority Advocacy'] %}
+
+
+{% for i in selectedInterests: %}
+{{allInterests.remove(i)}}
+{% endfor %}
+
+{% for i in allInterests: %}
+<option>{{ i }}</option>
+{% endfor %}
 
 
 <!-- commented 
@@ -17,11 +31,3 @@ Organization', 'Cap and Gown', 'Minority Advocacy'] %}
 <option>Women Empowerment</option>
 <option>Minority Advocacy</option>
 -->
-
-{% for i in selected: %}
-{{myList.remove(i)}}
-{% endfor %}
-
-{% for i in myList: %}
-<option>{{ i }}</option>
-{% endfor %}
