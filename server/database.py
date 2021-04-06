@@ -190,6 +190,45 @@ class Database:
         cursor.close()
         return info, careers, interests
 
+    def get_alum_by_id(self, profileid):
+        profileid = str(profileid)
+        cursor = self._connection.cursor()
+        cursor.execute('SELECT name, classyear, email, major, zip, ' +
+                       'nummatch FROM alumni WHERE profileid=%s', [profileid])
+        info = cursor.fetchone()
+
+        # getting this user's career interests
+        cursor.execute(
+            'SELECT career FROM careers WHERE profileid=%s', [profileid])
+        temp = cursor.fetchone()
+        careers = []
+        while temp is not None:
+            careers.append(temp)
+            temp = cursor.fetchone()
+
+        # getting this user's groups
+        cursor.execute(
+            'SELECT interest FROM interests WHERE profileid=%s', [profileid])
+        temp = cursor.fetchone()
+        interests = []
+        while temp is not None:
+            interests.append(temp)
+            temp = cursor.fetchone()
+
+        cursor.close()
+        return info, careers, interests
+
+    # returns student, alumni, or admin. If not in database, returns None
+    def get_role(self, profileid):
+        profileid = str(profileid)
+
+        cursor = self._connection.cursor()
+        cursor.execute('SELECT role FROM roles WHERE profileid=%s', [profileid])
+        role = cursor.fetchone()
+        return role[0]
+
+    # returns True if user exists, False otherwise.
+    # TODO: refactor to use roles table
     def user_exists(self, profileid):
         profileid = str(profileid)
 
@@ -213,7 +252,6 @@ class Database:
 
     # contents must be array of [name, classyear, email, major,
     # zip, nummatch, career]
-    # FIXME: handle the career table updates
     def update_student(self, profileid, contents, careers, interests):
         cursor = self._connection.cursor()
         args = contents.copy()  # dont modify list given to us
@@ -238,32 +276,33 @@ class Database:
         self._connection.commit()
         cursor.close()
 
-    # def update_alum(self, profileid, contents, careers, interests):
-    #     cursor = self._connection.cursor()
-    #     args = contents.copy()  # dont modify list given to us
-    #     args.append(profileid)
-    #     args = [str(x) for x in args]  # just convert everything to strings
-    #     cursor.execute('UPDATE alumni SET firstname=%s, lastname=%s, ' +
-    #                    'classyear=%s, email=%s, major=%s, zip=%s, nummatch=%s ' +
-    #                    'WHERE profileid=%s', args)
+    # contents must be array of [name, classyear, email, major,
+    # zip, nummatch, career]
+    def update_alum(self, profileid, contents, careers, interests):
+        cursor = self._connection.cursor()
+        args = contents.copy()  # dont modify list given to us
+        args.append(profileid)
+        args = [str(x) for x in args]  # just convert everything to strings
+        cursor.execute('UPDATE alumni SET name=%s, ' +
+                       'classyear=%s, email=%s, major=%s, zip=%s, nummatch=%s ' +
+                       'WHERE profileid=%s', args)
 
-    #     # delete previous career entires from database and insert new ones
-    #     cursor.execute('DELETE FROM careers WHERE profileid=%s', [profileid])
-    #     for elem in careers:
-    #         cursor.execute('INSERT INTO careers(profileid, career) ' +
-    #                        'VALUES (%s, %s)', [profileid, elem])
+        # delete previous career entires from database and insert new ones
+        cursor.execute('DELETE FROM careers WHERE profileid=%s', [profileid])
+        for elem in careers:
+            cursor.execute('INSERT INTO careers(profileid, career) ' +
+                           'VALUES (%s, %s)', [profileid, elem])
 
-    #     # delete previous interest entires from database and insert new ones
-    #     cursor.execute('DELETE FROM interests WHERE profileid=%s', [profileid])
-    #     for elem in interests:
-    #         cursor.execute('INSERT INTO interests(profileid, interest) ' +
-    #                        'VALUES (%s, %s)', [profileid, elem])
+        # delete previous interest entires from database and insert new ones
+        cursor.execute('DELETE FROM interests WHERE profileid=%s', [profileid])
+        for elem in interests:
+            cursor.execute('INSERT INTO interests(profileid, interest) ' +
+                           'VALUES (%s, %s)', [profileid, elem])
 
-    #     self._connection.commit()
-    #     cursor.close()
+        self._connection.commit()
+        cursor.close()
 
     # can search students or alumni
-    # TODO: career in diff table (need to fix)
     def search(self, search_query):
         # convert everything to strings
         search_values = [str(x) for x in search_query]
