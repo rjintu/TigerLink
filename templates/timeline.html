@@ -39,7 +39,27 @@
     {% endwith %}
 </header>
 <body>
-
+    <div class="container">
+        <div class="row justify-content-start">
+            <table class="table table-hover table-responsive">
+                <thead>
+                  <tr>
+                    <th>Time</th>
+                    <th>Post Content</th>
+                  </tr>
+                </thead>
+                <tbody>
+                    {% for res in posts: %}
+                    <tr>    
+                        <td>{{ res[2]}}</td> 
+                        <td>{{ res[3] }}</td> 
+                    </tr>  
+                    {% endfor %}
+                </tbody>
+                </table>
+        </div>
+    </div>
+  
 
 </body>
 </html>
