@@ -81,7 +81,7 @@
           <div class="form-group">
             <label for="Zip Code"><strong>Zip Code</strong></label>
             <input type="zipcode" class="form-control" name="zipcode" id="zipcode" aria-describedby="emailHelp"
-              placeholder="Ex: 08554">
+              placeholder="Ex: 08554" required>
             <small id="emailHelp" class="form-text text-muted">We'll never share your data with anyone.</small>
           </div>
 
@@ -98,7 +98,7 @@
           <div class="form-group">
             <label for="careerForm"><strong>Select the industries you're interested in or work
                 in.</strong></label>
-            <select multiple class="form-control" id="industry" name="industry">
+            <select multiple class="form-control" id="industry" name="industry" required>
               {% include 'careeroptions.html' %}
             </select>
           </div>

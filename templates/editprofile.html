@@ -52,26 +52,26 @@
             <div class="row justify-content-center">
                 <div class="col-4">
                     <div class="form-group">
-                        <label for="firstname"><strong>Name</strong></label>
-                        <input type="firstname" class="form-control" name="name" id="name" aria-describedby="emailHelp"
-                            value="{{ info[0] }}">
+                        <label for="name"><strong>Name</strong></label>
+                        <input type="name" class="form-control" name="name" id="name" aria-describedby="emailHelp"
+                            value="{{ info[0] }}" required>
                     </div>
                     <br>
                     <div class="form-group">
                         <label for="email"><strong>Email</strong></label>
                         <input type="email" class="form-control" name="email" id="email" aria-describedby="emailHelp"
-                            value="{{ info[2] }}">
+                            value="{{ info[2] }}" readonly>
                     </div>
                     <br>
                     <div class="form-group">
                         <label for="classYear"><strong>Class Year</strong></label>
                         <input type="classYear" class="form-control" name="classYear" id="classYear"
-                            aria-describedby="emailHelp" value="{{ info[1] }}">
+                            aria-describedby="emailHelp" value="{{ info[1] }}" required>
                     </div>
                     <br>
                     <strong>Major</strong>
                     <select class="form-select" aria-label="Default select example" name="major">
-                        <option value="{{ info[3] }}" selected>{{ info[3] }}</option>
+                        <option value="{{ info[3] }}" selected required>{{ info[3] }}</option>
                         {% set temp_major = info[3]|string %}
                         <!-- send selected careers to template via Jinja -->
                         {% with prevMajor=temp_major %}
@@ -80,9 +80,9 @@
                     </select>
                     <br>
                     <div class="form-group">
-                        <label for="zipcode"><strong>Zipcode</strong></label>
+                        <label for="zipcode"><strong>Zip Code</strong></label>
                         <input type="zipcode" class="form-control" name="zipcode" id="zipcode"
-                            aria-describedby="emailHelp" value="{{ info[4] }}">
+                            aria-describedby="emailHelp" value="{{ info[4] }}" required>
                     </div>
                     <br>
                     <strong>How many matches would you like?</strong>
@@ -105,7 +105,7 @@
                     <div class="form-group">
                         <label for="careerForm"><strong>Select the industries you're interested in or work
                                 in.</strong></label>
-                        <select multiple class="form-control" id="careerForm" name="career">
+                        <select multiple class="form-control" id="careerForm" name="career" required>
                             {% set temp_list = [] %}
                             {% for c in careers:%}
                             <option selected>{{ c[0] }}</option>
