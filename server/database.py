@@ -19,24 +19,37 @@ class Database:
 
     def init(self):
         cursor = self._connection.cursor()
+        # Students table
         cursor.execute('DROP TABLE IF EXISTS students')
-        cursor.execute('DROP TABLE IF EXISTS alumni')
-        cursor.execute('DROP TABLE IF EXISTS roles')
         cursor.execute('CREATE TABLE students ' +
                        '(profileid TEXT, name TEXT, classyear TEXT, \
                     email TEXT, major TEXT, zip TEXT, numMatch TEXT)')
+        # Alumni table
         cursor.execute('DROP TABLE IF EXISTS alumni')
         cursor.execute('CREATE TABLE alumni ' +
                        '(profileid TEXT, name TEXT, classyear TEXT, \
                     email TEXT, major TEXT, zip TEXT, numMatch TEXT)')
-        cursor.execute('CREATE TABLE roles ' +
-                       '(profileid TEXT, role TEXT)')
+
+        # Roles table
+        cursor.execute('DROP TABLE IF EXISTS roles')
+        cursor.execute('CREATE TABLE roles ' + 
+                '(profileid TEXT, role TEXT)')
+        # Careers table
         cursor.execute('DROP TABLE IF EXISTS careers')
-        cursor.execute('CREATE TABLE careers ' +
-                       '(profileid TEXT, career TEXT)')
+        cursor.execute('CREATE TABLE careers ' + 
+                '(profileid TEXT, career TEXT)')
+        # Interests table
         cursor.execute('DROP TABLE IF EXISTS interests')
-        cursor.execute('CREATE TABLE interests ' +
-                       '(profileid TEXT, interest TEXT)')
+        cursor.execute('CREATE TABLE interests ' + 
+                '(profileid TEXT, interest TEXT)')
+        # Timeline posts tables (posts, postgraphics)
+        cursor.execute('DROP TABLE IF EXISTS posts')
+        cursor.execute('CREATE TABLE posts ' + 
+                '(postid TEXT, authorid TEXT, posttime TEXT, postcontent TEXT)')
+        cursor.execute('DROP TABLE IF EXISTS postgraphics')
+        cursor.execute('CREATE TABLE postgraphics ' +
+                '(postid TEXT, postgraphic TEXT')
+
         self._connection.commit()
         cursor.close()
 

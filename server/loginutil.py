@@ -14,6 +14,9 @@ GOOGLE_DISCOVERY_URL = (
 def get_google_provider_cfg():
     return requests.get(GOOGLE_DISCOVERY_URL).json()
 
+def is_logged_in(session):
+    return session.get('profileid') is not None
+
 class GoogleLogin:
 
     # set up keys & the oauth client
@@ -29,7 +32,7 @@ class GoogleLogin:
 
         request_uri = self._oauth_cl.prepare_request_uri(
             auth_endpoint,
-            redirect_uri = request.base_url + "/auth",
+            redirect_uri = request.host_url + "login/auth",
             scope = ["openid", "email", "profile"],
         )
         return request_uri
