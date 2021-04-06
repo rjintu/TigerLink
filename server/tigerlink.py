@@ -194,6 +194,28 @@ def changeprofile():
 
     return redirect('editprofile')
 
+@app.route('/admin', methods=['GET'])
+def match():
+    try:
+        html = render_template('admin.html')
+    except Exception as e:
+        html = "error occurred: " + str(e)
+        print(e)
+
+    response = make_response(html)
+    return response
+
+@app.route('/permissions', methods=['GET'])
+def noAuth():
+    try:
+        html = render_template('permissions.html')
+    except Exception as e:
+        html = "error occurred: " + str(e)
+        print(e)
+
+    response = make_response(html)
+    return response
+
 # Note: search will automatically query both students and alumni
 # TODO: implement this page in the frontend
 @app.route('/search', methods=['GET'])
