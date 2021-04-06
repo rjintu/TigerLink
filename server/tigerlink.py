@@ -1,16 +1,40 @@
-from flask import Flask, request, make_response, redirect, url_for
+from flask import Flask, request, make_response, redirect, url_for, session
 from flask import render_template
+from flask_talisman import Talisman
 
 from .database import Database
 from .matching import Matching
 from .cookiemonster import CookieMonster
+from . import loginutil
+from .keychain import KeyChain
 
+keychain = KeyChain()
 app = Flask(__name__, template_folder="../templates",
             static_folder="../static")
+app.secret_key = keychain.FLASK_SECRET
+login_manager = loginutil.GoogleLogin(keychain)
+
+# for forcing HTTPS and adding other security features
+# CSP is disabled cause it messes with bootstrap
+Talisman(app, content_security_policy=None)
 
 
+@app.route('/', methods=['GET'])
 @app.route('/index', methods=['GET'])
 def index():
+    profileid = session.get('profileid')
+    if profileid is None:
+        # user is not logged in
+        return redirect('/login')
+
+    db = Database()
+    db.connect()
+    user = db.get_student_by_id(profileid)
+    db.disconnect()
+    if user is not None:
+        # profile is already created
+        return redirect('/getstudents')
+
     html = render_template('index.html')
     response = make_response(html)
     return response
@@ -18,32 +42,38 @@ def index():
 # Note: when testing locally, must use port 8888 for Google SSO
 
 
-@app.route('/', methods=['GET'])
 @app.route('/login', methods=['GET'])
 def login():
-    html = render_template('login.html')
-    response = make_response(html)
-    return response
+    # redirect the user to Google's login page
+    request_uri = login_manager.get_login_redirect(request)
+    return redirect(request_uri)
 
 # for checking if user exists already, setting a session cookie,
 # and redirecting to the next page
 
 
-@app.route('/login/auth', methods=['POST'])
+@app.route('/login/auth', methods=['GET'])
 def login_auth():
-    profileid = request.form['profileid']
+    try:
+        profileid, email, fullname = login_manager.authorize(request)
 
-    db = Database()
-    db.connect()
-    student_profile = db.get_student_by_id(
-        profileid)  # TODO: do same for alums
-    if student_profile is None:
-        return redirect(url_for('index'))
-    else:
-        # set the cookie!
-        response = redirect(url_for('getstudents'))
-        response.set_cookie('profileid', profileid)
-        return response
+        # set session!
+        session['profileid'] = profileid
+        session['email'] = email
+        session['fullname'] = fullname
+
+        # check where to redirect user
+        db = Database()
+        db.connect()
+        user = db.get_student_by_id(profileid)
+        db.disconnect()
+        if user is None:
+            return redirect('/index')
+        else:
+            return redirect('/getstudents')
+
+    except Exception as e:
+        return make_response('Failed to login: ' + str(e))
 
 
 @app.route('/createuser', methods=['POST'])
@@ -51,10 +81,12 @@ def createuser():
     try:
         acct_info = request.form
 
-        firstname, lastname = acct_info.get('name', 'test student').split()
-        # We need this to pass. Throw an error otherwise
-        profileid = acct_info['profileid']
-        email = acct_info.get('email', '')
+        if session.get('profileid') is None:
+            return redirect('/index')
+
+        name = session['fullname']
+        profileid = session['profileid']
+        email = session['email']
         role = acct_info.get('role', '')
         major = acct_info.get('major', '')
         classyear = acct_info.get('classYear', '')
@@ -63,8 +95,8 @@ def createuser():
         zipcode = acct_info.get('zipcode', '')
         industry = acct_info.getlist('industry')
         interests = acct_info.getlist('interests')
-        user = [profileid, firstname, lastname, classyear, email,
-                major, zipcode, nummatches, industry, interests]
+        user = [profileid, name, classyear, email, major,
+                zipcode, nummatches, industry, interests]
 
         db = Database()
         db.connect()
@@ -83,7 +115,7 @@ def createuser():
 
     # redirect to getstudents after the name is added, make sure to uncomment this
     # TODO: change the redirect to the right page
-    return redirect(url_for('getstudents'))
+    return redirect(url_for('timeline'))
 
 
 @app.route('/getstudents', methods=['GET'])
@@ -114,17 +146,17 @@ def getmatches():
         html = "error occurred: " + str(e)
         print(e)
 
+    response = make_response(html)
+    return response
+
 
 @app.route('/editprofile', methods=['GET'])
 def getprofile():
     try:
-        temp_id = request.cookies.get('profileid')
+        profileid = session['profileid']
         db = Database()
         db.connect()
-        info, careers, interests = db.get_student_by_id(temp_id)
-        # print(info)
-        # print(careers)
-        # print(interests)
+        info = db.get_student_by_id(profileid)
         db.disconnect()
         html = render_template('editprofile.html', info=info,
                                careers=careers, interests=interests)
@@ -142,14 +174,13 @@ def getprofile():
 def changeprofile():
     info = []
     try:
-        temp_id = request.cookies.get('profileid')
+        profileid = session['profileid']
         # first update the entry in the database
-        # contents of array must be array of [firstname, lastname, classyear, email, major,
+        # contents of array must be array of [name, classyear, email, major,
         # zip, nummatch, career]
         acct_info = request.form
 
-        firstname = acct_info.get('firstname', '')
-        lastname = acct_info.get('lastname', '')
+        name = acct_info.get('name', '')
         classyear = acct_info.get('classYear', '')
         email = acct_info.get('email', '')
         major = acct_info.get('major', '')
@@ -160,22 +191,18 @@ def changeprofile():
         print(careers)
         print(interests)
 
-        new_info = [firstname, lastname, classyear,
-                    email, major, zipcode, nummatches]
-
-        # for i in new_info:
-        #     print(i)
+        new_info = [name, classyear,
+                    email, major, zipcode, nummatches, career]
 
         db = Database()
         db.connect()
-        db.update_student(temp_id, new_info, careers, interests)
+        db.update_student(profileid, new_info)
         db.disconnect()
 
         # reload the editprofile page
-        temp_id = request.cookies.get('profileid')
         db = Database()
         db.connect()
-        info = db.get_student_by_id(temp_id)
+        info = db.get_student_by_id(profileid)
         db.disconnect()
         # return redirect(url_for('editprofile', info=info))
     except Exception as e:
@@ -193,21 +220,18 @@ def search():
     search_query = None
     search_form = None
     try:
-        firstname = request.args.get('firstname', '%')
-        lastname = request.args.get('lastname', '%')
-        email = request.args.get('email', '%')
+        name = request.args.get('namesearch', '%')
+        email = request.args.get('email-address', '%')
         major = request.args.get('major', '%')
         zipcode = request.args.get('zipcode', '%')
         career = request.args.get('industry', '%')
-        search_query = [firstname, lastname, major, email, zipcode, career]
+        search_query = [name, email, major, zipcode, career]
         print(search_query)
         # database queries
         db = Database()
         db.connect()
-        print('here')
         # FIXME: db.search() will take search_query and two booleans (student and alumni)
         results = db.search(search_query)
-        print(results)
         db.disconnect()
         html = render_template('search.html', results=results)
 

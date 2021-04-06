@@ -27,9 +27,8 @@
       <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.min.js" integrity="sha384-j0CNLUeiqtyaRmlzUHCPZ+Gy5fQu0dQ6eZ/xAww941Ai1SxSY+0EQqNXNE6DZiVc" crossorigin="anonymous"></script>
       -->
 </head>
-
 <header id="header">
-    <nav class="navbar fixed-top navbar-expand navbar-light">
+    <nav class="navbar navbar-expand navbar-light">
         <a class="navbar-brand" href="#">
             <img src="../static/img/logo.png" width="100" height="80" class="d-inline-block align-top" alt="">
         </a>
@@ -43,7 +42,6 @@
             &nbsp
             &nbsp
             &nbsp
-
             <li class="nav-item active">
                 <a class="nav-link" href="timeline">Timeline</span></a>
             </li>
@@ -73,8 +71,14 @@
         <a class="navbar-brand" href="#">
             <img src="../static/img/photo.jpg" width="60" height="60" class="d-inline-block align-top rounded-circle" alt="">
         </a>
-        <h6 class="mt-0 text-center">Sahil Jain&nbsp;&nbsp;&nbsp;&nbsp;</h6>
-
+        <div id="nav-name"></div>
+        <h6 class="mt-0 text-center" id=name></h6>
+        <script>
+            function fixName() {
+                document.getElementById('nav-name').innerHTML=sesssion['fullname']
+            }
+            fixName()
+        </script>
         </div>
 
 

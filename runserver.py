@@ -8,7 +8,7 @@ def main(argv):
         print('Invalid port argument.', file=stderr)
         exit(1)
 
-    app.run(host='0.0.0.0', port=port, debug=True)
+    app.run(host='0.0.0.0', port=port, debug=True, ssl_context="adhoc")
 
 if __name__ == '__main__':
     main(argv)

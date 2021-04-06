@@ -1,11 +1,10 @@
 
 class Alum(object):
 
-    def __init__(self, profid, fname, lname, year, email,
+    def __init__(self, profid, name, year, email,
     major, zipp, numMatch, careers = None, organizations = None):
         self._profid = profid
-        self._fname = fname
-        self._lname = lname
+        self._name = name
         self._year = year
         self._email = email
         self._major = major
