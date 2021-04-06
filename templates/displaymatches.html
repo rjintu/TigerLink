@@ -58,13 +58,13 @@
                       </tr>
                     </thead>
                     <tbody>
-                        <tr>
                         {% for match in matches: %}
                             {% for i in range (2, match|length): %} <br>
-                            <td>{{ match[i] }}</td>
+                            <tr>
+                                <td>{{ match[i] }}</td>
+                            </tr>   
                             {% endfor %}
                         {% endfor %}
-                        </tr>
                     </tbody>
                     </table>
                     </div>
