@@ -391,9 +391,11 @@ class Database:
 
     def create_timeline(self):
         cursor = self._connection.cursor()
-        cursor.execute('INSERT INTO posts(postid, authorid, postttime, postcontent) ' +
-                           'VALUES (%s, %s, %s, %s)', ['1', '123', 'April 6th, 12:51am', 'Teenage Jintu Turtles'])
+        cursor.execute('INSERT INTO posts(postid, authorid, posttime, postcontent) ' +
+                           'VALUES (%s, %s, %s, %s)', ['1', '123', 'April 6th, 12:51am', 'This is a sample timeline post that was put into the database.'])
         cursor.close()
+        cursor = self._connection.cursor()
+
         stmtStr = "SELECT postid, authorid, posttime, postcontent FROM posts"
         cursor.execute(stmtStr)
         row = cursor.fetchone()

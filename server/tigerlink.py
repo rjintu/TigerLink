@@ -360,7 +360,7 @@ def timeline():
     output = db.create_timeline()
     print(output)
     db.disconnect()
-    html = render_template('timeline.html')
+    html = render_template('timeline.html', posts=output)
     response = make_response(html)
     return response
 
