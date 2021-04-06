@@ -37,7 +37,9 @@
 </body>
 
 <form action="editprofile" method="get">
-    {% include 'navbar.html' %}
+    {% with bold='matches' %}
+    {% include "navbar.html" %}
+    {% endwith %}
     <body>
         <br>
         <div class="container">

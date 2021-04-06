@@ -33,7 +33,9 @@
 
 </head>
 <header>
-{% include 'navbar.html' %}
+{% with bold='search' %}
+{% include "navbar.html" %}
+{% endwith %}
 </header>
 <body>
     <form action="search" method="get">
