@@ -14,6 +14,9 @@ GOOGLE_DISCOVERY_URL = (
 def get_google_provider_cfg():
     return requests.get(GOOGLE_DISCOVERY_URL).json()
 
+def is_logged_in(session):
+    return session.get('profileid') is not None
+
 class GoogleLogin:
 
     # set up keys & the oauth client
