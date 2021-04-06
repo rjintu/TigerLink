@@ -24,6 +24,8 @@ def index():
         # user is not logged in
         return redirect('/login')
 
+    profileid = session['profileid']
+
     db = Database()
     db.connect()
     user = db.get_student_by_id(profileid)
