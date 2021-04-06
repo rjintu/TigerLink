@@ -15,14 +15,16 @@ class Matching(object):
 
     # convert to a student object
     def studentize(self, students, careers, organizations=None):
-        newS = []
-        #TODO: a little inefficient
         for student in students:
             pid = student[0]
             cs = []
+            orgs = []
             for row in careers:
                 if row[0] == pid:
                     cs.append(row[1])
+            for row in organizations:
+                if row[0] == pid:
+                    orgs.append(row[1])
 
             s = Student(pid, student[1], student[2], student[3],
             student[4], student[5], student[6], careers=cs, organizations=organizations)
@@ -31,16 +33,19 @@ class Matching(object):
 
     # convert to an alumni object
     def alumnize(self, alumni, careers, organizations=None):
-        newA = []
         for alum in alumni:
             pid = alum[0]
             cs = []
+            orgs = []
             for row in careers:
                 if row[0] == pid:
                     cs.append(row[1])
+            for row in organizations:
+                if row[0] == pid:
+                    orgs.append(row[1])
 
             a = Alum(pid, alum[1], alum[2], alum[3],
-            alum[4], alum[5], alum[6], careers=cs, organizations=organizations)
+            alum[4], alum[5], alum[6], careers=cs, organizations=orgs)
             newA.append(a)
         return newA
 
