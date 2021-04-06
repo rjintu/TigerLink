@@ -318,7 +318,7 @@ class Database:
         cursor = self._connection.cursor()
         cursor2 = self._connection.cursor()
         if typeofSearch in 'stud':
-            stmtStr = "SELECT profileid, classyear, name, major, zip FROM students WHERE name LIKE %s " + \
+            stmtStr = "SELECT profileid, classyear, name, major, zip, numMatch FROM students WHERE name LIKE %s " + \
             "AND email LIKE %s AND major LIKE %s AND zip LIKE %s"
             cursor.execute(stmtStr, [name, email, major, zipcode])
             row = cursor.fetchone()
@@ -343,7 +343,7 @@ class Database:
                 row = cursor.fetchone()
         
         elif typeofSearch in 'alum':
-            stmtStr = "SELECT profileid, classyear, name, major, zip FROM alumni WHERE name LIKE %s " + \
+            stmtStr = "SELECT profileid, classyear, name, major, zip, numMatch FROM alumni WHERE name LIKE %s " + \
             "AND email LIKE %s AND major LIKE %s AND zip LIKE %s"
             cursor.execute(stmtStr, [name, email, major, zipcode])
             row = cursor.fetchone()
@@ -368,7 +368,7 @@ class Database:
                 row = cursor.fetchone()
 
         else:
-            stmtStr = "SELECT profileid, classyear, name, major, zip FROM students WHERE name LIKE %s " + \
+            stmtStr = "SELECT profileid, classyear, name, major, zip, numMatch FROM students WHERE name LIKE %s " + \
             "AND email LIKE %s AND major LIKE %s AND zip LIKE %s"
             cursor.execute(stmtStr, [name, email, major, zipcode])
             row = cursor.fetchone()
@@ -395,7 +395,7 @@ class Database:
             cursor = self._connection.cursor()
             cursor2 = self._connection.cursor()
 
-            stmtStr = "SELECT profileid, classyear, name, major, zip FROM alumni WHERE name LIKE %s " + \
+            stmtStr = "SELECT profileid, classyear, name, major, zip, numMatch FROM alumni WHERE name LIKE %s " + \
             "AND email LIKE %s AND major LIKE %s AND zip LIKE %s"
             cursor.execute(stmtStr, [name, email, major, zipcode])
             row = cursor.fetchone()
