@@ -90,8 +90,13 @@ class Matching(object):
                 if sim > bestSim:
                     bestSim = sim
                     bestIdx = idx
+
             alum = alumni[bestIdx]
             alumni.remove(alum)
+            alum._numMatch = int(alum._numMatch)
+            if alum._numMatch > 1:
+                alum._numMatch -= 1
+                alumni.append(svec)
             
             #TODO: change to a student
             matches.append((svec, avec, svec._name, svec._year, avec._name, avec._year, bestSim))
@@ -101,7 +106,6 @@ class Matching(object):
             if svec._numMatch > 1:
                 svec._numMatch -= 1
                 students.append(svec)
-        print(matches)
         return matches
 
 
