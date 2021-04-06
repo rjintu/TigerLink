@@ -323,7 +323,7 @@ def search():
         # FIXME: db.search() will take search_query and two booleans (student and alumni)
         results = db.search(search_query)
         db.disconnect()
-        html = render_template('search.html', results=results)
+        html = render_template('search.html', results=results, picture=session['picture'])
 
     except Exception as e:
         html = str(search_query)
