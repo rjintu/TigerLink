@@ -33,8 +33,10 @@ def index():
     if user is not None:
         # profile is already created
         return redirect('/timeline')
+    
+    name = session['fullname']
 
-    html = render_template('index.html')
+    html = render_template('index.html', name=name)
     response = make_response(html)
     return response
 
