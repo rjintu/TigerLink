@@ -24,6 +24,8 @@ def index():
         # user is not logged in
         return redirect('/login')
 
+    profileid = session['profileid']
+
     db = Database()
     db.connect()
     user = db.get_student_by_id(profileid)
@@ -82,9 +84,9 @@ def login_auth():
 @app.route('/logout', methods=['GET'])
 def logout():
     # simply clear the user's session
-    session.pop('profileid')
-    session.pop('email')
-    session.pop('fullname')
+    session.pop('profileid', None)
+    session.pop('email', None)
+    session.pop('fullname', None)
 
     return redirect('/')
 
