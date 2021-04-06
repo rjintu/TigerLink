@@ -1,5 +1,6 @@
 from os import environ
 from psycopg2 import connect
+from .post import Post
 
 
 class Database:
@@ -68,6 +69,7 @@ class Database:
         self._connection.commit()
 
         cursor.close()
+
 
     def _add_student(self, cursor, student):
         student_elems = student[:-2]
@@ -423,6 +425,25 @@ class Database:
 
 
         cursor.close()
+        return output
+
+
+    def create_timeline(self):
+        cursor = self._connection.cursor()
+        cursor.execute('INSERT INTO posts(postid, authorid, posttime, postcontent) ' +
+                           'VALUES (%s, %s, %s, %s)', ['1', '123', 'April 6th, 12:51am', 'This is a sample timeline post that was put into the database.'])
+        cursor.close()
+        cursor = self._connection.cursor()
+
+        stmtStr = "SELECT postid, authorid, posttime, postcontent FROM posts"
+        cursor.execute(stmtStr)
+        row = cursor.fetchone()
+        output = []
+        while (row is not None):
+            output.append(row)
+            row = cursor.fetchone()
+
+        print(output)
         return output
 
     def disconnect(self):
