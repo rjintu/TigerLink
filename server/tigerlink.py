@@ -125,7 +125,6 @@ def createuser():
 
         if role == 'student':
             db.create_students([user])
-
         else:
             db.create_alumni([user])
 
@@ -279,8 +278,12 @@ def search():
         email = request.args.get('email-address', '%')
         major = request.args.get('major', '%')
         zipcode = request.args.get('zipcode', '%')
-        career = request.args.get('industry', '%')
-        search_query = [name, email, major, zipcode, career]
+        career = request.args.getlist('industry')
+        print("career:")
+        print(len(career))
+        print("career: ______")
+        search_req = request.args.get('student', '%')
+        search_query = [name, email, major, zipcode, career, search_req]
         print(search_query)
         # database queries
         db = Database()
