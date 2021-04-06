@@ -15,6 +15,7 @@ class Matching(object):
 
     # convert to a student object
     def studentize(self, students, careers, organizations=None):
+        newS = []
         for student in students:
             pid = student[0]
             cs = []
@@ -33,6 +34,7 @@ class Matching(object):
 
     # convert to an alumni object
     def alumnize(self, alumni, careers, organizations=None):
+        newA = []
         for alum in alumni:
             pid = alum[0]
             cs = []
