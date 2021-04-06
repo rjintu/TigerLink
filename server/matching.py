@@ -16,16 +16,19 @@ class Matching(object):
     # convert to a student object
     def studentize(self, students, careers, organizations=None):
         newS = []
-        #TODO: a little inefficient
         for student in students:
             pid = student[0]
             cs = []
+            orgs = []
             for row in careers:
                 if row[0] == pid:
                     cs.append(row[1])
+            for row in organizations:
+                if row[0] == pid:
+                    orgs.append(row[1])
 
             s = Student(pid, student[1], student[2], student[3],
-            student[4], student[5], student[6], careers=cs, organizations=organizations)
+            student[4], student[5], student[6], careers=cs, organizations=orgs)
             newS.append(s)
         return newS
 
@@ -35,12 +38,16 @@ class Matching(object):
         for alum in alumni:
             pid = alum[0]
             cs = []
+            orgs = []
             for row in careers:
                 if row[0] == pid:
                     cs.append(row[1])
+            for row in organizations:
+                if row[0] == pid:
+                    orgs.append(row[1])
 
             a = Alum(pid, alum[1], alum[2], alum[3],
-            alum[4], alum[5], alum[6], careers=cs, organizations=organizations)
+            alum[4], alum[5], alum[6], careers=cs, organizations=orgs)
             newA.append(a)
         return newA
 
@@ -74,9 +81,9 @@ class Matching(object):
     def match(self):
         students = self._students
         alumni = self._alumni
-        random.shuffle(students)
-
+        #random.shuffle(students)
         matches = []
+
         for svec in students:
             # check ending condition
             if len(alumni) == 0:
@@ -90,11 +97,18 @@ class Matching(object):
                 if sim > bestSim:
                     bestSim = sim
                     bestIdx = idx
+
             alum = alumni[bestIdx]
             alumni.remove(alum)
+
+            # add alumns back if they have more matches
+            alum._numMatch = int(alum._numMatch)
+            if alum._numMatch > 1:
+                alum._numMatch -= 1
+                alumni.append(alum)
             
             #TODO: change to a student
-            matches.append((svec, avec, svec._name, svec._year, avec._name, avec._year, bestSim))
+            matches.append((svec, alum, svec._name, svec._year, avec._name, avec._year, bestSim))
 
             # assign more matches
             svec._numMatch = int(svec._numMatch)
