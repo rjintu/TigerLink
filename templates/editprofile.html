@@ -29,14 +29,12 @@
 </head>
 
 {% include 'navbar.html' %}
-<br>
-<br>
-<br>
 
-<h4>My Profile</h4>
-<h5 style="text-align: left;">
+<h4 style="text-align: center;">My Profile</h4>
+<h5 style="text-align: center;">
     <small class="text-muted">Edit your profile below</small>
 </h5>
+<br>
 
 <!--- 
 <body>
@@ -49,65 +47,94 @@
 <form action="updateprofile" method="post">
 
     <body>
-        <div class="form-group">
-            <label for="firstname"><strong>First Name</strong></label>
-            <input type="firstname" class="form-control" name="firstname" id="firstname" aria-describedby="emailHelp"
-                value="{{ info[0] }}">
-        </div>
-        <br>
-        <div class="form-group">
-            <label for="lastname"><strong>Last Name</strong></label>
-            <input type="lastname" class="form-control" name="lastname" id="lastname" aria-describedby="emailHelp"
-                value="{{ info[1] }}">
-        </div>
-        <br>
-        <div class="form-group">
-            <label for="email"><strong>Email</strong></label>
-            <input type="email" class="form-control" name="email" id="email" aria-describedby="emailHelp"
-                value="{{ info[3] }}">
-        </div>
-        <br>
-        <div class="form-group">
-            <label for="classYear"><strong>Class Year</strong></label>
-            <input type="classYear" class="form-control" name="classYear" id="classYear" aria-describedby="emailHelp"
-                value="{{ info[2] }}">
-        </div>
-        <br>
-        <strong>Major</strong>
-        <select class="form-select" aria-label="Default select example" name="major">
-            <option value="{{ info[4] }}" selected>{{ info[4] }}</option>
-            <option value="COS">COS</option>
-            <option value="ORF">ORF</option>
-            <option value="MAT">MAT</option>
-        </select>
-        <br>
-        <div class="form-group">
-            <label for="zipcode"><strong>Zipcode</strong></label>
-            <input type="zipcode" class="form-control" name="zipcode" id="zipcode" aria-describedby="emailHelp"
-                value="{{ info[5] }}">
-        </div>
-        <br>
-        <strong>How many matches would you like?</strong>
-        <select class="form-select" aria-label="Default select example" id="numMatches" name="numMatches">
-            <option value="{{info[6]}}" selected>{{info[6]}}</option>
-            <option value=0>0</option>
-            <option value=1>1</option>
-            <option value=2>2</option>
-            <option value=3>3</option>
-        </select>
-        <br>
-        <div class="form-group">
-            <label for="careerForm"><strong>Select the industries you're interested in or work
-                    in.</strong></label>
-            <select multiple class="form-control" id="careerForm" name="career">
-                <option selected>{{ info[7] }}</option>
-            </select>
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-4">
+                    <div class="form-group">
+                        <label for="firstname"><strong>First Name</strong></label>
+                        <input type="firstname" class="form-control" name="firstname" id="firstname"
+                            aria-describedby="emailHelp" value="{{ info[0] }}">
+                    </div>
+                    <br>
+                    <div class="form-group">
+                        <label for="email"><strong>Email</strong></label>
+                        <input type="email" class="form-control" name="email" id="email" aria-describedby="emailHelp"
+                            value="{{ info[2] }}">
+                    </div>
+                    <br>
+                    <div class="form-group">
+                        <label for="classYear"><strong>Class Year</strong></label>
+                        <input type="classYear" class="form-control" name="classYear" id="classYear"
+                            aria-describedby="emailHelp" value="{{ info[1] }}">
+                    </div>
+                    <br>
+                    <strong>Major</strong>
+                    <select class="form-select" aria-label="Default select example" name="major">
+                        <option value="{{ info[3] }}" selected>{{ info[3] }}</option>
+                        <option value="COS">COS</option>
+                        <option value="ORF">ORF</option>
+                        <option value="MAT">MAT</option>
+                    </select>
+                    <br>
+                    <div class="form-group">
+                        <label for="zipcode"><strong>Zipcode</strong></label>
+                        <input type="zipcode" class="form-control" name="zipcode" id="zipcode"
+                            aria-describedby="emailHelp" value="{{ info[4] }}">
+                    </div>
+                    <br>
+                    <strong>How many matches would you like?</strong>
+                    <select class="form-select" aria-label="Default select example" id="numMatches" name="numMatches">
+                        <option value="{{info[5]}}" selected>{{info[5]}}</option>
+                        <option value=0>0</option>
+                        <option value=1>1</option>
+                        <option value=2>2</option>
+                        <option value=3>3</option>
+                    </select>
+                    <br>
+                </div>
+
+                <!-- ghost spacing column -->
+                <div class="col-1">
+
+                </div>
+
+                <div class="col-5">
+                    <div class="form-group">
+                        <label for="careerForm"><strong>Select the industries you're interested in or work
+                                in.</strong></label>
+                        <select multiple class="form-control" id="careerForm" name="career">
+                            {% set temp_list = [] %}
+                            {% for c in careers:%}
+                            <option selected>{{ c[0] }}</option>
+                            {{ temp_list.append(c[0]|string)}}
+                            {% endfor %}
+                            <!-- send selected careers to template via Jinja -->
+                            {% with selectedCareers=temp_list %}
+                            {% include "careeroptions.html" %}
+                            {% endwith %}
+                        </select>
+                    </div>
+                    <br>
+                    <div class="form-group">
+                        <label for="groupsForm"><strong>Select the organizations you're involved in.</strong></label>
+                        <select multiple class="form-control" id="interests" name="interests">
+                            {% set temp_list = [] %}
+                            {% for i in interests:%}
+                            <option selected>{{ i[0] }}</option>
+                            {{ temp_list.append(i[0]|string)}}
+                            {% endfor %}
+                            <!-- send selected interests to template via Jinja -->
+                            {% with selectedInterests=temp_list %}
+                            {% include "interestoptions.html" %}
+                            {% endwith %}
+                        </select>
+                    </div>
+                </div>
+            </div>
         </div>
     </body>
-    <br>
 
     <body>
-        <br>
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-1">

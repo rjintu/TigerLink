@@ -25,8 +25,7 @@ class Matching(object):
                     cs.append(row[1])
 
             s = Student(pid, student[1], student[2], student[3],
-            student[4], student[5], student[6], student[7], careers=cs,
-            organizations=organizations)
+            student[4], student[5], student[6], careers=cs, organizations=organizations)
             newS.append(s)
         return newS
 
@@ -41,8 +40,7 @@ class Matching(object):
                     cs.append(row[1])
 
             a = Alum(pid, alum[1], alum[2], alum[3],
-            alum[4], alum[5], alum[6], alum[7], careers=cs,
-            organizations=organizations)
+            alum[4], alum[5], alum[6], careers=cs, organizations=organizations)
             newA.append(a)
         return newA
 
@@ -96,14 +94,13 @@ class Matching(object):
             alumni.remove(alum)
             
             #TODO: change to a student
-            matches.append((svec, avec, svec._fname, avec._fname, bestSim))
+            matches.append((svec, avec, svec._name, svec._year, avec._name, avec._year, bestSim))
 
             # assign more matches
             svec._numMatch = int(svec._numMatch)
             if svec._numMatch > 1:
                 svec._numMatch -= 1
                 students.append(svec)
-        print(matches)
         return matches
 
 
