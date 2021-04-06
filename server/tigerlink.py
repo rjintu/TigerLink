@@ -365,7 +365,13 @@ def timeline():
         # profile has not been created
         return redirect('/index')
 
-    html = render_template('timeline.html')
+    db = Database()
+    db.connect()
+
+    output = db.create_timeline()
+    print(output)
+    db.disconnect()
+    html = render_template('timeline.html', posts=output)
     response = make_response(html)
     return response
 
