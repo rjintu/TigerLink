@@ -60,13 +60,6 @@
           <div class="form-group">
             <input type="classYear" class="form-control" name="classYear" id="classYear" required>
           </div>
-          <!--<select class="form-select" aria-label="Default select example" name="classYear">
-            
-            <option value="" selected disabled>Please select</option>
-            <option value="1963">1963</option>
-            <option value="1998">1998</option>
-            <option value="2023">2023</option>
-          </select>-->
           <br>
           <strong>Major</strong>
           <select class="form-select" aria-label="Default select example" name="major" required>
@@ -75,13 +68,6 @@
             <option value="ORF">ORF</option>
             <option value="MAT">MAT</option>
           </select>
-          <br>
-          <div class="custom-control custom-switch">
-            <input type="checkbox" class="custom-control-input" id="customSwitch1" name="matchBool">
-            <label class="custom-control-label" for="customSwitch1">I would like to be matched with a mentor or
-              mentee</label>
-          </div>
-
           <br>
 
           <strong>How many matches would you like?</strong>
@@ -127,23 +113,6 @@
               {% include 'interestoptions.html' %}
             </select>
           </div>
-
-          <!-- hidden input -->
-          <div class="col-0">
-            <input type="hidden" id="profileid" name="profileid" value="">
-            <input type="hidden" id="email" name="email" value="">
-            <input type="hidden" id="name" name="name" value="">
-          </div>
-
-          <script>
-            function setHidden() {
-              document.getElementById("profileid").value = localStorage.getItem("profileid");
-              document.getElementById("email").value = localStorage.getItem("email");
-              document.getElementById("name").value = localStorage.getItem("name");
-            }
-            setHidden();
-          </script>
-
         </div>
       </div>
     </div>
