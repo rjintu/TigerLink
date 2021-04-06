@@ -332,7 +332,6 @@ class Database:
                 if (len(career) != 0):
                     while row2 is not None:
                         if (row2[1] in career):
-                            print(row2[1])
                             contains=True
                         row2 = cursor2.fetchone()
                 else:
@@ -382,7 +381,6 @@ class Database:
                 if (len(career) != 0):
                     while row2 is not None:
                         if (row2[1] in career):
-                            print(row2[1])
                             contains=True
                         row2 = cursor2.fetchone()
                 else:
@@ -406,14 +404,9 @@ class Database:
                 smtr = 'SELECT profileid, career FROM careers WHERE profileid LIKE %s'
                 cursor2.execute(smtr, [row[0]])
                 row2 = cursor2.fetchone()
-                print("career:")
-                print(career)
-                print(career[0])
-                print(len(career))
                 if (len(career) != 0):
                     while row2 is not None:
                         if (row2[1] in career):
-                            print(row2[1])
                             contains=True
                         row2 = cursor2.fetchone()
                 else:
