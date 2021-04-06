@@ -27,7 +27,7 @@ class Matching(object):
                     orgs.append(row[1])
 
             s = Student(pid, student[1], student[2], student[3],
-            student[4], student[5], student[6], careers=cs, organizations=organizations)
+            student[4], student[5], student[6], careers=cs, organizations=orgs)
             newS.append(s)
         return newS
 
