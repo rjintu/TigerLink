@@ -27,57 +27,23 @@
   -->
 </head>
 
-  <body>
-    <!-- heading -->
-    <h2 style="text-align: center;">Search Results</h2>
-  </body>
+<body>
+
+  <!-- heading -->
+  <h2 style="text-align: center;">Admin User Interface</h2>
+</body>
 
 <header>
-{% with bold='search' %}
-{% include "navbar.html" %}
-{% endwith %}
+{% include 'navbar.html' %}
 </header>
-
 <body>
-  <br>
-        <div class="container">
-            <div class="row justify-content-center">
-                <!-- col 1 -->
-                  <table class="table table-hover table-responsive">
-                    <thead>
-                      <tr>
-                        <th>Name</th>
-                        <th>Year</th>
-                        <th>Major</th>
-                        <th>Zip Code</th>
-                        <th>Number of Matches</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                        {% for res in results: %}
-                            <tr>    
-                            <td>{{ res[2] }}</td>
-                            <td>{{ res[1] }}</td>
-                            <td>{{ res[3] }}</td>
-                            <td>{{ res[4] }}</td>
-                            <td>{{ res[5] }}</td>
-                            </tr>  
-                        {% endfor %}
-                    </tbody>
-                    </table>
-                    </div>
-            </div>
-</body>
-<body>
-  <br>
   <div class="container">
-      <div class="row justify-content-center">
-          <div class="col-1">
-            <a href = '/dosearch'><button type="submit" name="submit" class="btn btn-primary">Back</button></a>
-          </div>
-      </div>
+    <div class="row justify-content-center">
+
+    <form method="get" action="/callme">
+      <button type="submit"><a href='/displaymatches'>Run Matches!</a></button>
+    </form>
+    </div>
   </div>
-</body>
-
-
+    </body>
 </html>

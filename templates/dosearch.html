@@ -25,9 +25,17 @@
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js" integrity="sha384-SR1sx49pcuLnqZUnnPwx6FCym0wLsk5JZuNx2bPPENzswTNFaQU1RDvt3wT4gWFG" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.min.js" integrity="sha384-j0CNLUeiqtyaRmlzUHCPZ+Gy5fQu0dQ6eZ/xAww941Ai1SxSY+0EQqNXNE6DZiVc" crossorigin="anonymous"></script>
   -->
+
+  <body>
+    <!-- heading -->
+    <h2 style="text-align: center;">Search Page</h2>
+  </body>
+
 </head>
 <header>
-{% include 'navbar.html' %}
+{% with bold='search' %}
+{% include "navbar.html" %}
+{% endwith %}
 </header>
 <body>
     <form action="search" method="get">
@@ -47,17 +55,17 @@
                 <br>
                 <br>
                 <strong>Are you looking for students, alums, or both?</strong>
-                <div class="form-check">
-                  <input class="form-check-input" id="ugrad" type="radio" name="student">
+                <div class="form-check" name="form1">
+                  <input class="form-check-input" id="ugrad" value="stud" type="radio" name="student">
                   <label class="form-check-label" for="ugrad"> Undergraduate Student </label>
                 </div>
                 <div class="form-check">
-                  <input class="form-check-input" id="alum" type="radio" name="student">
-                  <label class="form-check-label" for="alum"> Both </label>
+                  <input class="form-check-input" id="alum" value="alum" type="radio" name="student">
+                  <label class="form-check-label" for="alum"> Alum </label>
                 </div>
                 <div class="form-check">
-                    <input class="form-check-input" id="all3" type="radio" name="student">
-                    <label class="form-check-label" for="alum"> All 3 of the Above </label>
+                    <input class="form-check-input" id="all3" value="both" type="radio" name="student">
+                    <label class="form-check-label" for="alum"> Both </label>
                   </div>  
                 <br>
                 <div class="form-group">
@@ -88,15 +96,47 @@
                   <label for="exampleFormControlSelect2"><strong>Select the careers you're searching for.</strong></label>
                   <br>
                   <br>
-                  <select multiple class="form-control" id="exampleFormControlSelect2" name="career">
+                  <select multiple class="form-control" id="industry" name="industry">
                     <option>Software Engineering</option>
                     <option>Product Management</option>
+                    <option>Accounting</option>
+                    <option>Marketing</option>
+                    <option>Architecture</option>
                     <option>Consulting</option>
+                    <option>Energy Resources</option>
+                    <option>Chemical Engineering</option>
+                    <option>Civil Engineering</option>
+                    <option>Electrical Engineering</option>
+                    <option>Mechanical Engineering</option>
+                    <option>Aerospace Engineering</option>
+                    <option>Environmental Affairs</option>
+                    <option>Asset Management</option>
+                    <option>Corporate Finance</option>
+                    <option>Hedge Funds</option>
                     <option>Private Equity</option>
+                    <option>Commercial Banking</option>
+                    <option>Financial Planning</option>
                     <option>Investment Banking</option>
-                    <option>Theater Performance</option>
-                    <option>Politics</option>
-                    <option>Researcher</option>
+                    <option>Security/Commodities</option>
+                    <option>Venture Capital</option>
+                    <option>Foreign Service</option>
+                    <option>Government</option>
+                    <option>Policy Analysis</option>
+                    <option>Health Care</option>
+                    <option>Human Resources</option>
+                    <option>Insurance</option>
+                    <option>Law</option>
+                    <option>Management</option>
+                    <option>Military</option>
+                    <option>Performing Arts</option>
+                    <option>Public Relations</option>
+                    <option>Real Estate</option>
+                    <option>Radio/TV</option>
+                    <option>Research & Development</option>
+                    <option>Social Work</option>
+                    <option>Teaching</option>
+                    <option>Veterinary Medicine</option>
+                    <option>Fine Arts</option>
                   </select>
                 </div>
       

@@ -18,7 +18,7 @@
 <body>
 
   <!-- heading -->
-  <h2 style="text-align: center;">Welcome to TigerLink!</h2>
+  <h2 style="text-align: center;">Welcome to TigerLink, {{name}}!</h2>
   <h4 style="text-align: center;">
     <small class="text-muted">Please fill out the questions below to create your profile.</small>
   </h4>
@@ -58,30 +58,14 @@
           <br>
           <strong>Class Year</strong>
           <div class="form-group">
-              <input type="classYear" class="form-control" name="classYear" id="classYear" required>
+            <input type="classYear" class="form-control" name="classYear" id="classYear" required>
           </div>
-          <!--<select class="form-select" aria-label="Default select example" name="classYear">
-            
-            <option value="" selected disabled>Please select</option>
-            <option value="1963">1963</option>
-            <option value="1998">1998</option>
-            <option value="2023">2023</option>
-          </select>-->
           <br>
           <strong>Major</strong>
           <select class="form-select" aria-label="Default select example" name="major" required>
             <option value="" selected disabled>Please select</option>
-            <option value="COS">COS</option>
-            <option value="ORF">ORF</option>
-            <option value="MAT">MAT</option>
+            {% include "allmajors.html" %}
           </select>
-          <br>
-          <div class="custom-control custom-switch">
-            <input type="checkbox" class="custom-control-input" id="customSwitch1" name="matchBool">
-            <label class="custom-control-label" for="customSwitch1">I would like to be matched with a mentor or
-              mentee</label>
-          </div>
-
           <br>
 
           <strong>How many matches would you like?</strong>
@@ -115,46 +99,7 @@
             <label for="careerForm"><strong>Select the industries you're interested in or work
                 in.</strong></label>
             <select multiple class="form-control" id="industry" name="industry">
-              <option>Software Engineering</option>
-              <option>Product Management</option>
-              <option>Accounting</option>
-              <option>Marketing</option>
-              <option>Architecture</option>
-              <option>Consulting</option>
-              <option>Energy Resources</option>
-              <option>Chemical Engineering</option>
-              <option>Civil Engineering</option>
-              <option>Electrical Engineering</option>
-              <option>Mechanical Engineering</option>
-              <option>Aerospace Engineering</option>
-              <option>Environmental Affairs</option>
-              <option>Asset Management</option>
-              <option>Corporate Finance</option>
-              <option>Hedge Funds</option>
-              <option>Private Equity</option>
-              <option>Commercial Banking</option>
-              <option>Financial Planning</option>
-              <option>Investment Banking</option>
-              <option>Security/Commodities</option>
-              <option>Venture Capital</option>
-              <option>Foreign Service</option>
-              <option>Government</option>
-              <option>Policy Analysis</option>
-              <option>Health Care</option>
-              <option>Human Resources</option>
-              <option>Insurance</option>
-              <option>Law</option>
-              <option>Management</option>
-              <option>Military</option>
-              <option>Performing Arts</option>
-              <option>Public Relations</option>
-              <option>Real Estate</option>
-              <option>Radio/TV</option>
-              <option>Research & Development</option>
-              <option>Social Work</option>
-              <option>Teaching</option>
-              <option>Veterinary Medicine</option>
-              <option>Fine Arts</option>
+              {% include 'careeroptions.html' %}
             </select>
           </div>
 
@@ -163,40 +108,9 @@
           <div class="form-group">
             <label for="groupsForm"><strong>Select the organizations you're involved in.</strong></label>
             <select multiple class="form-control" id="interests" name="interests">
-
-              <option>Christian Fellowship</option>
-              <option>ROTC</option>
-              <option>Engineering Society</option>
-              <option>Whig-Cliosophic Society</option>
-              <option>Athletic Organization</option>
-              <option>Dance Group</option>
-              <option>Business Today</option>
-              <option>Cannon</option>
-              <option>Cap & Gown</option>
-              <option>Choir & Chorus</option>
-              <option>Academic Club</option>
-              <option>Women Empowerment</option>
-              <option>Minority Advocacy</option>
-
+              {% include 'interestoptions.html' %}
             </select>
           </div>
-
-          <!-- hidden input -->
-          <div class="col-0">
-            <input type="hidden" id="profileid" name="profileid" value="">
-            <input type="hidden" id="email" name="email" value="">
-            <input type="hidden" id="name" name="name" value="">
-          </div>
-
-          <script>
-            function setHidden() {
-              document.getElementById("profileid").value = localStorage.getItem("profileid");
-              document.getElementById("email").value = localStorage.getItem("email");
-              document.getElementById("name").value = localStorage.getItem("name");
-            }
-            setHidden();
-          </script>
-
         </div>
       </div>
     </div>
