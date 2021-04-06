@@ -16,7 +16,7 @@
 </head>
 
 <body>
-
+<div class="container">
   <!-- heading -->
   <h2 style="text-align: center;">Welcome to TigerLink!</h2>
   <h4 style="text-align: center;">
@@ -26,61 +26,18 @@
     <!-- heading -->
 
 
-  <!-- Optional JavaScript; choose one of the two! -->
-
   <!-- Option 1: Bootstrap Bundle with Popper -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
     crossorigin="anonymous"></script>
 
-  <!-- Option 2: Separate Popper and Bootstrap JS -->
-  <!--
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js" integrity="sha384-SR1sx49pcuLnqZUnnPwx6FCym0wLsk5JZuNx2bPPENzswTNFaQU1RDvt3wT4gWFG" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.min.js" integrity="sha384-j0CNLUeiqtyaRmlzUHCPZ+Gy5fQu0dQ6eZ/xAww941Ai1SxSY+0EQqNXNE6DZiVc" crossorigin="anonymous"></script>
-    -->
-     
-    <!-- login button -->
-    <script src="https://apis.google.com/js/platform.js" async defer></script>
-    <meta name="google-signin-client_id" content="194740801025-kgpkca41khaesu6brekpp84pdc7bpjab.apps.googleusercontent.com">
+  <!-- Vertical Spacing -->
+  <div class="my-5"></div>
+  
+  <a href="/login/redirect" class="btn btn-primary mx-auto d-block"
+    style="width: 200px">Login With Google</a>
 
-    <div id="profileinfo"></div>
-    
-    <script>
-    function onSignIn(googleUser) {
-
-        var profile = googleUser.getBasicProfile();
-        console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
-        console.log('Name: ' + profile.getName());
-        console.log('Image URL: ' + profile.getImageUrl());
-        console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
-    
-        document.getElementById('profileinfo').innerHTML = profile.getName();
-        localStorage.setItem("name", profile.getName());
-        localStorage.setItem("email", profile.getEmail());
-        localStorage.setItem("profileid", profile.getId());
-        // window.location.href = "index";
-        // use a form to POST our profileid
-        document.getElementById("profileid").value = profile.getId();
-        document.getElementById("authform").submit();
-      }
-    </script>
-
-    <form id="authform" action="/login/auth" method="POST">
-        <input type="hidden" id="profileid" name="profileid" value="">
-    </form>
-
-    <div class="g-signin2" data-onsuccess="onSignIn">
-    </div>
-    <button type="button" class="btn btn-danger" onclick="signOut();">Sign out</button>
-    <script>
-      function signOut() {
-          var auth2 = gapi.auth2.getAuthInstance();
-          auth2.signOut().then(function () {
-            console.log('User signed out.');
-          });
-          document.getElementById('profileinfo').innerHTML = "";
-      }
-    </script> 
-    </body>
+</div>
+</body>
 </html>
     
