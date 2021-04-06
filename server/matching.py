@@ -82,6 +82,7 @@ class Matching(object):
         students = self._students
         alumni = self._alumni
         #random.shuffle(students)
+        matches = []
 
         for svec in students:
             # check ending condition
@@ -107,7 +108,7 @@ class Matching(object):
                 alumni.append(alum)
             
             #TODO: change to a student
-            matches.append((svec, avec, svec._name, svec._year, avec._name, avec._year, bestSim))
+            matches.append((svec, alum, svec._name, svec._year, avec._name, avec._year, bestSim))
 
             # assign more matches
             svec._numMatch = int(svec._numMatch)
