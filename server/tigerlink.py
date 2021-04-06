@@ -26,7 +26,7 @@ def index():
     db.disconnect()
     if user is not None:
         # profile is already created
-        return redirect('/getstudents')
+        return redirect('/timeline')
 
     html = render_template('index.html')
     response = make_response(html)
@@ -100,8 +100,7 @@ def createuser():
         print(e)
         return make_response(html)
 
-    # redirect to getstudents after the name is added, make sure to uncomment this
-    return redirect(url_for('timeline')) # TODO: change the redirect to the right page
+    return redirect(url_for('timeline'))
 
 
 @app.route('/getstudents', methods=['GET'])
@@ -216,7 +215,6 @@ def search():
 
     response = make_response(html)
     return response
-
 
 @app.route('/dosearch', methods=['GET'])
 def dosearch():
