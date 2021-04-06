@@ -1,5 +1,6 @@
 from flask import Flask, request, make_response, redirect, url_for, session
 from flask import render_template
+from flask_talisman import Talisman
 
 from .database import Database
 from .matching import Matching
@@ -11,6 +12,10 @@ keychain = KeyChain()
 app = Flask(__name__, template_folder="../templates", static_folder="../static")
 app.secret_key = keychain.FLASK_SECRET
 login_manager = loginutil.GoogleLogin(keychain)
+
+# for forcing HTTPS and adding other security features
+# CSP is disabled cause it messes with bootstrap
+Talisman(app, content_security_policy=None)
 
 @app.route('/', methods=['GET'])
 @app.route('/index', methods=['GET'])
