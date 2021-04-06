@@ -31,15 +31,22 @@ def index():
     db.disconnect()
     if user is not None:
         # profile is already created
-        return redirect('/getstudents')
+        return redirect('/timeline')
 
     html = render_template('index.html')
     response = make_response(html)
     return response
 
-# Note: when testing locally, must use port 8888 for Google SSO
+# general welcome/login page
 @app.route('/login', methods=['GET'])
 def login():
+    html = render_template('login.html')
+    response = make_response(html)
+    return response
+
+# Note: when testing locally, must use port 8888 for Google SSO
+@app.route('/login/redirect', methods=['GET'])
+def login_redirect():
     # redirect the user to Google's login page
     request_uri = login_manager.get_login_redirect(request)
     return redirect(request_uri)
@@ -64,10 +71,19 @@ def login_auth():
         if user is None:
             return redirect('/index')
         else:
-            return redirect('/getstudents')
+            return redirect('/timeline')
 
     except Exception as e:
         return make_response('Failed to login: ' + str(e))
+
+@app.route('/logout', methods=['GET'])
+def logout():
+    # simply clear the user's session
+    session.pop('profileid')
+    session.pop('email')
+    session.pop('fullname')
+
+    return redirect('/')
 
 @app.route('/createuser', methods=['POST'])
 def createuser():

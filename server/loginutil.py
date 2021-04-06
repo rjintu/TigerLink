@@ -29,7 +29,7 @@ class GoogleLogin:
 
         request_uri = self._oauth_cl.prepare_request_uri(
             auth_endpoint,
-            redirect_uri = request.base_url + "/auth",
+            redirect_uri = request.host_url + "login/auth",
             scope = ["openid", "email", "profile"],
         )
         return request_uri
