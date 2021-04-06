@@ -75,7 +75,11 @@
             </li>
             &nbsp
             <li class="nav-item">
-                <a class="nav-link" href="editprofile">Profile</a>
+                {% if bold == 'edit' %}
+                    <a class="nav-link" href="editprofile" style="color:darkblue"><strong>My Groups</strong></span></a>
+                {% else %}
+                    <a class="nav-link" href="editprofile">My Groups</span></a>
+                {% endif %}
             </li>
             &nbsp
             &nbsp
