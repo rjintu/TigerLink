@@ -6,7 +6,6 @@ import json
 
 from .keychain import KeyChain
 
-
 GOOGLE_DISCOVERY_URL = (
         "https://accounts.google.com/.well-known/openid-configuration"
     )
@@ -69,4 +68,5 @@ class GoogleLogin:
 
         # now get all relevant user data
         info = userinfo_response.json()
-        return (info['sub'], info['email'], info['name'])
+        print(info)
+        return (info['sub'], info['email'], info['name'], info['picture'])
