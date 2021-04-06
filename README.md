@@ -6,14 +6,14 @@ Here's some vague instructions for setting up the local environment, in
 case anyone needs to redo it in the next few weeks. Instructions are
 for Macs only.
 
-First, install Postgres. `brew install postgresql` generally works if
-you don't have an M1 Mac, but good luck otherwise lol.
+First, install Postgres. `brew install postgresql` should work on a Mac.
 
 Then, you have to do a bunch of things to get Postgres working properly
 with TigerLink. Here's everything that I think you'll need to do:
 1. Start the Postgres Server on your computer by running
-`pg_ctl –D /usr/local/var/postgres start`. Note: this also has to be done
-every time you restart your computer.
+`pg_ctl -D /usr/local/var/postgres start`. Note: this also has to be done
+every time you restart your computer. If you are using an M1 Mac (and Homebrew
+is installed to `/usr/opt/local`) then the command is `pg_ctl -D /opt/homebrew/var/postgres stop`.
 2. Get into the Postgres shell. This can be done by running
 `psql postgres` in the terminal. 
 3. Run `CREATE ROLE tigerlink LOGIN PASSWORD 'xxx';` in the shell to
@@ -29,7 +29,7 @@ like `gunicorn`). **Note: to get Google authentication working on your
 local server, you have to use port 8888.**
 
 If you get database errors while using the main branch, you may need to configure
-your tables. To do this, simply run `python utils/resetdb.py` from the TigerLink folder. 
+your tables. To do this, simply run `python util/resetdb.py` from the TigerLink folder. 
 
 ### Using Secret Keys & HTTPS Locally
 Our secret keys for Flask and Google OAuth have to not be shared anywhere
