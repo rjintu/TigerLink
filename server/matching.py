@@ -95,11 +95,11 @@ class Matching(object):
             bestIdx = 0
             for idx in range(len(alumni)):
                 avec = alumni[idx]
-                
+
                 sim = self.dotProduct(svec, avec)
                 if sim > bestSim:
                     bestSim = sim
-                    bestIdx = idxx
+                    bestIdx = idx
 
             alum = alumni[bestIdx]
             alumni.remove(alum)
