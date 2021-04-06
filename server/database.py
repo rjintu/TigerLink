@@ -163,38 +163,128 @@ class Database:
 
     # can search students or alumni
     # TODO: career in diff table (need to fix)
-    def search(self, search_query, students=True, alumni=False):
+    def search(self, search_query):
         print(search_query)
         search_values = [str(x) for x in search_query] # convert everything to strings
         for i in range(0, len(search_values)):
             if (search_values[i] == ''):
                 search_values[i] = '%%%%'
             
-        name, email, major, zipcode, career = search_values
+        name, email, major, zipcode, career, typeofSearch = search_values
+        career = search_query[-2]
+
         output = []
 
         print("name: " + str(name))
 
         cursor = self._connection.cursor()
-
-        if students:
-            stmtStr = "SELECT name, major FROM students WHERE name LIKE %s " + \
+        cursor2 = self._connection.cursor()
+        if typeofSearch in 'stud':
+            stmtStr = "SELECT profileid, classyear, name, major, zip FROM students WHERE name LIKE %s " + \
             "AND email LIKE %s AND major LIKE %s AND zip LIKE %s"
             cursor.execute(stmtStr, [name, email, major, zipcode])
             row = cursor.fetchone()
             
             while row is not None:
-                output.append(row)
+                # look up all the careers for that person and filter out those who aren't valid.
+                contains = False 
+                smtr = 'SELECT profileid, career FROM careers WHERE profileid LIKE %s'
+                cursor2.execute(smtr, [row[0]])
+                row2 = cursor2.fetchone()
+                if (len(career) != 0):
+                    while row2 is not None:
+                        if (row2[1] in career):
+                            print(row2[1])
+                            contains=True
+                        row2 = cursor2.fetchone()
+                else:
+                    contains=True
+
+                if contains:
+                    output.append(row)
                 row = cursor.fetchone()
         
-        if alumni:
-            cursor.execute('SELECT name, major, email, zip FROM alumni' +
-            'VALUES (%s, %s, %s, %s, %s)', search_values)
+        elif typeofSearch in 'alum':
+            stmtStr = "SELECT profileid, classyear, name, major, zip FROM alumni WHERE name LIKE %s " + \
+            "AND email LIKE %s AND major LIKE %s AND zip LIKE %s"
+            cursor.execute(stmtStr, [name, email, major, zipcode])
             row = cursor.fetchone()
-
+            
             while row is not None:
-                output.append(row)
+                # look up all the careers for that person and filter out those who aren't valid.
+                contains = False 
+                smtr = 'SELECT profileid, career FROM careers WHERE profileid LIKE %s'
+                cursor2.execute(smtr, [row[0]])
+                row2 = cursor2.fetchone()
+                if (len(career) != 0):
+                    while row2 is not None:
+                        if (row2[1] in career):
+                            print(row2[1])
+                            contains=True
+                        row2 = cursor2.fetchone()
+                else:
+                    contains=True
+
+                if contains:
+                    output.append(row)
                 row = cursor.fetchone()
+
+        else:
+            stmtStr = "SELECT profileid, classyear, name, major, zip FROM students WHERE name LIKE %s " + \
+            "AND email LIKE %s AND major LIKE %s AND zip LIKE %s"
+            cursor.execute(stmtStr, [name, email, major, zipcode])
+            row = cursor.fetchone()
+            
+            while row is not None:
+                # look up all the careers for that person and filter out those who aren't valid.
+                contains = False 
+                smtr = 'SELECT profileid, career FROM careers WHERE profileid LIKE %s'
+                cursor2.execute(smtr, [row[0]])
+                row2 = cursor2.fetchone()
+                if (len(career) != 0):
+                    while row2 is not None:
+                        if (row2[1] in career):
+                            print(row2[1])
+                            contains=True
+                        row2 = cursor2.fetchone()
+                else:
+                    contains=True
+
+                if contains:
+                    output.append(row)
+                row = cursor.fetchone()
+
+            cursor = self._connection.cursor()
+            cursor2 = self._connection.cursor()
+
+            stmtStr = "SELECT profileid, classyear, name, major, zip FROM alumni WHERE name LIKE %s " + \
+            "AND email LIKE %s AND major LIKE %s AND zip LIKE %s"
+            cursor.execute(stmtStr, [name, email, major, zipcode])
+            row = cursor.fetchone()
+            
+            while row is not None:
+                # look up all the careers for that person and filter out those who aren't valid.
+                contains = False 
+                smtr = 'SELECT profileid, career FROM careers WHERE profileid LIKE %s'
+                cursor2.execute(smtr, [row[0]])
+                row2 = cursor2.fetchone()
+                print("career:")
+                print(career)
+                print(career[0])
+                print(len(career))
+                if (len(career) != 0):
+                    while row2 is not None:
+                        if (row2[1] in career):
+                            print(row2[1])
+                            contains=True
+                        row2 = cursor2.fetchone()
+                else:
+                    contains=True
+
+                if contains:
+                    output.append(row)
+                row = cursor.fetchone()
+
 
         cursor.close()
         return output

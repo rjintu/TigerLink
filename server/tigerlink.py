@@ -200,8 +200,11 @@ def search():
         major = request.args.get('major', '%')
         zipcode = request.args.get('zipcode', '%')
         career = request.args.getlist('industry')
+        print("career:")
+        print(len(career))
+        print("career: ______")
         search_req = request.args.get('student', '%')
-        search_query = [name, email, major, zipcode, career]
+        search_query = [name, email, major, zipcode, career, search_req]
         print(search_query)
         # database queries
         db = Database()
