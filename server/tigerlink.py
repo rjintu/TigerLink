@@ -198,6 +198,10 @@ def changeprofile():
 def match():
     try:
         html = render_template('admin.html')
+        db = Database()
+        db.connect()
+        #db.update_student(profileid, new_info)
+        db.disconnect()
     except Exception as e:
         html = "error occurred: " + str(e)
         print(e)
