@@ -51,9 +51,9 @@
             <div class="row justify-content-center">
                 <div class="col-4">
                     <div class="form-group">
-                        <label for="firstname"><strong>First Name</strong></label>
-                        <input type="firstname" class="form-control" name="firstname" id="firstname"
-                            aria-describedby="emailHelp" value="{{ info[0] }}">
+                        <label for="firstname"><strong>Name</strong></label>
+                        <input type="firstname" class="form-control" name="name" id="name" aria-describedby="emailHelp"
+                            value="{{ info[0] }}">
                     </div>
                     <br>
                     <div class="form-group">
@@ -71,9 +71,11 @@
                     <strong>Major</strong>
                     <select class="form-select" aria-label="Default select example" name="major">
                         <option value="{{ info[3] }}" selected>{{ info[3] }}</option>
-                        <option value="COS">COS</option>
-                        <option value="ORF">ORF</option>
-                        <option value="MAT">MAT</option>
+                        {% set temp_major = info[3]|string %}
+                        <!-- send selected careers to template via Jinja -->
+                        {% with prevMajor=temp_major %}
+                        {% include "allmajors.html" %}
+                        {% endwith %}
                     </select>
                     <br>
                     <div class="form-group">
