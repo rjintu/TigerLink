@@ -30,9 +30,9 @@ def index():
 
     db = Database()
     db.connect()
-    user = db.user_exists(profileid)
+    user_exists = db.user_exists(profileid)
     db.disconnect()
-    if user is True:
+    if user_exists:
         # profile is already created
         return redirect('/timeline')
     
@@ -48,7 +48,7 @@ def index():
 def login():
     if loginutil.is_logged_in(session):
         # no need to be here
-        return redirect('/timeline')
+        return redirect('/index')
 
     html = render_template('login.html')
     response = make_response(html)
@@ -78,9 +78,9 @@ def login_auth():
         # check where to redirect user
         db = Database()
         db.connect()
-        user = db.get_student_by_id(profileid)
+        user_exists = db.user_exists(profileid)
         db.disconnect()
-        if user is None:
+        if not user_exists:
             return redirect('/index')
         else:
             return redirect('/timeline')
@@ -112,7 +112,6 @@ def createuser():
         role = acct_info.get('role', '')
         major = acct_info.get('major', '')
         classyear = acct_info.get('classYear', '')
-        matchbool = acct_info.get('matchBool', '')
         nummatches = acct_info.get('numMatches', '')
         zipcode = acct_info.get('zipcode', '')
         industry = acct_info.getlist('industry')
@@ -175,7 +174,17 @@ def getmatches():
 @app.route('/editprofile', methods=['GET'])
 def getprofile():
     if not loginutil.is_logged_in(session):
+        # user not logged in
         return redirect('/login')
+    
+    profileid = session['profileid']
+    db = Database()
+    db.connect()
+    user_exists = db.user_exists(profileid)
+    db.disconnect()
+    if not user_exists:
+        # profile has not been created
+        return redirect('/index')
 
     try:
         profileid = session['profileid']
@@ -269,7 +278,17 @@ def noAuth():
 @app.route('/search', methods=['GET'])
 def search():
     if not loginutil.is_logged_in(session):
+        # user not logged in
         return redirect('/login')
+    
+    profileid = session['profileid']
+    db = Database()
+    db.connect()
+    user_exists = db.user_exists(profileid)
+    db.disconnect()
+    if not user_exists:
+        # profile has not been created
+        return redirect('/index')
 
     search_query = None
     search_form = None
@@ -303,7 +322,17 @@ def search():
 @app.route('/dosearch', methods=['GET'])
 def dosearch():
     if not loginutil.is_logged_in(session):
+        # user not logged in
         return redirect('/login')
+    
+    profileid = session['profileid']
+    db = Database()
+    db.connect()
+    user_exists = db.user_exists(profileid)
+    db.disconnect()
+    if not user_exists:
+        # profile has not been created
+        return redirect('/index')
 
     html = render_template('dosearch.html')
     response = make_response(html)
@@ -313,7 +342,17 @@ def dosearch():
 @app.route('/timeline', methods=['GET'])
 def timeline():
     if not loginutil.is_logged_in(session):
+        # user not logged in
         return redirect('/login')
+    
+    profileid = session['profileid']
+    db = Database()
+    db.connect()
+    user_exists = db.user_exists(profileid)
+    db.disconnect()
+    if not user_exists:
+        # profile has not been created
+        return redirect('/index')
 
     db = Database()
     db.connect()
