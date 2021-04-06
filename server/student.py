@@ -1,12 +1,11 @@
 
 class Student(object):
     
-    def __init__(self, profileid, fname, lname, year, email,
+    def __init__(self, profileid, name, year, email,
     major, zip, numMatch, spref = [1/3, 1/3, 1/3],
     careers = None, organizations = None):
         self._profileid = profileid
-        self._fname = fname
-        self._lname = lname
+        self._name = name
         self._year = year
         self._email = email
         self._major = major
