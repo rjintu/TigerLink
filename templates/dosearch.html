@@ -26,12 +26,9 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.min.js" integrity="sha384-j0CNLUeiqtyaRmlzUHCPZ+Gy5fQu0dQ6eZ/xAww941Ai1SxSY+0EQqNXNE6DZiVc" crossorigin="anonymous"></script>
   -->
 </head>
-
+<header>
 {% include 'navbar.html' %}
-
-<br>
-<br>
-<br>
+</header>
 <body>
     <form action="search" method="get">
         <body>
@@ -43,16 +40,11 @@
 
                 <!-- enter the name of the person you wish to search up -->
                 <div class="form-group">
-                    <label for="firstname"><strong>Name</strong></label>
-                    <input type="firstname" class="form-control" name="firstname" id="firstname" aria-describedby="firstname"
+                    <label for="namesearch"><strong>Name</strong></label>
+                    <input type="namesearch" class="form-control" name="namesearch" id="namesearch" aria-describedby="namesearch"
                       placeholder="FirstName LastName">
                 </div>
                 <br>
-                <div class="form-group">
-                  <label for="lastname"><strong>Name</strong></label>
-                  <input type="lastname" class="form-control" name="lastname" id="lastname" aria-describedby="lastname"
-                    placeholder="FirstName LastName">
-                </div>
                 <br>
                 <strong>Are you looking for students, alums, or both?</strong>
                 <div class="form-check">
@@ -60,12 +52,8 @@
                   <label class="form-check-label" for="ugrad"> Undergraduate Student </label>
                 </div>
                 <div class="form-check">
-                  <input class="form-check-input" id="grad" type="radio" name="student">
-                  <label class="form-check-label" for="grad"> Graduate Student </label>
-                </div>
-                <div class="form-check">
                   <input class="form-check-input" id="alum" type="radio" name="student">
-                  <label class="form-check-label" for="alum"> Alumnus </label>
+                  <label class="form-check-label" for="alum"> Both </label>
                 </div>
                 <div class="form-check">
                     <input class="form-check-input" id="all3" type="radio" name="student">
@@ -84,19 +72,15 @@
                       placeholder="Ex: 08544">
                 </div>
                 <br>
-
                 <br>
-            
                 <br>
-      
-      
               </div>
       
               <!-- col 2 -->
               <div class="offset-1 col-4">
                 <div class="form-group">
-                    <label for="email"><strong>Email Address</strong></label>
-                    <input type="email" class="form-control" name="email" id="email" aria-describedby="email"
+                    <label for="email-address"><strong>Email Address</strong></label>
+                    <input type="email-address" class="form-control" name="email-address" id="email-address" aria-describedby="email-address"
                       placeholder="Ex: tiger-link@princeton.edu">
                 </div>
                 <br>

@@ -25,8 +25,7 @@ class Matching(object):
                     cs.append(row[1])
 
             s = Student(pid, student[1], student[2], student[3],
-            student[4], student[5], student[6], student[7], careers=cs,
-            organizations=organizations)
+            student[4], student[5], student[6], careers=cs, organizations=organizations)
             newS.append(s)
         return newS
 
@@ -41,8 +40,7 @@ class Matching(object):
                     cs.append(row[1])
 
             a = Alum(pid, alum[1], alum[2], alum[3],
-            alum[4], alum[5], alum[6], alum[7], careers=cs,
-            organizations=organizations)
+            alum[4], alum[5], alum[6], careers=cs, organizations=organizations)
             newA.append(a)
         return newA
 
@@ -54,10 +52,10 @@ class Matching(object):
         try:
             db = Database()
             db.connect()
-            s, c = db.get_students()
-            self._students = self.studentize(s, c)
-            s2, c2 = db.get_alumni()
-            self._alumni = self.alumnize(s2, c2)
+            s, c, i = db.get_students()
+            self._students = self.studentize(s, c, i)
+            s2, c2, i2 = db.get_alumni()
+            self._alumni = self.alumnize(s2, c2, i2)
         except Exception as e:
             html = "error occurred: " + str(e)
             print(e)
@@ -88,45 +86,46 @@ class Matching(object):
             bestSim = 0
             bestIdx = 0
             for idx, avec in enumerate(alumni):
-                sim = dotProduct(svec, avec)
+                sim = self.dotProduct(svec, avec)
                 if sim > bestSim:
                     bestSim = sim
                     bestIdx = idx
-            alum = avec[bestIdx]
-            aVecs.remove(alum)
+            alum = alumni[bestIdx]
+            alumni.remove(alum)
             
             #TODO: change to a student
-            matches.append((svec, avec, bestSim))
+            matches.append((svec, avec, svec._name, svec._year, avec._name, avec._year, bestSim))
 
             # assign more matches
+            svec._numMatch = int(svec._numMatch)
             if svec._numMatch > 1:
                 svec._numMatch -= 1
                 students.append(svec)
-        print(matches)
         return matches
 
 
     #sprefs = weightings for career, major, and organizations
-    def dotProduct(svec, avec):
+    def dotProduct(self, svec, avec):
         m = 0
         if (svec._major == avec._major):
             m = 1
 
         carS = 0
-        for career in svec._careers:
-            if career in avec._careers:
-                carS += 1
+        if svec._careers != None:
+            for career in svec._careers:
+                if career in avec._careers:
+                    carS += 1
                 
         orgS = 0
-        for org in svec._organizations:
-            if org in avec._organizations:
-                orgS += 1
+        if svec._organizations != None:
+            for org in svec._organizations:
+                if org in avec._organizations:
+                    orgS += 1
         
         vals = [m, carS, orgS]
 
         sim = 0
-        #TODO: add spref to the student class
-        for i, weight in enumerate(svec._sprefs):
+        for i, weight in enumerate(svec._spref):
             sim += vals[i] * weight
         
         return sim

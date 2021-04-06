@@ -40,14 +40,33 @@
 </body>
 
 <form action="editprofile" method="get">
-
+    {% include 'navbar.html' %}
     <body>
         <br>
         <div class="container">
-            <div class="row justify-content-start">
-                {% for match in matches: %}
-                {{ match }} <br>
-                {% endfor %}
+            <div class="row justify-content-center">
+                <!-- col 1 -->
+                <div class="col-6">
+                  <strong>Matches</strong>
+                  <table class="table table-hover table-responsive">
+                    <thead>
+                      <tr>
+                        <th>Student Name</th>
+                        <th>Student Year</th>
+                        <th>Alumni Name</th>
+                        <th>Alumni Year</th>
+                        <th>Similarity</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                        {% for match in matches: %}
+                            {% for i in range (2, match|length): %} <br>
+                            <td>{{ match[i] }}</td>
+                            {% endfor %}
+                        {% endfor %}
+                    </tbody>
+                    </table>
+                    </div>
             </div>
         </div>
     </body>
