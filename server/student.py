@@ -11,7 +11,7 @@ class Student(object):
         self._major = major
         self._zip = zip
         self._spref = spref
-        self._numMatch = numMatch
+        self._numMatch = int(numMatch)
         self._careers = careers
         self._organizations = organizations
 
