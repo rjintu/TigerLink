@@ -110,10 +110,7 @@ class Matching(object):
                 alum = alumni[bestIdx]
                 alum._numMatch -= 1
                 alumni.remove(alum)  
-                              
-                '''
-                #matches_made[svec] = alum
-                # add alumns back if they have more matches
+
                 if alum._numMatch > 0:
                     alumni.append(alum)
                 
@@ -126,7 +123,7 @@ class Matching(object):
                 svec._numMatch -= 1
                 if svec._numMatch > 0:
                     students.append(svec)
-                    '''
+
         return matches
 
 
