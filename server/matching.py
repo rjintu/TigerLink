@@ -96,7 +96,6 @@ class Matching(object):
 
             svec = students[0]
             students.remove(svec)
-            '''
             if svec._numMatch > 0:
                 bestSim = 0
                 bestIdx = 0
@@ -110,8 +109,9 @@ class Matching(object):
 
                 alum = alumni[bestIdx]
                 alum._numMatch -= 1
-                alumni.remove(alum)                
-
+                alumni.remove(alum)  
+                              
+                '''
                 #matches_made[svec] = alum
                 # add alumns back if they have more matches
                 if alum._numMatch > 0:
