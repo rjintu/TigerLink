@@ -91,7 +91,6 @@ class Matching(object):
         #matches_made = {}
         matches = []
         while (len(students) > 0):
-            print(i)
             svec = students[0]
             if svec._numMatch > 0:
                 if len(alumni) == 0:
