@@ -14,29 +14,34 @@ import random
 class Matching(object):
 
     # convert to a student object
-    def studentize(self, students, careers, organizations=None):
-        newS = []
-        for student in students:
-            if len(student) >= 7:
-                pid = student[0]
-                cs = []
-                orgs = []
-                for row in careers:
-                    if (len(row) > 1):
-                        if row[0] == pid:
-                            cs.append(row[1])
-                for row in organizations:
-                    if (len(row) > 1):
-                        if row[0] == pid:
-                            orgs.append(row[1])
+    def studentize(self, students, careers, organizations):
+        try:
+            newS = []
+            for student in students:
+                if len(student) >= 7:
+                    pid = student[0]
+                    cs = []
+                    orgs = []
+                    for row in careers:
+                        if (len(row) > 1):
+                            if row[0] == pid:
+                                cs.append(row[1])
+                    for row in organizations:
+                        if (len(row) > 1):
+                            if row[0] == pid:
+                                orgs.append(row[1])
 
-                s = Student(pid, student[1], student[2], student[3],
-                student[4], student[5], student[6], careers=cs, organizations=orgs)
-                newS.append(s)
-        return newS
+                    s = Student(pid, student[1], student[2], student[3],
+                    student[4], student[5], student[6], careers=cs, organizations=orgs)
+                    newS.append(s)
+            return newS
+        except Exception as e:
+            html = "student is broken"
+            make_response(html)
+            return
 
     # convert to an alumni object
-    def alumnize(self, alumni, careers, organizations=None):
+    def alumnize(self, alumni, careers, organizations):
         newA = []
         for alum in alumni:
             if len(alum) >= 7:
