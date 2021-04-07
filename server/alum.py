@@ -9,7 +9,7 @@ class Alum(object):
         self._email = email
         self._major = major
         self._zip = zipp
-        self._numMatch = numMatch
+        self._numMatch = int(numMatch)
         self._careers = careers
         self._organizations = organizations
 

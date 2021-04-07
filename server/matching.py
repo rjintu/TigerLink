@@ -88,48 +88,47 @@ class Matching(object):
         students = self._students
         alumni = self._alumni
         #random.shuffle(students)
-        matches_made = {}
+        #matches_made = {}
         matches = []
-        i = 0
         while (len(students) > 0):
             print(i)
-            svec = students[i]
-            if len(alumni) == 0:
-                return matches
+            svec = students[0]
+            if svec._numMatch > 0:
+                if len(alumni) == 0:
+                    return matches
 
-            # check ending condition
-            students.remove(svec)
-            bestSim = 0
-            bestIdx = 0
-            for idx in range(len(alumni)):
-                avec = alumni[idx]
+                # check ending condition
+                students.remove(svec)
+                bestSim = 0
+                bestIdx = 0
+                for idx in range(len(alumni)):
+                    avec = alumni[idx]
+                    if avec._numMatch > 0:
+                        sim = self.dotProduct(svec, avec)
+                        if sim > bestSim:
+                            bestSim = sim
+                            bestIdx = idx
 
-                sim = self.dotProduct(svec, avec)
-                if sim > bestSim:
-                    bestSim = sim
-                    bestIdx = idx
+                alum = alumni[bestIdx]
+                alumni.remove(alum)                
 
-            alum = alumni[bestIdx]
-            alumni.remove(alum)                
+                #matches_made[svec] = alum
 
-            matches_made[svec] = alum
+                # add alumns back if they have more matches
+                if alum._numMatch > 1:
+                    alum._numMatch -= 1
+                    alumni.append(alum)
+                
+                #TODO: change to a student
+                match = (svec, alum, svec._name, svec._year, avec._name, avec._year, bestSim)
+                if match not in matches:
+                    matches.append(match)
 
-            # add alumns back if they have more matches
-            alum._numMatch = int(alum._numMatch)
-            if alum._numMatch > 1:
-                alum._numMatch -= 1
-                alumni.append(alum)
-            
-            #TODO: change to a student
-            match = (svec, alum, svec._name, svec._year, avec._name, avec._year, bestSim)
-            if match not in matches:
-                matches.append(match)
-
-            # assign more matches
-            svec._numMatch = int(svec._numMatch)
-            if svec._numMatch > 1:
-                svec._numMatch -= 1
-                students.append(svec)
+                # assign more matches
+                svec._numMatch = int(svec._numMatch)
+                if svec._numMatch > 1:
+                    svec._numMatch -= 1
+                    students.append(svec)
 
         return matches
 
