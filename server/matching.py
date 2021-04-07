@@ -99,14 +99,15 @@ class Matching(object):
         alumni = self._alumni
         #random.shuffle(students)
         matches = []
-
-        for i in range(len(students)):
+        i = 0
+        while (len(students) > 0):
+            print(i)
             svec = students[i]
-            # check ending condition
             if len(alumni) == 0:
                 return matches
+
+            # check ending condition
             students.remove(svec)
-            i = i-1
             bestSim = 0
             bestIdx = 0
             for idx in range(len(alumni)):
@@ -134,7 +135,6 @@ class Matching(object):
             if svec._numMatch > 1:
                 svec._numMatch -= 1
                 students.append(svec)
-                i = i + 1
 
         return matches
 
