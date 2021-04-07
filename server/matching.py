@@ -76,9 +76,9 @@ class Matching(object):
             db = Database()
             db.connect()
             s, c, i = db.get_students()
-            # self._students = self.studentize(s, c, i)
+            self._students = self.studentize(s, c, i)
             s2, c2, i2 = db.get_alumni()
-            # self._alumni = self.alumnize(s2, c2, i2)
+            self._alumni = self.alumnize(s2, c2, i2)
         except Exception as e:
             html = "error occurred: " + str(e)
             print(e)
@@ -106,7 +106,7 @@ class Matching(object):
             if len(alumni) == 0:
                 return matches
             students.remove(svec)
-            
+            i = i-1
             bestSim = 0
             bestIdx = 0
             for idx in range(len(alumni)):
@@ -134,6 +134,8 @@ class Matching(object):
             if svec._numMatch > 1:
                 svec._numMatch -= 1
                 students.append(svec)
+                i = i + 1
+
         return matches
 
 
