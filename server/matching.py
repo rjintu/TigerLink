@@ -91,13 +91,12 @@ class Matching(object):
         #matches_made = {}
         matches = []
         while (len(students) > 0):
-            svec = students[0]
-            if svec._numMatch > 0:
-                if len(alumni) == 0:
-                    return matches
+            if len(alumni) == 0:
+                return matches
 
-                # check ending condition
-                students.remove(svec)
+            svec = students[0]
+            students.remove(svec)
+            if svec._numMatch > 0:
                 bestSim = 0
                 bestIdx = 0
                 for idx in range(len(alumni)):
@@ -109,13 +108,13 @@ class Matching(object):
                             bestIdx = idx
 
                 alum = alumni[bestIdx]
+                alum._numMatch -= 1
                 alumni.remove(alum)                
 
                 #matches_made[svec] = alum
 
                 # add alumns back if they have more matches
-                if alum._numMatch > 1:
-                    alum._numMatch -= 1
+                if alum._numMatch > 0:
                     alumni.append(alum)
                 
                 #TODO: change to a student
@@ -124,9 +123,8 @@ class Matching(object):
                     matches.append(match)
 
                 # assign more matches
-                svec._numMatch = int(svec._numMatch)
-                if svec._numMatch > 1:
-                    svec._numMatch -= 1
+                svec._numMatch -= 1
+                if svec._numMatch > 0:
                     students.append(svec)
 
         return matches
