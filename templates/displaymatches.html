@@ -60,8 +60,8 @@
                     </thead>
                     <tbody>
                         {% for match in matches: %}
-                            <tr>   
                             {% if (match|length) > 2 %} 
+                                <tr>
                                 {% for i in range (2, match|length): %} <br>
                                     <td>{{ match[i] }}</td> 
                                 {% endfor %}
