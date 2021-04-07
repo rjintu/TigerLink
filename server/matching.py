@@ -17,42 +17,44 @@ class Matching(object):
     def studentize(self, students, careers, organizations=None):
         newS = []
         for student in students:
-            pid = student[0]
-            cs = []
-            orgs = []
-            for row in careers:
-                if (len(row) > 1):
-                    if row[0] == pid:
-                        cs.append(row[1])
-            for row in organizations:
-                if (len(row) > 1):
-                    if row[0] == pid:
-                        orgs.append(row[1])
+            if len(student) >= 7:
+                pid = student[0]
+                cs = []
+                orgs = []
+                for row in careers:
+                    if (len(row) > 1):
+                        if row[0] == pid:
+                            cs.append(row[1])
+                for row in organizations:
+                    if (len(row) > 1):
+                        if row[0] == pid:
+                            orgs.append(row[1])
 
-            s = Student(pid, student[1], student[2], student[3],
-            student[4], student[5], student[6], careers=cs, organizations=orgs)
-            newS.append(s)
+                s = Student(pid, student[1], student[2], student[3],
+                student[4], student[5], student[6], careers=cs, organizations=orgs)
+                newS.append(s)
         return newS
 
     # convert to an alumni object
     def alumnize(self, alumni, careers, organizations=None):
         newA = []
         for alum in alumni:
-            pid = alum[0]
-            cs = []
-            orgs = []
-            for row in careers:
-                if (len(row) > 1):
-                    if row[0] == pid:
-                        cs.append(row[1])
-            for row in organizations:
-                if (len(row) > 1):
-                    if row[0] == pid:
-                        orgs.append(row[1])
+            if len(alum) >= 7:
+                pid = alum[0]
+                cs = []
+                orgs = []
+                for row in careers:
+                    if (len(row) > 1):
+                        if row[0] == pid:
+                            cs.append(row[1])
+                for row in organizations:
+                    if (len(row) > 1):
+                        if row[0] == pid:
+                            orgs.append(row[1])
 
-            a = Alum(pid, alum[1], alum[2], alum[3],
-            alum[4], alum[5], alum[6], careers=cs, organizations=orgs)
-            newA.append(a)
+                a = Alum(pid, alum[1], alum[2], alum[3],
+                alum[4], alum[5], alum[6], careers=cs, organizations=orgs)
+                newA.append(a)
         return newA
 
     #student info: gauth, netid, fname, lname, year, email,
@@ -63,12 +65,10 @@ class Matching(object):
         try:
             db = Database()
             db.connect()
-            # s, c, i = db.get_students()
-            # self._students = self.studentize(s, c, i)
+            s, c, i = db.get_students()
+            self._students = self.studentize(s, c, i)
             s2, c2, i2 = db.get_alumni()
             self._alumni = self.alumnize(s2, c2, i2)
-            html = "got here"
-            make_response(html)
         except Exception as e:
             html = "error occurred: " + str(e)
             print(e)
