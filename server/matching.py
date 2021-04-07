@@ -67,6 +67,8 @@ class Matching(object):
             self._students = self.studentize(s, c, i)
             s2, c2, i2 = db.get_alumni()
             self._alumni = self.alumnize(s2, c2, i2)
+            html = "got here"
+            make_response(html)
         except Exception as e:
             html = "error occurred: " + str(e)
             print(e)
