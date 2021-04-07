@@ -15,57 +15,47 @@ class Matching(object):
 
     # convert to a student object
     def studentize(self, students, careers, organizations):
-        try:
-            newS = []
-            for student in students:
-                if len(student) >= 7:
-                    pid = student[0]
-                    cs = []
-                    orgs = []
-                    for row in careers:
-                        if (len(row) > 1):
-                            if row[0] == pid:
-                                cs.append(row[1])
-                    for row in organizations:
-                        if (len(row) > 1):
-                            if row[0] == pid:
-                                orgs.append(row[1])
+        newS = []
+        for student in students:
+            if len(student) >= 7 and student[6] > 0:
+                pid = student[0]
+                cs = []
+                orgs = []
+                for row in careers:
+                    if (len(row) > 1):
+                        if row[0] == pid:
+                            cs.append(row[1])
+                for row in organizations:
+                    if (len(row) > 1):
+                        if row[0] == pid:
+                            orgs.append(row[1])
 
-                    s = Student(pid, student[1], student[2], student[3],
-                    student[4], student[5], student[6], careers=cs, organizations=orgs)
-                    newS.append(s)
-            return newS
-        except Exception as e:
-            html = "student is broken"
-            make_response(html)
-            exit(1)
+                s = Student(pid, student[1], student[2], student[3],
+                student[4], student[5], student[6], careers=cs, organizations=orgs)
+                newS.append(s)
+        return newS
 
     # convert to an alumni object
     def alumnize(self, alumni, careers, organizations):
-        try:
-            newA = []
-            for alum in alumni:
-                if len(alum) >= 7:
-                    pid = alum[0]
-                    cs = []
-                    orgs = []
-                    for row in careers:
-                        if (len(row) > 1):
-                            if row[0] == pid:
-                                cs.append(row[1])
-                    for row in organizations:
-                        if (len(row) > 1):
-                            if row[0] == pid:
-                                orgs.append(row[1])
+        newA = []
+        for alum in alumni:
+            if len(alum) >= 7 and alum[6] > 0:
+                pid = alum[0]
+                cs = []
+                orgs = []
+                for row in careers:
+                    if (len(row) > 1):
+                        if row[0] == pid:
+                            cs.append(row[1])
+                for row in organizations:
+                    if (len(row) > 1):
+                        if row[0] == pid:
+                            orgs.append(row[1])
 
-                    a = Alum(pid, alum[1], alum[2], alum[3],
-                    alum[4], alum[5], alum[6], careers=cs, organizations=orgs)
-                    newA.append(a)
-            return newA
-        except Exception as e:
-            html = "alumni is broken"
-            make_response(html)
-            exit(1)
+                a = Alum(pid, alum[1], alum[2], alum[3],
+                alum[4], alum[5], alum[6], careers=cs, organizations=orgs)
+                newA.append(a)
+        return newA
 
     #student info: gauth, netid, fname, lname, year, email,
     #           major, zipp, numMatch, grad = None, career = None, organizations = None
@@ -131,7 +121,9 @@ class Matching(object):
                 alumni.append(alum)
             
             #TODO: change to a student
-            matches.append((svec, alum, svec._name, svec._year, avec._name, avec._year, bestSim))
+            match = (svec, alum, svec._name, svec._year, avec._name, avec._year, bestSim)
+            if match not in matches:
+                matches.append(match)
 
             # assign more matches
             svec._numMatch = int(svec._numMatch)
