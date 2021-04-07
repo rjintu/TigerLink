@@ -76,9 +76,9 @@ class Matching(object):
             db = Database()
             db.connect()
             s, c, i = db.get_students()
-            self._students = self.studentize(s, c, i)
+            # self._students = self.studentize(s, c, i)
             s2, c2, i2 = db.get_alumni()
-            self._alumni = self.alumnize(s2, c2, i2)
+            # self._alumni = self.alumnize(s2, c2, i2)
         except Exception as e:
             html = "error occurred: " + str(e)
             print(e)
