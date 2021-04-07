@@ -17,7 +17,7 @@ class Matching(object):
     def studentize(self, students, careers, organizations):
         newS = []
         for student in students:
-            if len(student) >= 7 and student[6] > 0:
+            if len(student) >= 7 and int(student[6]) > 0:
                 pid = student[0]
                 cs = []
                 orgs = []
@@ -39,7 +39,7 @@ class Matching(object):
     def alumnize(self, alumni, careers, organizations):
         newA = []
         for alum in alumni:
-            if len(alum) >= 7 and alum[6] > 0:
+            if len(alum) >= 7 and int(alum[6]) > 0:
                 pid = alum[0]
                 cs = []
                 orgs = []
@@ -96,6 +96,7 @@ class Matching(object):
 
             svec = students[0]
             students.remove(svec)
+            '''
             if svec._numMatch > 0:
                 bestSim = 0
                 bestIdx = 0
@@ -112,7 +113,6 @@ class Matching(object):
                 alumni.remove(alum)                
 
                 #matches_made[svec] = alum
-'''
                 # add alumns back if they have more matches
                 if alum._numMatch > 0:
                     alumni.append(alum)
@@ -127,7 +127,6 @@ class Matching(object):
                 if svec._numMatch > 0:
                     students.append(svec)
                     '''
-
         return matches
 
 
