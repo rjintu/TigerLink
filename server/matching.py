@@ -113,8 +113,6 @@ class Matching(object):
 
                 #matches_made[svec] = alum
 
-''' isolate bug 
-
                 # add alumns back if they have more matches
                 if alum._numMatch > 0:
                     alumni.append(alum)
@@ -128,7 +126,6 @@ class Matching(object):
                 svec._numMatch -= 1
                 if svec._numMatch > 0:
                     students.append(svec)
-    '''
 
         return matches
 
