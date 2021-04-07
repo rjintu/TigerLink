@@ -21,11 +21,13 @@ class Matching(object):
             cs = []
             orgs = []
             for row in careers:
-                if row[0] == pid:
-                    cs.append(row[1])
+                if (len(row) > 1):
+                    if row[0] == pid:
+                        cs.append(row[1])
             for row in organizations:
-                if row[0] == pid:
-                    orgs.append(row[1])
+                if (len(row) > 1):
+                    if row[0] == pid:
+                        orgs.append(row[1])
 
             s = Student(pid, student[1], student[2], student[3],
             student[4], student[5], student[6], careers=cs, organizations=orgs)
