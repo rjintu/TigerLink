@@ -98,6 +98,7 @@ class Matching(object):
         students = self._students
         alumni = self._alumni
         #random.shuffle(students)
+        matches_made = {}
         matches = []
         i = 0
         while (len(students) > 0):
@@ -119,7 +120,9 @@ class Matching(object):
                     bestIdx = idx
 
             alum = alumni[bestIdx]
-            alumni.remove(alum)
+            alumni.remove(alum)                
+
+            matches_made[svec] = alum
 
             # add alumns back if they have more matches
             alum._numMatch = int(alum._numMatch)
