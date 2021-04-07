@@ -40,11 +40,13 @@ class Matching(object):
             cs = []
             orgs = []
             for row in careers:
-                if row[0] == pid:
-                    cs.append(row[1])
+                if (len(row) > 1):
+                    if row[0] == pid:
+                        cs.append(row[1])
             for row in organizations:
-                if row[0] == pid:
-                    orgs.append(row[1])
+                if (len(row) > 1):
+                    if row[0] == pid:
+                        orgs.append(row[1])
 
             a = Alum(pid, alum[1], alum[2], alum[3],
             alum[4], alum[5], alum[6], careers=cs, organizations=orgs)
