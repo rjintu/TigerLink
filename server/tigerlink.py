@@ -1,6 +1,7 @@
 from flask import Flask, request, make_response, redirect, url_for, session
 from flask import render_template
 from flask_talisman import Talisman
+import datetime
 
 from .database import Database
 from .matching import Matching
@@ -136,6 +137,91 @@ def createuser():
         return make_response(html)
 
     return redirect(url_for('timeline'))
+
+
+@app.route('/loadpost', methods=['GET'])
+def loadpost():
+    if not loginutil.is_logged_in(session):
+        # user not logged in
+        return redirect('/login')
+
+    profileid = session['profileid']
+    db = Database()
+    db.connect()
+    user_exists = db.user_exists(profileid)
+    db.disconnect()
+    if not user_exists:
+        # profile has not been created
+        return redirect('/index')
+
+    try:
+        profileid = session['profileid']
+        db = Database()
+        db.connect()
+        role = db.get_role(profileid)
+
+        info, careers, interests = None, None, None
+        print(role)
+        if role == 'student':
+            info, careers, interests = db.get_student_by_id(profileid)
+        elif role == 'alum':
+            info, careers, interests = db.get_alum_by_id(profileid)
+        db.disconnect()
+
+        html = render_template('createpost.html', picture=session['picture'], interests=interests)
+    except Exception as e:
+        html = "error occurred: " + str(e)
+        print(e)
+        return make_response(html)
+
+    return html
+
+@app.route('/createpost', methods=['POST'])
+def createpost():
+    if not loginutil.is_logged_in(session):
+        # user not logged in
+        return redirect('/login')
+
+    profileid = session['profileid']
+    db = Database()
+    db.connect()
+    user_exists = db.user_exists(profileid)
+    db.disconnect()
+
+    if not user_exists:
+        # profile has not been created
+        return redirect('/index')
+
+    try:
+        acct_info = request.form
+
+        title = acct_info.get('title', '')
+        content = acct_info.get('content', '')
+        email = acct_info.get('email', '')
+        role = acct_info.get('role', '')
+        interests = acct_info.getlist('interests')  # FIXME: verify this works
+
+        db = Database()
+        db.connect()
+        profileid = session['profileid']
+        role = db.get_role(profileid)
+
+        info, careers, interests = None, None, None
+        print(role)
+        if role == 'student':
+            info, careers, interests = db.get_student_by_id(profileid)
+        elif role == 'alum':
+            info, careers, interests = db.get_alum_by_id(profileid)
+
+        output = db.create_timeline(True, '1', str(info[0]), str(datetime.datetime.now()), str(title), str(content))
+        db.disconnect()
+        return redirect('/timeline')
+    except Exception as e:
+        html = "error occurred: " + str(e)
+        print(e)
+        return make_response(html)
+
+    return html
 
 
 @app.route('/getstudents', methods=['GET'])
@@ -370,8 +456,9 @@ def timeline():
     db = Database()
     db.connect()
 
-    output = db.create_timeline()
+    output = db.create_timeline(False, None, None, None, None, None)
     print(output)
+
     db.disconnect()
     html = render_template('timeline.html', posts=output, picture=session['picture'])
     response = make_response(html)

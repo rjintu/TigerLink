@@ -46,7 +46,7 @@ class Database:
         # Timeline posts tables (posts, postgraphics)
         cursor.execute('DROP TABLE IF EXISTS posts')
         cursor.execute('CREATE TABLE posts ' + 
-                '(postid TEXT, authorid TEXT, posttime TEXT, postcontent TEXT)')
+                '(postid TEXT, authorid TEXT, posttime TEXT, posttitle TEXT, postcontent TEXT)')
         cursor.execute('DROP TABLE IF EXISTS postgraphics')
         cursor.execute('CREATE TABLE postgraphics ' +
                 '(postid TEXT, postgraphic TEXT)')
@@ -421,14 +421,21 @@ class Database:
         return output
 
 
-    def create_timeline(self):
-        cursor = self._connection.cursor()
-        cursor.execute('INSERT INTO posts(postid, authorid, posttime, postcontent) ' +
-                           'VALUES (%s, %s, %s, %s)', ['1', '123', 'April 6th, 12:51am', 'This is a sample timeline post that was put into the database.'])
-        cursor.close()
+    def create_timeline(self, posting, postid, authorid, posttime, posttitle, postcontent):
+        if posting:
+            cursor = self._connection.cursor()
+            print(postid)
+            print(authorid)
+            print(posttime)
+            print(postcontent)
+            cursor.execute('INSERT INTO posts(postid, authorid, posttime, posttitle, postcontent) ' +
+                            'VALUES (%s, %s, %s, %s, %s)', ['1', authorid, posttime, posttitle, postcontent])
+            self._connection.commit()
+            cursor.close()
+
         cursor = self._connection.cursor()
 
-        stmtStr = "SELECT postid, authorid, posttime, postcontent FROM posts"
+        stmtStr = "SELECT postid, authorid, posttime, posttitle, postcontent FROM posts"
         cursor.execute(stmtStr)
         row = cursor.fetchone()
         output = []
@@ -436,6 +443,8 @@ class Database:
             output.append(row)
             row = cursor.fetchone()
 
+        output.reverse()
+        cursor.close()
         print(output)
         return output
 
