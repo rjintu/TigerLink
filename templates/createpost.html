@@ -13,6 +13,8 @@
 
   <link rel='stylesheet' type='text/css' href='static/style.css'>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans">
+  <script src="jquery-3.5.1.min.js"></script>
+
 </head>
 <header>
     <h2 style="text-align: center;">Create Post</h2>
@@ -98,23 +100,28 @@
                     <!-- send selected interests to template via Jinja -->
                 </select>
             </div>
+            <br>
+                Upload an Image:
+                <label class="file-upload-container" for="file-upload">
+                  <input id="file-upload" type="file" style="background-color: gray;">
+                </label>
+            </div>
 
+            <div id="loading">
+                <img id="loading-image" style="display: none" src="../giphy.gif" alt="Loading..." />
+            </div>
+                          
+        
+            <input id="imgurl" name="imgurl" type="hidden" value="google.com">
           </div>
         </div>
       </div>
     </div>
   </body>
 
-  <body>
-    <div class="card">
-        <label class="file-upload-container" for="file-upload">
-          <input id="file-upload" type="file" style="display:none;">
-          Select an Image
-        </label>
-    </div>
       <!-- Scripts -->
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-  
+  <body>
     <br>
     <div class="container">
       <div class="row justify-content-center">
@@ -138,7 +145,6 @@ var myWidget = cloudinary.createUploadWidget({
     }
   }
 ) -->
-
 <script>
 
     const CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/tigerlink/upload'; 
@@ -150,7 +156,7 @@ var myWidget = cloudinary.createUploadWidget({
         var formData = new FormData();
         formData.append('file', file);
         formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
-
+        document.getElementById('loading').style.display = 'block'; 
         axios({
             url: CLOUDINARY_URL,
             method: 'POST',
@@ -159,8 +165,12 @@ var myWidget = cloudinary.createUploadWidget({
             },
             data: formData
         }).then(function(res) {
-            console.log(res.data.secure_url);
+            document.getElementById('loading').style.display = 'none';
+            // $('#loading').hide();
+
+            document.getElementById('imgurl').value = res.data.secure_url;
         }).catch(function(err) {
+            document.getElementById('loading').style.display = 'none'; 
             console.error(err);
         });
     });

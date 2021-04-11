@@ -200,7 +200,7 @@ def createpost():
         email = acct_info.get('email', '')
         role = acct_info.get('role', '')
         interests = acct_info.getlist('interests')  # FIXME: verify this works
-
+        imgurl = acct_info.get('imgurl', '')
         db = Database()
         db.connect()
         profileid = session['profileid']
@@ -213,7 +213,7 @@ def createpost():
         elif role == 'alum':
             info, careers, interests = db.get_alum_by_id(profileid)
 
-        output = db.create_timeline(True, '1', str(info[0]), str(datetime.datetime.now()), str(title), str(content))
+        output = db.create_timeline(True, '1', str(info[0]), str(datetime.datetime.now()), str(title), str(content), str(imgurl))
         db.disconnect()
         return redirect('/timeline')
     except Exception as e:
@@ -456,7 +456,7 @@ def timeline():
     db = Database()
     db.connect()
 
-    output = db.create_timeline(False, None, None, None, None, None)
+    output = db.create_timeline(False, None, None, None, None, None, None)
     print(output)
 
     db.disconnect()
