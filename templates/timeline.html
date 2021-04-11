@@ -41,18 +41,29 @@
 <body>
     <div class="container">
         <div class="row justify-content-start">
+            <a href='loadpost'>
+            <button type="button" style="background-color: orange" class="btn btn-primary btn-lg btn-block">Create a timeline post.</button>
+            </a>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row justify-content-start">
             <table class="table table-hover table-responsive">
                 <thead>
                   <tr>
                     <th>Time</th>
+                    <th>Author</th>
+                    <th>Post Title</th>
                     <th>Post Content</th>
                   </tr>
                 </thead>
                 <tbody>
                     {% for res in posts: %}
-                    <tr>    
+                    <tr>  
                         <td>{{ res[2]}}</td> 
-                        <td>{{ res[3] }}</td> 
+                        <td>{{ res[1] }}</td>
+                        <td>{{ res[3]}}</td> 
+                        <td>{{ res[4] }}</td> 
                     </tr>  
                     {% endfor %}
                 </tbody>
