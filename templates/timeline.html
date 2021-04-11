@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="en">
 
+
 <head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
@@ -40,37 +41,36 @@
 </header>
 <body>
     <div class="container">
-        <div class="row justify-content-start">
-            <a href='loadpost'>
+        <a href='loadpost'>
+            <div class="row justify-content-start">
             <button type="button" style="background-color: orange" class="btn btn-primary btn-lg btn-block">Create a timeline post.</button>
-            </a>
+            </div>
+        </a>
         </div>
     </div>
-    <div class="container">
-        <div class="row justify-content-start">
-            <table class="table table-hover table-responsive">
-                <thead>
-                  <tr>
-                    <th>Time</th>
-                    <th>Author</th>
-                    <th>Post Title</th>
-                    <th>Post Content</th>
-                  </tr>
-                </thead>
-                <tbody>
-                    {% for res in posts: %}
-                    <tr>  
-                        <td>{{ res[2]}}</td> 
-                        <td>{{ res[1] }}</td>
-                        <td>{{ res[3]}}</td> 
-                        <td>{{ res[4] }}</td> 
-                    </tr>  
-                    {% endfor %}
-                </tbody>
-                </table>
+    {% for res in posts: %}
+    <div class="container mt-5 mb-5">
+        <div class="row justify-content-center">
+            <!-- <div class="d-flex flex-row"></div> -->
+                <div class="col-md-4 ">
+                    <div><img src="https://i.imgur.com/ZKbpmaU.jpg"></div>
+                </div>
+                <div class="col-md-4 ">
+                    <h5>Posted by: {{res[1]}}</h5>
+                    <h9>Time Posted: {{res[2]}}</h9>
+                    <br>
+                    <br>
+                    <h5>{{res[3]}}</h5>
+                    <h7>
+                        Content: {{res[4]}}
+                    </h7>
+                </div>
+
+
         </div>
+
     </div>
-  
+    {% endfor %}
 
 </body>
 </html>
