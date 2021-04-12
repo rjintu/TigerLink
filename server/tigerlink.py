@@ -362,7 +362,15 @@ def match():
 @app.route('/permissions', methods=['GET'])
 def noAuth():
     try:
-        html = render_template('permissions.html')
+        db = Database()
+        db.connect()
+        # TODO: handle case where user isn't logged in
+        role = db.get_role(session['profileid'])
+        db.disconnect()
+        if role != 'admin': # TODO: change to some constant
+            html = render_template('permissions.html')
+        else:
+            html = "welcome, admin!"
     except Exception as e:
         html = "error occurred: " + str(e)
         print(e)
