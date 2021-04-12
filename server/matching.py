@@ -87,44 +87,48 @@ class Matching(object):
     def match(self):
         students = self._students
         alumni = self._alumni
-        #random.shuffle(students)
-        #matches_made = {}
         matches = []
+        finalMatches = []
         while (len(students) > 0):
             if len(alumni) == 0:
-                return matches
+                return finalMatches
 
             svec = students[0]
             students.remove(svec)
             if svec._numMatch > 0:
-                bestSim = 0
-                bestIdx = 0
+                bestSim = -1
+                bestIdx = -1
+                updated = False
                 for idx in range(len(alumni)):
                     avec = alumni[idx]
-                    if avec._numMatch > 0:
+                    # make sure no re-matches EVER
+                    potentialMatch = (svec, avec)
+                    if potentialMatch not in matches and avec._numMatch > 0:
                         sim = self.dotProduct(svec, avec)
                         if sim > bestSim:
                             bestSim = sim
                             bestIdx = idx
-
-                alum = alumni[bestIdx]
-                alum._numMatch -= 1
-                alumni.remove(alum)  
-
-                if alum._numMatch > 0:
-                    alumni.append(alum)
-                
-                #TODO: change to a student
-                match = (svec, alum, svec._name, svec._year, avec._name, avec._year, bestSim)
-                if match not in matches:
+                            updated = True
+                                
+                if updated:
+                    alum = alumni[bestIdx]
+                    match = (svec, alum)
+                    
+                    #match = (svec._name, svec._year, alum._name, alum._year, bestSim)
                     matches.append(match)
+                    finalMatches.append((svec._name, svec._year, alum._name, alum._year, bestSim))
+                    
+                    del(alumni[bestIdx])
+                    alum._numMatch -= 1
 
-                # assign more matches
-                svec._numMatch -= 1
-                if svec._numMatch > 0:
-                    students.append(svec)
+                    if alum._numMatch > 0:
+                        alumni.append(alum)
 
-        return matches
+                    svec._numMatch -= 1
+                    if svec._numMatch > 0:
+                        students.append(svec)
+                        
+        return finalMatches
 
 
     #sprefs = weightings for career, major, and organizations
