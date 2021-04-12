@@ -65,7 +65,7 @@
                     <br>
                     <div class="form-group">
                         <label for="classYear"><strong>Class Year</strong></label>
-                        <input type="classYear" class="form-control" name="classYear" id="classYear"
+                        <input type="number" min="1920" max="2025" placeholder="Ex: 2023" class="form-control" name="classYear" id="classYear"
                             aria-describedby="emailHelp" value="{{ info[1] }}" required>
                     </div>
                     <br>
@@ -81,7 +81,7 @@
                     <br>
                     <div class="form-group">
                         <label for="zipcode"><strong>Zip Code</strong></label>
-                        <input type="zipcode" class="form-control" name="zipcode" id="zipcode"
+                        <input type="number" min="000001" max="99999" class="form-control" name="zipcode" id="zipcode"
                             aria-describedby="emailHelp" value="{{ info[4] }}" required>
                     </div>
                     <br>
