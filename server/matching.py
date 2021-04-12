@@ -116,7 +116,7 @@ class Matching(object):
                     
                     #match = (svec._name, svec._year, alum._name, alum._year, bestSim)
                     matches.append(match)
-                    finalMatches.append((svec._name, svec._year, alum._name, alum._year, bestSim))
+                    finalMatches.append((svec, alum, svec._name, svec._year, alum._name, alum._year, bestSim))
                     
                     del(alumni[bestIdx])
                     alum._numMatch -= 1
@@ -127,7 +127,7 @@ class Matching(object):
                     svec._numMatch -= 1
                     if svec._numMatch > 0:
                         students.append(svec)
-                        
+
         return finalMatches
 
 
