@@ -21,6 +21,7 @@ login_manager = loginutil.GoogleLogin(keychain)
 # CSP is disabled cause it messes with bootstrap
 Talisman(app, content_security_policy=None)
 
+
 # add other blueprints
 app.register_blueprint(admin)
 
@@ -33,13 +34,7 @@ def index():
         return redirect('/login')
 
     profileid = session['profileid']
-
-    db = Database()
-    db.connect()
-    user_exists = db.user_exists(profileid)
-    db.disconnect()
-    if user_exists:
-        # profile is already created
+    if user_exists(profileid):
         return redirect('/timeline')
 
     name = session['fullname']
@@ -87,14 +82,10 @@ def login_auth():
         session['picture'] = picture
 
         # check where to redirect user
-        db = Database()
-        db.connect()
-        user_exists = db.user_exists(profileid)
-        db.disconnect()
-        if not user_exists:
-            return redirect('/index')
-        else:
+        if user_exists(profileid):
             return redirect('/timeline')
+        else:
+            return redirect('/index')
 
     except Exception as e:
         return make_response('Failed to login: ' + str(e))
@@ -156,16 +147,11 @@ def loadpost():
         return redirect('/login')
 
     profileid = session['profileid']
-    db = Database()
-    db.connect()
-    user_exists = db.user_exists(profileid)
-    db.disconnect()
-    if not user_exists:
+    if not user_exists(profileid):
         # profile has not been created
         return redirect('/index')
 
     try:
-        profileid = session['profileid']
         db = Database()
         db.connect()
         role = db.get_role(profileid)
@@ -195,12 +181,7 @@ def createpost():
         return redirect('/login')
 
     profileid = session['profileid']
-    db = Database()
-    db.connect()
-    user_exists = db.user_exists(profileid)
-    db.disconnect()
-
-    if not user_exists:
+    if not user_exists(profileid):
         # profile has not been created
         return redirect('/index')
 
@@ -243,6 +224,8 @@ def createpost():
 
     return html
 
+# TODO: remove this page (currently for debugging only)
+
 
 @app.route('/getstudents', methods=['GET'])
 def getstudents():
@@ -265,6 +248,11 @@ def getmatches():
     if not loginutil.is_logged_in(session):
         return redirect('/login')
 
+    profileid = session['profileid']
+    if not user_exists(profileid):
+        # profile has not been created
+        return redirect('/index')
+
     try:
         # creates matches from matching.py file. returns a list of tuples.
         m = Matching()
@@ -278,6 +266,112 @@ def getmatches():
     response = make_response(html)
     return response
 
+# input (from get request): studentid, alumid
+
+
+@app.route('/matchdetails', methods=['GET'])
+def matchdetails():
+    if not loginutil.is_logged_in(session):
+        return redirect('/login')
+
+    profileid = session['profileid']
+    if not user_exists(profileid):
+        # profile has not been created
+        return redirect('/index')
+
+    try:
+        # retrieve information about matches
+        db = Database()
+        db.connect()
+        student = request.args.get('student')
+        alum = request.args.get('alum')
+        student_info, student_careers, student_interests = db.get_student_by_id(
+            student)
+        alum_info, alum_careers, alum_interests = db.get_alum_by_id(alum)
+
+    except Exception as e:
+        html = "error occurred: " + str(e)
+        print(e)
+
+    html = "<table class='table'>"
+    # print(student_careers)
+
+    html += "<thead>"
+    html += "<tr>\
+                    <td style='width: 20%'><strong>MATCH INFO</strong></td>\
+                    <td style='width: 40%'><strong>Student Info</strong></td>\
+                    <td style='width: 40%'><strong>Alum Info</strong></td>\
+                </tr>"
+    html += "</thead>"
+    html += "<tbody>"
+
+    for i in range(len(student_info)+1):
+        html += "<tr>"
+
+        if i is 0:
+            html += "<td ><strong>Name:</strong></td>"
+        elif i is 1:
+            html += "<td><strong>Class Year:</strong></td>"
+        elif i is 2:
+            html += "<td><strong>Email:</strong></td>"
+        elif i is 3:
+            html += "<td><strong>Major:</strong></td>"
+        elif i is 4:
+            html += "<td><strong>Zip Code:</strong></td>"
+        elif i is 5:
+            html += "<td><strong>Careers:</strong></td>"
+        elif i is 6:
+            html += "<td><strong>Groups:</strong></td>"
+
+        if (i <= 4):
+            html += '<td>' + student_info[i] + '</td>'
+            html += '<td>' + alum_info[i] + '</td>'
+        elif i is 5:
+            stud_temp = ""
+            alum_temp = ""
+
+            for m in range(len(student_careers)-1):
+                stud_temp += student_careers[m][0]
+                stud_temp += ", "
+            stud_temp += student_careers[-1][0]
+
+            for n in range(len(alum_careers)-1):
+                alum_temp += alum_careers[n][0]
+                alum_temp += ", "
+            alum_temp += alum_careers[-1][0]
+
+            html += '<td>' + stud_temp + '</td>'
+            html += '<td>' + alum_temp + '</td>'
+
+        elif i is 6:
+            stud_temp = ""
+            alum_temp = ""
+
+            for m in range(len(student_interests)-1):
+                stud_temp += student_interests[m][0]
+                stud_temp += ", "
+            stud_temp += student_interests[-1][0]
+
+            for n in range(len(alum_interests)-1):
+                alum_temp += alum_interests[n][0]
+                alum_temp += ", "
+            alum_temp += alum_interests[-1][0]
+
+            html += '<td>' + stud_temp + '</td>'
+            html += '<td>' + alum_temp + '</td>'
+
+        html += "</tr>"
+
+    html += "</tbody>"
+    html += "</table>"
+
+    # html = render_template('displaymatches.html', student_info=student_info,
+    #                      student_careers=student_careers, student_interests=student_interests,
+    #                     alum_info=alum_info, alum_careers=alum_careers, alum_interests=alum_interests)
+    # TODO: incorporate careers/interests
+    response = make_response(html)
+    return response
+
 
 @app.route('/editprofile', methods=['GET'])
 def getprofile():
@@ -286,16 +380,11 @@ def getprofile():
         return redirect('/login')
 
     profileid = session['profileid']
-    db = Database()
-    db.connect()
-    user_exists = db.user_exists(profileid)
-    db.disconnect()
-    if not user_exists:
+    if not user_exists(profileid):
         # profile has not been created
         return redirect('/index')
 
     try:
-        profileid = session['profileid']
         db = Database()
         db.connect()
         role = db.get_role(profileid)
@@ -309,6 +398,7 @@ def getprofile():
         db.disconnect()
         html = render_template('editprofile.html', info=info,
                                careers=careers, interests=interests, picture=session['picture'], role=role)
+        
     except Exception as e:
         html = "error occurred: " + str(e)
         print(e)
@@ -362,7 +452,6 @@ def changeprofile():
 
     return redirect('editprofile')
 
-  
 # Note: search will automatically query both students and alumni
 # TODO: implement this page in the frontend
 @app.route('/search', methods=['GET'])
@@ -372,11 +461,7 @@ def search():
         return redirect('/login')
 
     profileid = session['profileid']
-    db = Database()
-    db.connect()
-    user_exists = db.user_exists(profileid)
-    db.disconnect()
-    if not user_exists:
+    if not user_exists(profileid):
         # profile has not been created
         return redirect('/index')
 
@@ -414,11 +499,7 @@ def dosearch():
         return redirect('/login')
 
     profileid = session['profileid']
-    db = Database()
-    db.connect()
-    user_exists = db.user_exists(profileid)
-    db.disconnect()
-    if not user_exists:
+    if not user_exists(profileid):
         # profile has not been created
         return redirect('/index')
 
@@ -434,11 +515,7 @@ def timeline():
         return redirect('/login')
 
     profileid = session['profileid']
-    db = Database()
-    db.connect()
-    user_exists = db.user_exists(profileid)
-    db.disconnect()
-    if not user_exists:
+    if not user_exists(profileid):
         # profile has not been created
         return redirect('/index')
 

@@ -29,7 +29,7 @@
         integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
         crossorigin="anonymous"></script>
 
-    <script src= "https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
 
     <!-- Option 2: Separate Popper and Bootstrap JS -->
     <!--
@@ -47,7 +47,8 @@
     <div class="container">
         <div class="row justify-content-center">
             <!-- col 1 -->
-                <table class="table table-hover table-responsive">
+
+            <table class="table table-hover table-responsive">
                 <thead>
                     <tr>
                         <th>Student Name</th>
@@ -59,34 +60,91 @@
                 </thead>
                 <tbody>
                     {% for match in matches: %}
-                        {% if (match|length) > 2 %} 
-                            <tr class="clickable-row" id='{{match[0]}}' value='{{match[1]}}'>
-                            {% for i in range (2, 6): %}
-                                <td>{{ match[i] }}</td> 
-                            {% endfor %}
-                            <td>{{ match[6] }}%</td>
-                            </tr>
-                        {% endif %}
-                        <tbody class="details" id="{{match[0]}}&{{match[1]}}"></tbody>
+                    {% if (match|length) > 2 %}
+                    <tr class="clickable-row" id='{{match[0]}}' value='{{match[1]}}'>
+                        {% for i in range (2, match|length): %}
+                        <td>{{ match[i] }}</td>
+                        {% endfor %}
+                    </tr>
+                    {% endif %}
+                    <!-- <p id="details"></p> -->
+
                     {% endfor %}
                 </tbody>
             </table>
+            <div class="w-50 justify-content-left">
+                <p id="details"></p>
+            </div>
+            <div class="d-flex justify-content-center">
+                <button type="submit" id="closeMatch" class="btn btn-success">Done</button>
+            </div>
+
+            <!-- <a tabindex="0" class="button" id='test123' value='test123' role="button" data-bs-toggle="popover"
+                data-bs-content="testing" data-bs-trigger="focus" title="Match Info">Dismissible
+                popover</a> -->
         </div>
     </div>
-    
+
+    <!-- button and modal -->
+    <!-- <button type="button" class="btn btn-primary" id="modalButton" data-bs-toggle="modal"
+        data-bs-target="#staticBackdrop">
+        Launch static backdrop modal
+    </button>
+
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Match Info</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="test123">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div> -->
+
+
+
     <script>
         'use strict';
 
-        function handleResponse(response, student, alum){
-            $('.details').html(""); // clear out other boxes
-            let results = document.getElementById(student + "&" + alum);
-            $(results).html(response);
+        // var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
+        // var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+        //     return new bootstrap.Popover(popoverTriggerEl)
+        // })
+
+        // var popover = new bootstrap.Popover(document.querySelector('.popover-dismiss'), {
+        //     trigger: 'focus'
+        // })
+
+        // var myModal = document.getElementById('myModal')
+        // var myInput = document.getElementById('myInput')
+
+        // myModal.addEventListener('shown.bs.modal', function () {
+        //     myInput.focus()
+        // })
+
+        function handleResponse(response) {
+            $('#details').html(response);
+            // let b = document.querySelector('#test123');
+            // b.setAttribute('title', 'helloButton');
+            // print(response)
+            // $('#modalButton').on('click', function () {
+            //     $('<p>Text</p>').appendTo('#test123');
+            // });
         }
 
         let request = null;
 
-        function setup()
-        {
+
+        function setup() {
+
+            $("#closeMatch").hide();
             $('.clickable-row').click(
                 (e) => {
 
@@ -103,17 +161,34 @@
 
                     if (request != null)
                         request.abort();
-                    
+
                     request = $.ajax({
                         type: 'GET',
-                        url: url, 
-                        success: function (response){
-                            handleResponse (response, studentU, alumU)
-                        }
+                        url: url,
+                        success: handleResponse
                     });
+
+                    $("#details").show();
+                    $("#closeMatch").show();
                 }
             );
+
+
+            $("#closeMatch").click(function () {
+                $("#details").hide();
+                $("#closeMatch").hide();
+            });
+
+
+            // $('#modalButton').click(
+            //     (e) => {
+            //         // $('<p>Text</p>').appendTo('#test123');
+            //     }
+            // );
+
         }
+
+
         $(document).ready(setup);
 
     </script>
