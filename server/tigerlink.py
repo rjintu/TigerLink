@@ -36,7 +36,7 @@ def index():
     if user_exists:
         # profile is already created
         return redirect('/timeline')
-    
+
     name = session['fullname']
 
     html = render_template('index.html', name=name)
@@ -45,6 +45,8 @@ def index():
 
 # Note: when testing locally, must use port 8888 for Google SSO
 # general welcome/login page
+
+
 @app.route('/login', methods=['GET'])
 def login():
     if loginutil.is_logged_in(session):
@@ -56,6 +58,8 @@ def login():
     return response
 
 # Note: when testing locally, must use port 8888 for Google SSO
+
+
 @app.route('/login/redirect', methods=['GET'])
 def login_redirect():
     # redirect the user to Google's login page
@@ -76,7 +80,7 @@ def login_auth():
         session['email'] = email
         session['fullname'] = fullname
         session['picture'] = picture
-        
+
         # check where to redirect user
         db = Database()
         db.connect()
@@ -100,6 +104,7 @@ def logout():
     session.pop('picture', None)
 
     return redirect('/')
+
 
 @app.route('/createuser', methods=['POST'])
 def createuser():
@@ -168,13 +173,15 @@ def loadpost():
             info, careers, interests = db.get_alum_by_id(profileid)
         db.disconnect()
 
-        html = render_template('createpost.html', picture=session['picture'], interests=interests)
+        html = render_template(
+            'createpost.html', picture=session['picture'], interests=interests)
     except Exception as e:
         html = "error occurred: " + str(e)
         print(e)
         return make_response(html)
 
     return html
+
 
 @app.route('/createpost', methods=['POST'])
 def createpost():
@@ -213,7 +220,8 @@ def createpost():
         elif role == 'alum':
             info, careers, interests = db.get_alum_by_id(profileid)
 
-        output = db.create_timeline(True, '1', str(info[0]), str(datetime.datetime.now()), str(title), str(content), str(imgurl))
+        output = db.create_timeline(True, '1', str(info[0]), str(
+            datetime.datetime.now()), str(title), str(content), str(imgurl))
         db.disconnect()
         return redirect('/timeline')
     except Exception as e:
@@ -249,8 +257,8 @@ def getmatches():
         # creates matches from matching.py file. returns a list of tuples.
         m = Matching()
         matches = m.match()
-        html = render_template('displaymatches.html', matches=matches, 
-                picture=session['picture'])
+        html = render_template('displaymatches.html', matches=matches,
+                               picture=session['picture'])
     except Exception as e:
         html = "error occurred: " + str(e)
         print(e)
@@ -264,7 +272,7 @@ def getprofile():
     if not loginutil.is_logged_in(session):
         # user not logged in
         return redirect('/login')
-    
+
     profileid = session['profileid']
     db = Database()
     db.connect()
@@ -288,7 +296,7 @@ def getprofile():
             info, careers, interests = db.get_alum_by_id(profileid)
         db.disconnect()
         html = render_template('editprofile.html', info=info,
-                careers=careers, interests=interests, picture=session['picture'])
+                               careers=careers, interests=interests, picture=session['picture'], role=role)
     except Exception as e:
         html = "error occurred: " + str(e)
         print(e)
@@ -344,6 +352,7 @@ def changeprofile():
 
     return redirect('editprofile')
 
+
 @app.route('/admin', methods=['GET'])
 def match():
     try:
@@ -358,6 +367,7 @@ def match():
 
     response = make_response(html)
     return response
+
 
 @app.route('/permissions', methods=['GET'])
 def noAuth():
@@ -379,7 +389,7 @@ def search():
     if not loginutil.is_logged_in(session):
         # user not logged in
         return redirect('/login')
-    
+
     profileid = session['profileid']
     db = Database()
     db.connect()
@@ -409,7 +419,8 @@ def search():
         # FIXME: db.search() will take search_query and two booleans (student and alumni)
         results = db.search(search_query)
         db.disconnect()
-        html = render_template('search.html', results=results, picture=session['picture'])
+        html = render_template(
+            'search.html', results=results, picture=session['picture'])
 
     except Exception as e:
         html = str(search_query)
@@ -418,12 +429,13 @@ def search():
     response = make_response(html)
     return response
 
+
 @app.route('/dosearch', methods=['GET'])
 def dosearch():
     if not loginutil.is_logged_in(session):
         # user not logged in
         return redirect('/login')
-    
+
     profileid = session['profileid']
     db = Database()
     db.connect()
@@ -443,7 +455,7 @@ def timeline():
     if not loginutil.is_logged_in(session):
         # user not logged in
         return redirect('/login')
-    
+
     profileid = session['profileid']
     db = Database()
     db.connect()
@@ -460,7 +472,8 @@ def timeline():
     print(output)
 
     db.disconnect()
-    html = render_template('timeline.html', posts=output, picture=session['picture'])
+    html = render_template('timeline.html', posts=output,
+                           picture=session['picture'])
     response = make_response(html)
     return response
 

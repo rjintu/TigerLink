@@ -37,6 +37,47 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js" integrity="sha384-SR1sx49pcuLnqZUnnPwx6FCym0wLsk5JZuNx2bPPENzswTNFaQU1RDvt3wT4gWFG" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.min.js" integrity="sha384-j0CNLUeiqtyaRmlzUHCPZ+Gy5fQu0dQ6eZ/xAww941Ai1SxSY+0EQqNXNE6DZiVc" crossorigin="anonymous"></script>
     -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+  <script>
+    'use strict';
+    $(document).ready(function () {
+
+      $("#studGroup1").hide();
+      $("#alumGroup1").hide();
+      $("#studGroup2").hide();
+      $("#alumGroup2").hide();
+      $("#studGroup3").hide();
+      $("#alumGroup3").hide();
+      $("#interestsForm").hide();
+      $("#numMatches").hide();
+      $("#careersForm").hide();
+
+      $("#student").click(function () {
+        $("#interestsForm").show();
+        $("#numMatches").show();
+        $("#careersForm").show();
+        $("#alumGroup1").hide();
+        $("#alumGroup2").hide();
+        $("#alumGroup3").hide();
+        $("#studGroup1").show();
+        $("#studGroup2").show();
+        $("#studGroup3").show();
+      });
+
+      $("#alum").click(function () {
+        $("#interestsForm").show();
+        $("#numMatches").show();
+        $("#careersForm").show();
+        $("#studGroup1").hide();
+        $("#studGroup2").hide();
+        $("#studGroup3").hide();
+        $("#alumGroup1").show();
+        $("#alumGroup2").show();
+        $("#alumGroup3").show();
+      });
+    });
+  </script>
+
 </body>
 
 <form action="createuser" method="post">
@@ -69,19 +110,20 @@
           </select>
           <br>
 
-          <strong>How many matches would you like?</strong>
-          <select class="form-select" aria-label="Default select example" id="numMatches" name="numMatches">
-            {% include 'numofmatches.html' %}
-          </select>
-
-          <br>
-
           <div class="form-group">
             <label for="Zip Code"><strong>Zip Code</strong></label>
             <input type="number" min="000001" max="99999" class="form-control" name="zipcode" id="zipcode"
               aria-describedby="emailHelp" placeholder="Ex: 08554" required>
             <small id="emailHelp" class="form-text text-muted">We'll never share your data with anyone.</small>
           </div>
+
+          <br>
+
+          <strong id="studGroup1">How many alumni would you like to be matched with?</strong>
+          <strong id="alumGroup1">How many students would you like to be matched with?</strong>
+          <select class="form-select" aria-label="Default select example" id="numMatches" name="numMatches">
+            {% include 'numofmatches.html' %}
+          </select>
 
         </div>
 
@@ -93,9 +135,11 @@
 
         <!-- col 2 -->
         <div class="col-5">
-          <div class="form-group">
-            <label for="careerForm"><strong>Select the industries you're interested in or work
-                in.</strong></label>
+          <div class="form-group" id="careersForm">
+            <label for="careerForm">
+              <strong id="studGroup2">Select the industries you're interested in. </strong>
+              <strong id="alumGroup2">Select the industries you've worked in. </strong>
+            </label>
             <select multiple class="form-control" id="industry" name="industry" required>
               {% include 'careeroptions.html' %}
             </select>
@@ -103,8 +147,11 @@
 
           <br>
 
-          <div class="form-group">
-            <label for="groupsForm"><strong>Select the organizations you're involved in.</strong></label>
+          <div class="form-group" id="interestsForm">
+            <label for="groupsForm">
+              <strong id="studGroup3">Select the student groups you are currently involved in. </strong>
+              <strong id="alumGroup3">Select the groups you were involved in as a student. </strong>
+            </label>
             <select multiple class="form-control" id="interests" name="interests">
               {% include 'interestoptions.html' %}
             </select>
@@ -125,6 +172,7 @@
     </div>
   </body>
 </form>
+
 
 
 </html>
