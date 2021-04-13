@@ -45,6 +45,34 @@
 </body>
 -->
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+<script>
+    'use strict';
+    $(document).ready(function () {
+
+        let role = "{{ role }}"
+
+        $("#studGroup1").hide();
+        $("#alumGroup1").hide();
+        $("#studGroup2").hide();
+        $("#alumGroup2").hide();
+        $("#studGroup3").hide();
+        $("#alumGroup3").hide();
+
+        if (role == 'student') {
+            $("#studGroup1").show();
+            $("#studGroup2").show();
+            $("#studGroup3").show();
+        }
+        else {
+            $("#alumGroup1").show();
+            $("#alumGroup2").show();
+            $("#alumGroup3").show();
+        }
+
+    });
+</script>
+
 <form action="updateprofile" method="post">
 
     <body>
@@ -85,7 +113,9 @@
                             aria-describedby="emailHelp" value="{{ info[4] }}" required>
                     </div>
                     <br>
-                    <strong>How many matches would you like?</strong>
+
+                    <strong id="studGroup1">How many alumni would you like to be matched with?</strong>
+                    <strong id="alumGroup1">How many students would you like to be matched with?</strong>
                     <select class="form-select" aria-label="Default select example" id="numMatches" name="numMatches">
                         {% with selectedNumber=info[5] %}
                         {% include "numofmatches.html" %}
@@ -101,8 +131,10 @@
 
                 <div class="col-5">
                     <div class="form-group">
-                        <label for="careerForm"><strong>Select the industries you're interested in or work
-                                in.</strong></label>
+                        <label for="careerForm">
+                            <strong id="studGroup2">Select the industries you're interested in. </strong>
+                            <strong id="alumGroup2">Select the industries you've worked in. </strong>
+                        </label>
                         <select multiple class="form-control" id="careerForm" name="career" required>
                             {% set temp_list = [] %}
                             {% for c in careers:%}
@@ -117,7 +149,10 @@
                     </div>
                     <br>
                     <div class="form-group">
-                        <label for="groupsForm"><strong>Select the organizations you're involved in.</strong></label>
+                        <label for="groupsForm">
+                            <strong id="studGroup3">Select the student groups you are currently involved in. </strong>
+                            <strong id="alumGroup3">Select the groups you were involved in as a student. </strong>
+                        </label>
                         <select multiple class="form-control" id="interests" name="interests">
                             {% set temp_list = [] %}
                             {% for i in interests:%}
