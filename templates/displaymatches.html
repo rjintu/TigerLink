@@ -60,7 +60,7 @@
                 <tbody>
                     {% for match in matches: %}
                     {% if (match|length) > 2 %}
-                    <tr class="clickable-row" id='{{match[0]}}' value='{{match[1]}}'>
+                    <tr class="clickable-row" data-href='google.com' id='{{match[0]}}' value='{{match[1]}}'>
                         {% for i in range (2, match|length): %}
                         <td>{{ match[i] }}</td>
                         {% endfor %}
@@ -159,7 +159,35 @@
                         });
                     }
                 );
+
+                $('#modalButton').click(
+                    (e) => {
+
+                        print("HERE 2")
+                        let student = $(e.target).closest('tr').attr('id');
+                        let alum = $(e.target).closest('tr').attr('value');
+
+                        let studentU = encodeURIComponent(student);
+                        let alumU = encodeURIComponent(alum);
+
+                        let url = "/matchdetails?student=" + studentU + "&alum=" + alumU;
+
+                        console.log(url);
+
+                        if (request != null)
+                            request.abort();
+
+                        request = $.ajax({
+                            type: 'GET',
+                            url: url,
+                            success: handleResponse
+                        });
+                    }
+                );
+
             }
+
+
             $(document).ready(setup);
 
         </script>
