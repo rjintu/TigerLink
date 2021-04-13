@@ -61,9 +61,10 @@
                     {% for match in matches: %}
                         {% if (match|length) > 2 %} 
                             <tr class="clickable-row" id='{{match[0]}}' value='{{match[1]}}'>
-                            {% for i in range (2, match|length): %}
+                            {% for i in range (2, 6): %}
                                 <td>{{ match[i] }}</td> 
                             {% endfor %}
+                            <td>{{ match[6] }}%</td>
                             </tr>
                         {% endif %}
                         <tbody class="details" id="{{match[0]}}&{{match[1]}}"></tbody>
@@ -77,6 +78,7 @@
         'use strict';
 
         function handleResponse(response, student, alum){
+            $('.details').html(""); // clear out other boxes
             let results = document.getElementById(student + "&" + alum);
             $(results).html(response);
         }
