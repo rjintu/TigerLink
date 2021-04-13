@@ -33,23 +33,23 @@ class Database:
 
         # Roles table
         cursor.execute('DROP TABLE IF EXISTS roles')
-        cursor.execute('CREATE TABLE roles ' + 
-                '(profileid TEXT, role TEXT)')
+        cursor.execute('CREATE TABLE roles ' +
+                       '(profileid TEXT, role TEXT)')
         # Careers table
         cursor.execute('DROP TABLE IF EXISTS careers')
-        cursor.execute('CREATE TABLE careers ' + 
-                '(profileid TEXT, career TEXT)')
+        cursor.execute('CREATE TABLE careers ' +
+                       '(profileid TEXT, career TEXT)')
         # Interests table
         cursor.execute('DROP TABLE IF EXISTS interests')
-        cursor.execute('CREATE TABLE interests ' + 
-                '(profileid TEXT, interest TEXT)')
+        cursor.execute('CREATE TABLE interests ' +
+                       '(profileid TEXT, interest TEXT)')
         # Timeline posts tables (posts, postgraphics)
         cursor.execute('DROP TABLE IF EXISTS posts')
-        cursor.execute('CREATE TABLE posts ' + 
-                '(postid TEXT, authorid TEXT, posttime TEXT, posttitle TEXT, postcontent TEXT, imgurl TEXT)')
+        cursor.execute('CREATE TABLE posts ' +
+                       '(postid TEXT, authorid TEXT, posttime TEXT, posttitle TEXT, postcontent TEXT, imgurl TEXT)')
         cursor.execute('DROP TABLE IF EXISTS postgraphics')
         cursor.execute('CREATE TABLE postgraphics ' +
-                '(postid TEXT, postgraphic TEXT)')
+                       '(postid TEXT, postgraphic TEXT)')
 
         self._connection.commit()
         cursor.close()
@@ -69,7 +69,6 @@ class Database:
         self._connection.commit()
 
         cursor.close()
-
 
     def _add_student(self, cursor, student):
         student_elems = student[:-2]
@@ -225,7 +224,8 @@ class Database:
         profileid = str(profileid)
 
         cursor = self._connection.cursor()
-        cursor.execute('SELECT role FROM roles WHERE profileid=%s', [profileid])
+        cursor.execute(
+            'SELECT role FROM roles WHERE profileid=%s', [profileid])
         role = cursor.fetchone()
         return role[0]
 
@@ -310,46 +310,49 @@ class Database:
         search_values = [str(x) for x in search_query]
         for i in range(0, len(search_values)):
             if (search_values[i] == ''):
-                search_values[i] = '%%%%'            
+                search_values[i] = '%%%%'
         name, email, major, zipcode, career, typeofSearch = search_values
         career = search_query[-2]
+
+        name = '%%' + name + '%%'
+        name = name.lower()
 
         output = []
         cursor = self._connection.cursor()
         cursor2 = self._connection.cursor()
         if typeofSearch in 'stud':
-            stmtStr = "SELECT profileid, classyear, name, major, zip, numMatch FROM students WHERE name LIKE %s " + \
-            "AND email LIKE %s AND major LIKE %s AND zip LIKE %s"
+            stmtStr = "SELECT profileid, classyear, name, major, zip, numMatch FROM students WHERE lower(name) LIKE %s " + \
+                "AND email LIKE %s AND major LIKE %s AND zip LIKE %s"
             cursor.execute(stmtStr, [name, email, major, zipcode])
             row = cursor.fetchone()
 
             while row is not None:
                 # look up all the careers for that person and filter out those who aren't valid.
-                contains = False 
+                contains = False
                 smtr = 'SELECT profileid, career FROM careers WHERE profileid LIKE %s'
                 cursor2.execute(smtr, [row[0]])
                 row2 = cursor2.fetchone()
                 if (len(career) != 0):
                     while row2 is not None:
                         if (row2[1] in career):
-                            contains=True
+                            contains = True
                         row2 = cursor2.fetchone()
                 else:
-                    contains=True
+                    contains = True
 
                 if contains:
                     output.append(row)
                 row = cursor.fetchone()
-        
+
         elif typeofSearch in 'alum':
-            stmtStr = "SELECT profileid, classyear, name, major, zip, numMatch FROM alumni WHERE name LIKE %s " + \
-            "AND email LIKE %s AND major LIKE %s AND zip LIKE %s"
+            stmtStr = "SELECT profileid, classyear, name, major, zip, numMatch FROM alumni WHERE lower(name) LIKE %s " + \
+                "AND email LIKE %s AND major LIKE %s AND zip LIKE %s"
             cursor.execute(stmtStr, [name, email, major, zipcode])
             row = cursor.fetchone()
-            
+
             while row is not None:
                 # look up all the careers for that person and filter out those who aren't valid.
-                contains = False 
+                contains = False
                 smtr = 'SELECT profileid, career FROM careers WHERE profileid LIKE %s'
                 cursor2.execute(smtr, [row[0]])
                 row2 = cursor2.fetchone()
@@ -357,34 +360,34 @@ class Database:
                     while row2 is not None:
                         if (row2[1] in career):
                             print(row2[1])
-                            contains=True
+                            contains = True
                         row2 = cursor2.fetchone()
                 else:
-                    contains=True
+                    contains = True
 
                 if contains:
                     output.append(row)
                 row = cursor.fetchone()
 
         else:
-            stmtStr = "SELECT profileid, classyear, name, major, zip, numMatch FROM students WHERE name LIKE %s " + \
-            "AND email LIKE %s AND major LIKE %s AND zip LIKE %s"
+            stmtStr = "SELECT profileid, classyear, name, major, zip, numMatch FROM students WHERE lower(name) LIKE %s " + \
+                "AND email LIKE %s AND major LIKE %s AND zip LIKE %s"
             cursor.execute(stmtStr, [name, email, major, zipcode])
             row = cursor.fetchone()
-            
+
             while row is not None:
                 # look up all the careers for that person and filter out those who aren't valid.
-                contains = False 
+                contains = False
                 smtr = 'SELECT profileid, career FROM careers WHERE profileid LIKE %s'
                 cursor2.execute(smtr, [row[0]])
                 row2 = cursor2.fetchone()
                 if (len(career) != 0):
                     while row2 is not None:
                         if (row2[1] in career):
-                            contains=True
+                            contains = True
                         row2 = cursor2.fetchone()
                 else:
-                    contains=True
+                    contains = True
 
                 if contains:
                     output.append(row)
@@ -394,32 +397,30 @@ class Database:
             cursor2 = self._connection.cursor()
 
             stmtStr = "SELECT profileid, classyear, name, major, zip, numMatch FROM alumni WHERE name LIKE %s " + \
-            "AND email LIKE %s AND major LIKE %s AND zip LIKE %s"
+                "AND email LIKE %s AND major LIKE %s AND zip LIKE %s"
             cursor.execute(stmtStr, [name, email, major, zipcode])
             row = cursor.fetchone()
-            
+
             while row is not None:
                 # look up all the careers for that person and filter out those who aren't valid.
-                contains = False 
+                contains = False
                 smtr = 'SELECT profileid, career FROM careers WHERE profileid LIKE %s'
                 cursor2.execute(smtr, [row[0]])
                 row2 = cursor2.fetchone()
                 if (len(career) != 0):
                     while row2 is not None:
                         if (row2[1] in career):
-                            contains=True
+                            contains = True
                         row2 = cursor2.fetchone()
                 else:
-                    contains=True
+                    contains = True
 
                 if contains:
                     output.append(row)
                 row = cursor.fetchone()
 
-
         cursor.close()
         return output
-
 
     def create_timeline(self, posting, postid, authorid, posttime, posttitle, postcontent, imgurl):
         if posting:
@@ -429,7 +430,7 @@ class Database:
             print(posttime)
             print(postcontent)
             cursor.execute('INSERT INTO posts(postid, authorid, posttime, posttitle, postcontent, imgurl) ' +
-                            'VALUES (%s, %s, %s, %s, %s, %s)', ['1', authorid, posttime, posttitle, postcontent, imgurl])
+                           'VALUES (%s, %s, %s, %s, %s, %s)', ['1', authorid, posttime, posttitle, postcontent, imgurl])
             self._connection.commit()
             cursor.close()
 
