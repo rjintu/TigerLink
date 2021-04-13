@@ -57,8 +57,6 @@
             <textarea type="content" class="form-control" style='height:300px' name="content" id="content" aria-describedby="emailHelp"
               placeholder="Ex: 'Basic javascript experience required!'" required></textarea>
           </div>
-
-
         </div>
 
 
@@ -69,7 +67,6 @@
 
         <!-- col 2 -->
         <div class="col-5">
-            
           <div class="form-group">
             <strong>Which general community would you like to post to?</strong>
             <br>
@@ -85,17 +82,16 @@
               <br>
               <input class="form-check-input" id="everyone" value="everyone" type="radio" name="role" required>
               <label class="form-check-label" for="everyone"> Everyone </label>
-
             </div>
             <br>
 
             <div class="form-group">
                 <label for="groupsForm"><strong>Select the private communities you'd like to post to. (if any)</strong></label>
-                <select multiple class="form-control" id="interests" name="interests">
+                <select multiple class="form-control" id="communities" name="communities">
                     {% set temp_list = [] %}
                     {% for i in interests:%}
-                    <option>{{ i[0] }}</option>
-                    {{ temp_list.append(i[0]|string)}}
+                    <option>{{ i }}</option>
+                    {{ temp_list.append(i|string)}}
                     {% endfor %}
                     <!-- send selected interests to template via Jinja -->
                 </select>
