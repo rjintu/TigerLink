@@ -29,7 +29,7 @@
         integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
         crossorigin="anonymous"></script>
 
-    <script src= "https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
 
     <!-- Option 2: Separate Popper and Bootstrap JS -->
     <!--
@@ -47,7 +47,7 @@
     <div class="container">
         <div class="row justify-content-center">
             <!-- col 1 -->
-                <table class="table table-hover table-responsive">
+            <table class="table table-hover table-responsive">
                 <thead>
                     <tr>
                         <th>Student Name</th>
@@ -59,66 +59,110 @@
                 </thead>
                 <tbody>
                     {% for match in matches: %}
-                        {% if (match|length) > 2 %} 
-                            <tr class="clickable-row" id='{{match[0]}}' value='{{match[1]}}'>
-                            {% for i in range (2, match|length): %}
-                                <td>{{ match[i] }}</td> 
-                            {% endfor %}
-                            </tr>
-                        {% endif %}
-                        <per id="details"></per>
+                    {% if (match|length) > 2 %}
+                    <tr class="clickable-row" id='{{match[0]}}' value='{{match[1]}}'>
+                        {% for i in range (2, match|length): %}
+                        <td>{{ match[i] }}</td>
+                        {% endfor %}
+                    </tr>
+                    {% endif %}
+                    <per id="details"></per>
                     {% endfor %}
                 </tbody>
             </table>
+
+            <!-- <a tabindex="0" class="button" id='test123' value='test123' role="button" data-bs-toggle="popover"
+                data-bs-content="testing" data-bs-trigger="focus" title="Match Info">Dismissible
+                popover</a> -->
         </div>
-    </div>
-    
-    <script>
-        'use strict';
 
-        function handleResponse(response){
-            $('#details').html(response);
-        }
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-primary" id="modalButton" data-bs-toggle="modal"
+            data-bs-target="#staticBackdrop">
+            Launch static backdrop modal
+        </button>
 
-        let request = null;
+        <!-- Modal -->
+        <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+            aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="staticBackdropLabel">Match Info</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" id="test123">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-        function getResults()
-        {
-            let dept = encodeURIComponent($('#dept').val());
-            let num = encodeURIComponent($('#num').val());
-            let area = encodeURIComponent($('#area').val());
-            let title = encodeURIComponent($('#title').val());
-        }
 
-        function setup()
-        {
-            $('.clickable-row').click(
-                (e) => {
 
-                    let student = $(e.target).closest('tr').attr('id');
-                    let alum = $(e.target).closest('tr').attr('value');
+        <script>
+            'use strict';
 
-                    let studentU = encodeURIComponent(student);
-                    let alumU = encodeURIComponent(alum);
+            // var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
+            // var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+            //     return new bootstrap.Popover(popoverTriggerEl)
+            // })
 
-                    let url = "/matchdetails?student=" + studentU + "&alum=" + alumU;
+            // var popover = new bootstrap.Popover(document.querySelector('.popover-dismiss'), {
+            //     trigger: 'focus'
+            // })
 
-                    console.log(url);
+            var myModal = document.getElementById('myModal')
+            var myInput = document.getElementById('myInput')
 
-                    if (request != null)
-                        request.abort();
-                    
-                    request = $.ajax({
-                        type: 'GET',
-                        url: url, 
-                        success: handleResponse
-                    });
-                }
-            );
-        }
-        $(document).ready(setup);
+            myModal.addEventListener('shown.bs.modal', function () {
+                myInput.focus()
+            })
 
-    </script>
+            function handleResponse(response) {
+                $('#details').html(response);
+                // let b = document.querySelector('#test123');
+                // b.setAttribute('title', 'helloButton');
+                print(response)
+                $('#modalButton').on('click', function () {
+                    $('<p>Text</p>').appendTo('#test123');
+                });
+            }
+
+            let request = null;
+
+            function setup() {
+
+                $('.clickable-row').click(
+                    (e) => {
+
+                        print("HERE")
+                        let student = $(e.target).closest('tr').attr('id');
+                        let alum = $(e.target).closest('tr').attr('value');
+
+                        let studentU = encodeURIComponent(student);
+                        let alumU = encodeURIComponent(alum);
+
+                        let url = "/matchdetails?student=" + studentU + "&alum=" + alumU;
+
+                        console.log(url);
+
+                        if (request != null)
+                            request.abort();
+
+                        request = $.ajax({
+                            type: 'GET',
+                            url: url,
+                            success: handleResponse
+                        });
+                    }
+                );
+            }
+            $(document).ready(setup);
+
+        </script>
 </body>
 
 </html>
