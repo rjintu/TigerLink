@@ -19,6 +19,15 @@ login_manager = loginutil.GoogleLogin(keychain)
 # CSP is disabled cause it messes with bootstrap
 Talisman(app, content_security_policy=None)
 
+# If the user is exists, return True. Else return False
+# Call this after checking that the user is logged in.
+def user_exists(profileid):
+    db = Database()
+    db.connect()
+    user_exists = db.user_exists(profileid)
+    db.disconnect()
+
+    return user_exists
 
 @app.route('/', methods=['GET'])
 @app.route('/index', methods=['GET'])
@@ -28,13 +37,7 @@ def index():
         return redirect('/login')
 
     profileid = session['profileid']
-
-    db = Database()
-    db.connect()
-    user_exists = db.user_exists(profileid)
-    db.disconnect()
-    if user_exists:
-        # profile is already created
+    if user_exists(profileid):
         return redirect('/timeline')
     
     name = session['fullname']
@@ -64,8 +67,6 @@ def login_redirect():
 
 # for checking if user exists already, setting a session cookie,
 # and redirecting to the next page
-
-
 @app.route('/login/auth', methods=['GET'])
 def login_auth():
     try:
@@ -78,14 +79,10 @@ def login_auth():
         session['picture'] = picture
         
         # check where to redirect user
-        db = Database()
-        db.connect()
-        user_exists = db.user_exists(profileid)
-        db.disconnect()
-        if not user_exists:
-            return redirect('/index')
-        else:
+        if user_exists(profileid):
             return redirect('/timeline')
+        else: 
+            return redirect('/index')
 
     except Exception as e:
         return make_response('Failed to login: ' + str(e))
@@ -146,16 +143,11 @@ def loadpost():
         return redirect('/login')
 
     profileid = session['profileid']
-    db = Database()
-    db.connect()
-    user_exists = db.user_exists(profileid)
-    db.disconnect()
-    if not user_exists:
+    if not user_exists(profileid):
         # profile has not been created
         return redirect('/index')
 
     try:
-        profileid = session['profileid']
         db = Database()
         db.connect()
         role = db.get_role(profileid)
@@ -183,12 +175,7 @@ def createpost():
         return redirect('/login')
 
     profileid = session['profileid']
-    db = Database()
-    db.connect()
-    user_exists = db.user_exists(profileid)
-    db.disconnect()
-
-    if not user_exists:
+    if not user_exists(profileid):
         # profile has not been created
         return redirect('/index')
 
@@ -223,7 +210,7 @@ def createpost():
 
     return html
 
-
+# TODO: remove this page (currently for debugging only)
 @app.route('/getstudents', methods=['GET'])
 def getstudents():
     try:
@@ -244,11 +231,18 @@ def getstudents():
 def getmatches():
     if not loginutil.is_logged_in(session):
         return redirect('/login')
+    
+    profileid = session['profileid']
+    if not user_exists(profileid):
+        # profile has not been created
+        return redirect('/index')
 
     try:
         # creates matches from matching.py file. returns a list of tuples.
         m = Matching()
         matches = m.match()
+        print('here')
+        print(matches)
         html = render_template('displaymatches.html', matches=matches, 
                 picture=session['picture'])
     except Exception as e:
@@ -258,6 +252,54 @@ def getmatches():
     response = make_response(html)
     return response
 
+# input (from get request): studentid, alumid
+@app.route('/matchdetails', methods=['GET'])
+def matchdetails():
+    if not loginutil.is_logged_in(session):
+        return redirect('/login')
+    
+    profileid = session['profileid']
+    if not user_exists(profileid):
+        # profile has not been created
+        return redirect('/index')
+    
+    try:
+        # retrieve information about matches
+        db = Database()
+        db.connect()
+        student = request.args.get('student')
+        alum = request.args.get('alum')
+        student_info, student_careers, student_interests = db.get_student_by_id(student)
+        alum_info, alum_careers, alum_interests = db.get_alum_by_id(alum)
+
+    except Exception as e:
+        html = "error occurred: " + str(e)
+        print(e)
+    
+    html = ""
+    print(student_careers)
+    for elem in student_info:
+        html += "<p>" + elem + "</p>"
+    for elem in student_careers:
+        html += "<p>" + elem[0] + "</p>"
+    for elem in student_interests:
+        html += "<p>" + elem[0] + "</p>"
+
+    html += "<br>"
+
+    for elem in alum_info:
+        html += "<p>" + elem + "</p>"
+    for elem in alum_careers:
+        html += "<p>" + elem[0] + "</p>"
+    for elem in alum_interests:
+        html += "<p>" + elem[0] + "</p>"
+    
+    html += "<br>"
+    # TODO: incorporate careers/interests
+    response = make_response(html)
+    return response
+    
+
 
 @app.route('/editprofile', methods=['GET'])
 def getprofile():
@@ -266,16 +308,11 @@ def getprofile():
         return redirect('/login')
     
     profileid = session['profileid']
-    db = Database()
-    db.connect()
-    user_exists = db.user_exists(profileid)
-    db.disconnect()
-    if not user_exists:
+    if not user_exists(profileid):
         # profile has not been created
         return redirect('/index')
 
     try:
-        profileid = session['profileid']
         db = Database()
         db.connect()
         role = db.get_role(profileid)
@@ -379,13 +416,9 @@ def search():
     if not loginutil.is_logged_in(session):
         # user not logged in
         return redirect('/login')
-    
+
     profileid = session['profileid']
-    db = Database()
-    db.connect()
-    user_exists = db.user_exists(profileid)
-    db.disconnect()
-    if not user_exists:
+    if not user_exists(profileid):
         # profile has not been created
         return redirect('/index')
 
@@ -425,11 +458,7 @@ def dosearch():
         return redirect('/login')
     
     profileid = session['profileid']
-    db = Database()
-    db.connect()
-    user_exists = db.user_exists(profileid)
-    db.disconnect()
-    if not user_exists:
+    if not user_exists(profileid):
         # profile has not been created
         return redirect('/index')
 
@@ -445,11 +474,7 @@ def timeline():
         return redirect('/login')
     
     profileid = session['profileid']
-    db = Database()
-    db.connect()
-    user_exists = db.user_exists(profileid)
-    db.disconnect()
-    if not user_exists:
+    if not user_exists(profileid):
         # profile has not been created
         return redirect('/index')
 
