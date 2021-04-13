@@ -529,7 +529,9 @@
 
 
 {% for i in selectedInterests: %}
+{% if i is in allInterests %}
 {{allInterests.remove(i)}}
+{% endif %}
 {% endfor %}
 
 {% for i in allInterests: %}

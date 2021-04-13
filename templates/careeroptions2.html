@@ -40,7 +40,9 @@
 'Veterinary Medicine'] %}
 
 {% for i in selectedCareers: %}
+{% if i is in allCareers %}
 {{allCareers.remove(i)}}
+{% endif %}
 {% endfor %}
 
 <!-- Include Twitter Bootstrap and jQuery: -->
