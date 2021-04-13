@@ -142,17 +142,25 @@ class Matching(object):
             for career in svec._careers:
                 if career in avec._careers:
                     carS += 1
-                
+
+            totalC = len(list(set().union(svec._careers, avec._careers)))
+            carS /= totalC
+
         orgS = 0
         if svec._organizations != None:
             for org in svec._organizations:
                 if org in avec._organizations:
                     orgS += 1
-        
+
+            totalO = len(list(set().union(svec._organizations, avec._organizations)))
+            orgS /= totalO
+
         vals = [m, carS, orgS]
 
         sim = 0
         for i, weight in enumerate(svec._spref):
             sim += vals[i] * weight
-        
-        return sim
+
+        finalS = round(sim, 2) * 100
+
+        return finalS

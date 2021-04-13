@@ -17,8 +17,8 @@
 
   <!-- Option 1: Bootstrap Bundle with Popper -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
-  integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
-  crossorigin="anonymous"></script>
+    integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+    crossorigin="anonymous"></script>
 
   <!-- Option 2: Separate Popper and Bootstrap JS -->
   <!--
@@ -26,158 +26,119 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.min.js" integrity="sha384-j0CNLUeiqtyaRmlzUHCPZ+Gy5fQu0dQ6eZ/xAww941Ai1SxSY+0EQqNXNE6DZiVc" crossorigin="anonymous"></script>
   -->
 
-  <body>
-    <!-- heading -->
-    <h2 style="text-align: center;">Search Page</h2>
-  </body>
+<body>
+  <!-- heading -->
+  <h2 style="text-align: center;">Search Page</h2>
+</body>
 
 </head>
 <header>
-{% with bold='search' %}
-{% include "navbar.html" %}
-{% endwith %}
+  {% with bold='search' %}
+  {% include "navbar.html" %}
+  {% endwith %}
 </header>
-<body>
-    <form action="search" method="get">
-        <body>
-          <br>
-          <div class="container">
-            <div class="row justify-content-center">
-              <!-- col 1 -->
-              <div class="col-4">
 
-                <!-- enter the name of the person you wish to search up -->
-                <div class="form-group">
-                    <label for="namesearch"><strong>Name</strong></label>
-                    <input type="namesearch" class="form-control" name="namesearch" id="namesearch" aria-describedby="namesearch"
-                      placeholder="FirstName LastName">
-                </div>
-                <br>
-                <br>
-                <strong>Are you looking for students, alums, or both?</strong>
-                <div class="form-check" name="form1">
-                  <input class="form-check-input" id="ugrad" value="stud" type="radio" name="student">
-                  <label class="form-check-label" for="ugrad"> Undergraduate Student </label>
-                </div>
-                <div class="form-check">
-                  <input class="form-check-input" id="alum" value="alum" type="radio" name="student">
-                  <label class="form-check-label" for="alum"> Alum </label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" id="both" value="both" type="radio" name="student">
-                    <label class="form-check-label" for="both"> Both </label>
-                </div>  
-                <br>
-                <!-- TODO: add backend functionality of class year
+<body>
+  <form action="search" method="get">
+
+    <body>
+      <br>
+      <div class="container">
+        <div class="row justify-content-center">
+          <!-- col 1 -->
+          <div class="col-4">
+
+            <!-- enter the name of the person you wish to search up -->
+            <div class="form-group">
+              <label for="namesearch"><strong>Name</strong></label>
+              <input type="namesearch" class="form-control" name="namesearch" id="namesearch"
+                aria-describedby="namesearch" placeholder="Ex: Christopher Eisgruber ">
+            </div>
+            <br>
+            <strong>Are you looking for students, alums, or both?</strong>
+            <div class="form-check" name="form1">
+              <input class="form-check-input" id="ugrad" value="stud" type="radio" name="student">
+              <label class="form-check-label" for="ugrad"> Undergraduate Student </label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" id="alum" value="alum" type="radio" name="student">
+              <label class="form-check-label" for="alum"> Alum </label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" id="both" value="both" type="radio" name="student">
+              <label class="form-check-label" for="both"> Both </label>
+            </div>
+            <br>
+            <!-- TODO: add backend functionality of class year
                 <div class="form-group">
                     <label for="classYear"><strong>Class Year</strong></label>
                     <input type="classYear" class="form-control" name="classYear" id="classYear" aria-describedby="major"
                       placeholder="Ex: 2023">
                 </div>
                 <br>-->
-                <div class="form-group">
-                  <label for="major"><strong>Major</strong></label>
-                  <input type="major" class="form-control" name="major" id="major" aria-describedby="major"
-                    placeholder="Ex: COS (must be 3 letter acronym)">
-                </div>
-                <br>
-                <div class="form-group">
-                    <label for="zipcode"><strong>Zip Code</strong></label>
-                    <input type="zipcode" class="form-control" name="zipcode" id="zipcode" aria-describedby="zipcode"
-                      placeholder="Ex: 08544">
-                </div>
-                <br>
-                <br>
-                <br>
-              </div>
-      
-              <!-- col 2 -->
-              <div class="offset-1 col-4">
-                <div class="form-group">
-                    <label for="email-address"><strong>Email Address</strong></label>
-                    <input type="email-address" class="form-control" name="email-address" id="email-address" aria-describedby="email-address"
-                      placeholder="Ex: tiger-link@princeton.edu">
-                </div>
-                <br>
-                <div class="form-group">
-                  <label for="exampleFormControlSelect2"><strong>Select the careers you're searching for.</strong></label>
-                  <br>
-                  <br>
-                  <select multiple class="form-control" id="industry" name="industry">
-                    <option>Software Engineering</option>
-                    <option>Product Management</option>
-                    <option>Accounting</option>
-                    <option>Marketing</option>
-                    <option>Architecture</option>
-                    <option>Consulting</option>
-                    <option>Energy Resources</option>
-                    <option>Chemical Engineering</option>
-                    <option>Civil Engineering</option>
-                    <option>Electrical Engineering</option>
-                    <option>Mechanical Engineering</option>
-                    <option>Aerospace Engineering</option>
-                    <option>Environmental Affairs</option>
-                    <option>Asset Management</option>
-                    <option>Corporate Finance</option>
-                    <option>Hedge Funds</option>
-                    <option>Private Equity</option>
-                    <option>Commercial Banking</option>
-                    <option>Financial Planning</option>
-                    <option>Investment Banking</option>
-                    <option>Security/Commodities</option>
-                    <option>Venture Capital</option>
-                    <option>Foreign Service</option>
-                    <option>Government</option>
-                    <option>Policy Analysis</option>
-                    <option>Health Care</option>
-                    <option>Human Resources</option>
-                    <option>Insurance</option>
-                    <option>Law</option>
-                    <option>Management</option>
-                    <option>Military</option>
-                    <option>Performing Arts</option>
-                    <option>Public Relations</option>
-                    <option>Real Estate</option>
-                    <option>Radio/TV</option>
-                    <option>Research & Development</option>
-                    <option>Social Work</option>
-                    <option>Teaching</option>
-                    <option>Veterinary Medicine</option>
-                    <option>Fine Arts</option>
-                  </select>
-                </div>
-      
-                <!-- hidden input -->
-                <div class="col-0">
-                  <input type="hidden" id="profileid" name="profileid" value="">
-                  <input type="hidden" id="email" name="email" value="">
-                  <input type="hidden" id="name" name="name" value="">
-                </div>
-      
-                <script>
-                  function setHidden() {
-                    document.getElementById("profileid").value = localStorage.getItem("profileid");
-                    document.getElementById("email").value = localStorage.getItem("email");
-                    document.getElementById("name").value = localStorage.getItem("name");
-                  }
-                  setHidden();
-                </script>
-      
-              </div>
+            <div class="form-group">
+              <label for="major"><strong>Major</strong></label>
+              <input type="major" class="form-control" name="major" id="major" aria-describedby="major"
+                placeholder="Ex: COS (must be 3 letter acronym)">
             </div>
-          </div>
-        </body>
-      
-        <body>
-          <br>
-          <div class="container">
-            <div class="row justify-content-center">
-              <div class="col-1">
-                <button type="submit" name="submit" class="btn btn-primary">Search!</button>
-              </div>
+            <br>
+            <div class="form-group">
+              <label for="zipcode"><strong>Zip Code</strong></label>
+              <input type="zipcode" class="form-control" name="zipcode" id="zipcode" aria-describedby="zipcode"
+                placeholder="Ex: 08544">
             </div>
+            <br>
+            <br>
+            <br>
           </div>
-        </body>
-      </form>
+
+          <!-- col 2 -->
+          <div class="offset-1 col-4">
+            <div class="form-group">
+              <label for="email-address"><strong>Email Address</strong></label>
+              <input type="email-address" class="form-control" name="email-address" id="email-address"
+                aria-describedby="email-address" placeholder="Ex: tiger-link@princeton.edu">
+            </div>
+            <br>
+            <div class="form-group">
+              <label for="exampleFormControlSelect2"><strong>Select the careers you're searching for.</strong></label>
+              <select multiple class="form-control" id="industry" name="industry">
+                {% include 'careeroptions.html' %}
+              </select>
+            </div>
+
+            <!-- hidden input -->
+            <div class="col-0">
+              <input type="hidden" id="profileid" name="profileid" value="">
+              <input type="hidden" id="email" name="email" value="">
+              <input type="hidden" id="name" name="name" value="">
+            </div>
+
+            <script>
+              function setHidden() {
+                document.getElementById("profileid").value = localStorage.getItem("profileid");
+                document.getElementById("email").value = localStorage.getItem("email");
+                document.getElementById("name").value = localStorage.getItem("name");
+              }
+              setHidden();
+            </script>
+
+          </div>
+        </div>
+      </div>
     </body>
+
+    <body>
+      <br>
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-1">
+            <button type="submit" name="submit" class="btn btn-primary">Search</button>
+          </div>
+        </div>
+      </div>
+    </body>
+  </form>
+</body>
+
 </html>

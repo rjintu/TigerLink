@@ -68,6 +68,7 @@
                     </tr>
                     {% endif %}
                     <!-- <p id="details"></p> -->
+
                     {% endfor %}
                 </tbody>
             </table>
@@ -140,10 +141,10 @@
 
         let request = null;
 
+
         function setup() {
 
             $("#closeMatch").hide();
-
             $('.clickable-row').click(
                 (e) => {
 
@@ -154,6 +155,7 @@
                     let alumU = encodeURIComponent(alum);
 
                     let url = "/matchdetails?student=" + studentU + "&alum=" + alumU;
+                    // let url = "/timeline"
 
                     console.log(url);
 

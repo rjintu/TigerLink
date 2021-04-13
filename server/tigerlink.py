@@ -2,12 +2,14 @@ from flask import Flask, request, make_response, redirect, url_for, session
 from flask import render_template
 from flask_talisman import Talisman
 import datetime
+import json
 
 from .database import Database
 from .matching import Matching
 from .cookiemonster import CookieMonster
 from . import loginutil
 from .keychain import KeyChain
+from .admin import admin
 
 keychain = KeyChain()
 app = Flask(__name__, template_folder="../templates",
@@ -19,17 +21,9 @@ login_manager = loginutil.GoogleLogin(keychain)
 # CSP is disabled cause it messes with bootstrap
 Talisman(app, content_security_policy=None)
 
-# If the user is exists, return True. Else return False
-# Call this after checking that the user is logged in.
 
-
-def user_exists(profileid):
-    db = Database()
-    db.connect()
-    user_exists = db.user_exists(profileid)
-    db.disconnect()
-
-    return user_exists
+# add other blueprints
+app.register_blueprint(admin)
 
 
 @app.route('/', methods=['GET'])
@@ -197,23 +191,30 @@ def createpost():
         title = acct_info.get('title', '')
         content = acct_info.get('content', '')
         email = acct_info.get('email', '')
-        role = acct_info.get('role', '')
-        interests = acct_info.getlist('interests')  # FIXME: verify this works
+        private = acct_info.get('role', '')
+        communities = acct_info.getlist('communities')  # FIXME: verify this works
         imgurl = acct_info.get('imgurl', '')
+        
         db = Database()
         db.connect()
         profileid = session['profileid']
         role = db.get_role(profileid)
 
         info, careers, interests = None, None, None
-        print(role)
+        print("role: " + str(role))
         if role == 'student':
             info, careers, interests = db.get_student_by_id(profileid)
         elif role == 'alum':
             info, careers, interests = db.get_alum_by_id(profileid)
 
-        output = db.create_timeline(True, '1', str(info[0]), str(
-            datetime.datetime.now()), str(title), str(content), str(imgurl))
+        # info[0] is the author name
+        name = info[0]
+        currDate = str(datetime.datetime.now())
+
+    # def create_post(self, authorId, authorName, time, title, content, image_url, private, communities):
+
+        db.create_post(str(profileid), str(name), str(currDate), str(title), 
+            str(content), str(imgurl), str(private), json.dumps(communities))
         db.disconnect()
         return redirect('/timeline')
     except Exception as e:
@@ -256,8 +257,6 @@ def getmatches():
         # creates matches from matching.py file. returns a list of tuples.
         m = Matching()
         matches = m.match()
-        print('here')
-        print(matches)
         html = render_template('displaymatches.html', matches=matches,
                                picture=session['picture'])
     except Exception as e:
@@ -398,7 +397,8 @@ def getprofile():
             info, careers, interests = db.get_alum_by_id(profileid)
         db.disconnect()
         html = render_template('editprofile.html', info=info,
-                               careers=careers, interests=interests, picture=session['picture'])
+                               careers=careers, interests=interests, picture=session['picture'], role=role)
+        
     except Exception as e:
         html = "error occurred: " + str(e)
         print(e)
@@ -426,8 +426,6 @@ def changeprofile():
         nummatches = acct_info.get('numMatches', '')
         careers = acct_info.getlist('career')  # FIXME: verify this works
         interests = acct_info.getlist('interests')  # FIXME: verify this works
-        print(careers)
-        print(interests)
 
         new_info = [name, classyear,
                     email, major, zipcode, nummatches]
@@ -454,38 +452,8 @@ def changeprofile():
 
     return redirect('editprofile')
 
-
-@app.route('/admin', methods=['GET'])
-def match():
-    try:
-        html = render_template('admin.html')
-        db = Database()
-        db.connect()
-        # db.update_student(profileid, new_info)
-        db.disconnect()
-    except Exception as e:
-        html = "error occurred: " + str(e)
-        print(e)
-
-    response = make_response(html)
-    return response
-
-
-@app.route('/permissions', methods=['GET'])
-def noAuth():
-    try:
-        html = render_template('permissions.html')
-    except Exception as e:
-        html = "error occurred: " + str(e)
-        print(e)
-
-    response = make_response(html)
-    return response
-
 # Note: search will automatically query both students and alumni
 # TODO: implement this page in the frontend
-
-
 @app.route('/search', methods=['GET'])
 def search():
     if not loginutil.is_logged_in(session):
@@ -505,12 +473,8 @@ def search():
         major = request.args.get('major', '%')
         zipcode = request.args.get('zipcode', '%')
         career = request.args.getlist('industry')
-        print("career:")
-        print(len(career))
-        print("career: ______")
         search_req = request.args.get('student', '%')
         search_query = [name, email, major, zipcode, career, search_req]
-        print(search_query)
         # database queries
         db = Database()
         db.connect()
@@ -558,12 +522,26 @@ def timeline():
     db = Database()
     db.connect()
 
-    output = db.create_timeline(False, None, None, None, None, None, None)
-    print(output)
+    role = str(db.get_role(profileid))
+    info, careers, interests = None, None, None
+    if role == 'student':
+        info, careers, interests = db.get_student_by_id(profileid)
+    elif role == 'alum':
+        info, careers, interests = db.get_alum_by_id(profileid)    
+
+    posts = []
+    output = db.get_posts()
+    for i in output:
+        if (role == i[7]):
+            posts.append(i)
+        elif (i[7] == 'private'):
+            if not set(interests).isdisjoint(set(json.loads(i[8]))):
+                posts.append(i)
+        elif (i[7] == 'everyone'):
+            posts.append(i)
 
     db.disconnect()
-    html = render_template('timeline.html', posts=output,
-                           picture=session['picture'])
+    html = render_template('timeline.html', posts=posts, picture=session['picture'])
     response = make_response(html)
     return response
 
