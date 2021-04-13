@@ -60,7 +60,7 @@
                 <tbody>
                     {% for match in matches: %}
                     {% if (match|length) > 2 %}
-                    <tr class="clickable-row" data-href='google.com' id='{{match[0]}}' value='{{match[1]}}'>
+                    <tr class="clickable-row" id='{{match[0]}}' value='{{match[1]}}'>
                         {% for i in range (2, match|length): %}
                         <td>{{ match[i] }}</td>
                         {% endfor %}
@@ -75,122 +75,103 @@
                 data-bs-content="testing" data-bs-trigger="focus" title="Match Info">Dismissible
                 popover</a> -->
         </div>
+    </div>
 
-        <!-- Button trigger modal -->
-        <button type="button" class="btn btn-primary" id="modalButton" data-bs-toggle="modal"
-            data-bs-target="#staticBackdrop">
-            Launch static backdrop modal
-        </button>
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-primary" id="modalButton" data-bs-toggle="modal"
+        data-bs-target="#staticBackdrop">
+        Launch static backdrop modal
+    </button>
 
-        <!-- Modal -->
-        <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-            aria-labelledby="staticBackdropLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="staticBackdropLabel">Match Info</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body" id="test123">
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Match Info</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="test123">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
+    </div>
 
 
 
-        <script>
-            'use strict';
+    <script>
+        'use strict';
 
-            // var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
-            // var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
-            //     return new bootstrap.Popover(popoverTriggerEl)
-            // })
+        // var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
+        // var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+        //     return new bootstrap.Popover(popoverTriggerEl)
+        // })
 
-            // var popover = new bootstrap.Popover(document.querySelector('.popover-dismiss'), {
-            //     trigger: 'focus'
-            // })
+        // var popover = new bootstrap.Popover(document.querySelector('.popover-dismiss'), {
+        //     trigger: 'focus'
+        // })
 
-            var myModal = document.getElementById('myModal')
-            var myInput = document.getElementById('myInput')
+        // var myModal = document.getElementById('myModal')
+        // var myInput = document.getElementById('myInput')
 
-            myModal.addEventListener('shown.bs.modal', function () {
-                myInput.focus()
-            })
+        // myModal.addEventListener('shown.bs.modal', function () {
+        //     myInput.focus()
+        // })
 
-            function handleResponse(response) {
-                $('#details').html(response);
-                // let b = document.querySelector('#test123');
-                // b.setAttribute('title', 'helloButton');
-                print(response)
-                $('#modalButton').on('click', function () {
-                    $('<p>Text</p>').appendTo('#test123');
-                });
-            }
+        function handleResponse(response) {
+            $('#details').html(response);
+            // let b = document.querySelector('#test123');
+            // b.setAttribute('title', 'helloButton');
+            // print(response)
+            // $('#modalButton').on('click', function () {
+            //     $('<p>Text</p>').appendTo('#test123');
+            // });
+        }
 
-            let request = null;
+        let request = null;
 
-            function setup() {
+        function setup() {
 
-                $('.clickable-row').click(
-                    (e) => {
+            $('.clickable-row').click(
+                (e) => {
 
-                        print("HERE")
-                        let student = $(e.target).closest('tr').attr('id');
-                        let alum = $(e.target).closest('tr').attr('value');
+                    let student = $(e.target).closest('tr').attr('id');
+                    let alum = $(e.target).closest('tr').attr('value');
 
-                        let studentU = encodeURIComponent(student);
-                        let alumU = encodeURIComponent(alum);
+                    let studentU = encodeURIComponent(student);
+                    let alumU = encodeURIComponent(alum);
 
-                        let url = "/matchdetails?student=" + studentU + "&alum=" + alumU;
+                    let url = "/matchdetails?student=" + studentU + "&alum=" + alumU;
 
-                        console.log(url);
+                    console.log(url);
 
-                        if (request != null)
-                            request.abort();
+                    if (request != null)
+                        request.abort();
 
-                        request = $.ajax({
-                            type: 'GET',
-                            url: url,
-                            success: handleResponse
-                        });
-                    }
-                );
+                    request = $.ajax({
+                        type: 'GET',
+                        url: url,
+                        success: handleResponse
+                    });
+                }
+            );
 
-                $('#modalButton').click(
-                    (e) => {
+            $('#modalButton').click(
+                (e) => {
+                    // $('<p>Text</p>').appendTo('#test123');
+                }
+            );
 
-                        print("HERE 2")
-                        let student = $(e.target).closest('tr').attr('id');
-                        let alum = $(e.target).closest('tr').attr('value');
-
-                        let studentU = encodeURIComponent(student);
-                        let alumU = encodeURIComponent(alum);
-
-                        let url = "/matchdetails?student=" + studentU + "&alum=" + alumU;
-
-                        console.log(url);
-
-                        if (request != null)
-                            request.abort();
-
-                        request = $.ajax({
-                            type: 'GET',
-                            url: url,
-                            success: handleResponse
-                        });
-                    }
-                );
-
-            }
+        }
 
 
-            $(document).ready(setup);
+        $(document).ready(setup);
 
-        </script>
+    </script>
 </body>
 
 </html>
