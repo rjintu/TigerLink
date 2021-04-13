@@ -82,15 +82,26 @@
 
         let request = null;
 
+        function getResults()
+        {
+            let dept = encodeURIComponent($('#dept').val());
+            let num = encodeURIComponent($('#num').val());
+            let area = encodeURIComponent($('#area').val());
+            let title = encodeURIComponent($('#title').val());
+        }
+
         function setup()
         {
             $('.clickable-row').click(
                 (e) => {
 
-                    let student = $(e.target).closest('tr').id;
-                    let alum = $(e.target).closest('tr').value;
+                    let student = $(e.target).closest('tr').attr('id');
+                    let alum = $(e.target).closest('tr').attr('value');
 
-                    let url = "/matchdetails?student=" + student + "&alum=" + alum;
+                    let studentU = encodeURIComponent(student);
+                    let alumU = encodeURIComponent(alum);
+
+                    let url = "/matchdetails?student=" + studentU + "&alum=" + alumU;
 
                     console.log(url);
 
