@@ -29,56 +29,85 @@
         integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
         crossorigin="anonymous"></script>
 
+    <script src= "https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+
     <!-- Option 2: Separate Popper and Bootstrap JS -->
     <!--
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js" integrity="sha384-SR1sx49pcuLnqZUnnPwx6FCym0wLsk5JZuNx2bPPENzswTNFaQU1RDvt3wT4gWFG" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.min.js" integrity="sha384-j0CNLUeiqtyaRmlzUHCPZ+Gy5fQu0dQ6eZ/xAww941Ai1SxSY+0EQqNXNE6DZiVc" crossorigin="anonymous"></script>
     -->
 </body>
-
-<form action="editprofile" method="get">
+<header>
     {% with bold='matches' %}
     {% include "navbar.html" %}
     {% endwith %}
-    <body>
-        <h3>Matches</h3>
-    </body>
-    <body>
-        <br>
-        <div class="container">
-            <div class="row justify-content-center">
-                <!-- col 1 -->
-                  <table class="table table-hover table-responsive"
-                            id="table"
-                            data-search="true"
-                            data-show-refresh="true"
-                            data-show-toggle="true"
-                            >
-                    <thead>
-                      <tr>
+</header>
+
+<body>
+    <div class="container">
+        <div class="row justify-content-center">
+            <!-- col 1 -->
+                <table class="table table-hover table-responsive">
+                <thead>
+                    <tr>
                         <th>Student Name</th>
                         <th>Student Year</th>
                         <th>Alumni Name</th>
                         <th>Alumni Year</th>
                         <th>Similarity</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                        {% for match in matches: %}
-                            {% if (match|length) > 2 %} 
-                                <tr>
-                                {% for i in range (2, match|length): %} <br>
-                                    <td>{{ match[i] }}</td> 
-                                {% endfor %}
-                                </tr>  
-                            {% endif %}
-                        {% endfor %}
-                    </tbody>
-                    </table>
-                    </div>
-            </div>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for match in matches: %}
+                        {% if (match|length) > 2 %} 
+                            <tr class="clickable-row" id='{{match[0]}}' value='{{match[1]}}'>
+                            {% for i in range (2, match|length): %}
+                                <td>{{ match[i] }}</td> 
+                            {% endfor %}
+                            </tr>
+                        {% endif %}
+                        <per id="details"></per>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
-    </body>
-</form>
+    </div>
+    
+    <script>
+        'use strict';
+
+        function handleResponse(response){
+            $('#details').html(response);
+        }
+
+        let request = null;
+
+        function setup()
+        {
+            $('.clickable-row').click(
+                (e) => {
+
+                    let student = $(e.target).closest('tr').id;
+                    let alum = $(e.target).closest('tr').value;
+
+                    let url = "/matchdetails?student=" + student + "&alum=" + alum;
+
+                    console.log(url);
+
+                    if (request != null)
+                        request.abort();
+                    
+                    request = $.ajax({
+                        type: 'GET',
+                        url: url, 
+                        success: handleResponse
+                    });
+                }
+            );
+        }
+        $(document).ready(setup);
+
+    </script>
+</body>
 
 </html>
