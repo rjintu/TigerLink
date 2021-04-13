@@ -61,12 +61,13 @@
                     {% for match in matches: %}
                         {% if (match|length) > 2 %} 
                             <tr class="clickable-row" id='{{match[0]}}' value='{{match[1]}}'>
-                            {% for i in range (2, match|length): %}
+                            {% for i in range (2, 6): %}
                                 <td>{{ match[i] }}</td> 
                             {% endfor %}
+                            <td>{{ match[6] }}%</td>
                             </tr>
                         {% endif %}
-                        <per id="details"></per>
+                        <tbody class="details" id="{{match[0]}}&{{match[1]}}"></tbody>
                     {% endfor %}
                 </tbody>
             </table>
@@ -76,19 +77,13 @@
     <script>
         'use strict';
 
-        function handleResponse(response){
-            $('#details').html(response);
+        function handleResponse(response, student, alum){
+            $('.details').html(""); // clear out other boxes
+            let results = document.getElementById(student + "&" + alum);
+            $(results).html(response);
         }
 
         let request = null;
-
-        function getResults()
-        {
-            let dept = encodeURIComponent($('#dept').val());
-            let num = encodeURIComponent($('#num').val());
-            let area = encodeURIComponent($('#area').val());
-            let title = encodeURIComponent($('#title').val());
-        }
 
         function setup()
         {
@@ -102,6 +97,7 @@
                     let alumU = encodeURIComponent(alum);
 
                     let url = "/matchdetails?student=" + studentU + "&alum=" + alumU;
+                    // let url = "/timeline"
 
                     console.log(url);
 
@@ -111,7 +107,9 @@
                     request = $.ajax({
                         type: 'GET',
                         url: url, 
-                        success: handleResponse
+                        success: function (response){
+                            handleResponse (response, studentU, alumU)
+                        }
                     });
                 }
             );
