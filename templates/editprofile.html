@@ -33,8 +33,8 @@
     <!-- heading -->
     <h2 style="text-align: center;">Edit My Profile</h2>
     {% with bold='edit' %}
-{% include "navbar.html" %}
-{% endwith %}
+    {% include "navbar.html" %}
+    {% endwith %}
 </body>
 
 <!--- 
@@ -65,8 +65,8 @@
                     <br>
                     <div class="form-group">
                         <label for="classYear"><strong>Class Year</strong></label>
-                        <input type="number" min="1920" max="2025" placeholder="Ex: 2023" class="form-control" name="classYear" id="classYear"
-                            aria-describedby="emailHelp" value="{{ info[1] }}" required>
+                        <input type="number" min="1920" max="2025" placeholder="Ex: 2023" class="form-control"
+                            name="classYear" id="classYear" aria-describedby="emailHelp" value="{{ info[1] }}" required>
                     </div>
                     <br>
                     <strong>Major</strong>
@@ -87,11 +87,9 @@
                     <br>
                     <strong>How many matches would you like?</strong>
                     <select class="form-select" aria-label="Default select example" id="numMatches" name="numMatches">
-                        <option value="{{info[5]}}" selected>{{info[5]}}</option>
-                        <option value=0>0</option>
-                        <option value=1>1</option>
-                        <option value=2>2</option>
-                        <option value=3>3</option>
+                        {% with selectedNumber=info[5] %}
+                        {% include "numofmatches.html" %}
+                        {% endwith %}
                     </select>
                     <br>
                 </div>

@@ -58,7 +58,8 @@
           <br>
           <strong>Class Year</strong>
           <div class="form-group">
-            <input type="number" min="1920" max="2025" placeholder="Ex: 2023" class="form-control" name="classYear" id="classYear" required>
+            <input type="number" min="1920" max="2025" placeholder="Ex: 2023" class="form-control" name="classYear"
+              id="classYear" required>
           </div>
           <br>
           <strong>Major</strong>
@@ -70,18 +71,15 @@
 
           <strong>How many matches would you like?</strong>
           <select class="form-select" aria-label="Default select example" id="numMatches" name="numMatches">
-            <option value="0">0</option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
+            {% include 'numofmatches.html' %}
           </select>
 
           <br>
 
           <div class="form-group">
             <label for="Zip Code"><strong>Zip Code</strong></label>
-            <input type="number" min="000001" max="99999" class="form-control" name="zipcode" id="zipcode" aria-describedby="emailHelp"
-              placeholder="Ex: 08554" required>
+            <input type="number" min="000001" max="99999" class="form-control" name="zipcode" id="zipcode"
+              aria-describedby="emailHelp" placeholder="Ex: 08554" required>
             <small id="emailHelp" class="form-text text-muted">We'll never share your data with anyone.</small>
           </div>
 
