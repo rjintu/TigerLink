@@ -66,6 +66,14 @@ def login_redirect():
     request_uri = login_manager.get_login_redirect(request)
     return redirect(request_uri)
 
+
+def user_exists(profileid):
+    db = Database()
+    db.connect()
+    does_user_exist = db.user_exists(profileid)
+    db.disconnect()
+    return does_user_exist
+
 # for checking if user exists already, setting a session cookie,
 # and redirecting to the next page
 
