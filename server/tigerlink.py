@@ -9,6 +9,7 @@ from .matching import Matching
 from .cookiemonster import CookieMonster
 from . import loginutil
 from .keychain import KeyChain
+from .admin import admin
 
 keychain = KeyChain()
 app = Flask(__name__, template_folder="../templates",
@@ -19,6 +20,9 @@ login_manager = loginutil.GoogleLogin(keychain)
 # for forcing HTTPS and adding other security features
 # CSP is disabled cause it messes with bootstrap
 Talisman(app, content_security_policy=None)
+
+# add other blueprints
+app.register_blueprint(admin)
 
 
 @app.route('/', methods=['GET'])
@@ -352,35 +356,8 @@ def changeprofile():
 
     return redirect('editprofile')
 
-@app.route('/admin', methods=['GET'])
-def match():
-    try:
-        html = render_template('admin.html')
-        db = Database()
-        db.connect()
-        db.disconnect()
-    except Exception as e:
-        html = "error occurred: " + str(e)
-        print(e)
-
-    response = make_response(html)
-    return response
-
-@app.route('/permissions', methods=['GET'])
-def noAuth():
-    try:
-        html = render_template('permissions.html')
-    except Exception as e:
-        html = "error occurred: " + str(e)
-        print(e)
-
-    response = make_response(html)
-    return response
-
 # Note: search will automatically query both students and alumni
 # TODO: implement this page in the frontend
-
-
 @app.route('/search', methods=['GET'])
 def search():
     if not loginutil.is_logged_in(session):
