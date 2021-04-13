@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans">
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans">
+
+  <!-- Optional JavaScript; choose one of the two! -->
+
+  <!-- Option 1: Bootstrap Bundle with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+  integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+  crossorigin="anonymous"></script>
+
+  <link rel='stylesheet' type='text/css' href='static/style.css'>
+</head>
+
+<body>
+  <center>
+    <h1>TigerLink Admin</h1>
+  </center>
+
+  <nav class="navbar navbar-light navbar-expand-lg" style="background-color: orange;">
+    <ul class="navbar-nav mx-auto">
+        <li class="nav-item active">
+            <a class="nav-link" href="/admin/matches" style="color: black"><strong>Matches</strong></a>
+        </li>
+        &nbsp;
+        <li class="nav-item">
+            <a class="nav-link" href="/admin/users">Users</a>
+        </li>
+        &nbsp;
+        <li class="nav-item">
+            <a class="nav-link" href="#">Timeline</a>
+        </li>
+        &nbsp;
+        <li class="nav-item">
+            <a class="nav-link" href="/logout">Sign Out</a>
+        </li>
+    </ul>
+  </nav>
+
+  <br>
+  <div class="container">
+    <h2>Current Matches</h2>
+    <table class="table table-hover table-responsive">
+      <thead>
+        <tr>
+          <th scope="col">Student Name</th>
+          <th scope="col">Student Year</th>
+          <th scope="col">Alumnus Name</th>
+          <th scope="col">Alumnus Year</th>
+          <th scope="col">Similarity</th>
+        </tr>
+      </thead>
+        <tbody>
+            {% for match in matches: %}
+                        {% if (match|length) > 2 %}
+                            <tr class="clickable-row" id='{{match[0]}}' value='{{match[1]}}'>
+                            {% for i in range (2, match|length): %}
+                                <td>{{ match[i] }}</td>
+                            {% endfor %}
+                            </tr>
+                        {% endif %}
+                        <per id="details"></per>
+                    {% endfor %}
+        </tbody>
+    </table>
+
+    <a class="btn btn-primary" href="#">Click Here to Automatically Create Matches</a>
+  </div>
+</body>
+</html>
