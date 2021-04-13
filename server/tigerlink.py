@@ -294,25 +294,77 @@ def matchdetails():
         html = "error occurred: " + str(e)
         print(e)
 
-    html = ""
-    print(student_careers)
-    for elem in student_info:
-        html += "<p>" + elem + "</p>"
-    for elem in student_careers:
-        html += "<p>" + elem[0] + "</p>"
-    for elem in student_interests:
-        html += "<p>" + elem[0] + "</p>"
+    html = "<table class='table'>"
+    # print(student_careers)
 
-    html += "<br>"
+    html += "<thead>"
+    html += "<tr>\
+                    <td style='width: 20%'><strong>MATCH INFO</strong></td>\
+                    <td style='width: 40%'><strong>Student Info</strong></td>\
+                    <td style='width: 40%'><strong>Alum Info</strong></td>\
+                </tr>"
+    html += "</thead>"
+    html += "<tbody>"
 
-    for elem in alum_info:
-        html += "<p>" + elem + "</p>"
-    for elem in alum_careers:
-        html += "<p>" + elem[0] + "</p>"
-    for elem in alum_interests:
-        html += "<p>" + elem[0] + "</p>"
+    for i in range(len(student_info)+1):
+        html += "<tr>"
 
-    html += "<br>"
+        if i is 0:
+            html += "<td ><strong>Name:</strong></td>"
+        elif i is 1:
+            html += "<td><strong>Class Year:</strong></td>"
+        elif i is 2:
+            html += "<td><strong>Email:</strong></td>"
+        elif i is 3:
+            html += "<td><strong>Major:</strong></td>"
+        elif i is 4:
+            html += "<td><strong>Zip Code:</strong></td>"
+        elif i is 5:
+            html += "<td><strong>Careers:</strong></td>"
+        elif i is 6:
+            html += "<td><strong>Groups:</strong></td>"
+
+        if (i <= 4):
+            html += '<td>' + student_info[i] + '</td>'
+            html += '<td>' + alum_info[i] + '</td>'
+        elif i is 5:
+            stud_temp = ""
+            alum_temp = ""
+
+            for m in range(len(student_careers)-1):
+                stud_temp += student_careers[m][0]
+                stud_temp += ", "
+            stud_temp += student_careers[-1][0]
+
+            for n in range(len(alum_careers)-1):
+                alum_temp += alum_careers[n][0]
+                alum_temp += ", "
+            alum_temp += alum_careers[-1][0]
+
+            html += '<td>' + stud_temp + '</td>'
+            html += '<td>' + alum_temp + '</td>'
+
+        elif i is 6:
+            stud_temp = ""
+            alum_temp = ""
+
+            for m in range(len(student_interests)-1):
+                stud_temp += student_interests[m][0]
+                stud_temp += ", "
+            stud_temp += student_interests[-1][0]
+
+            for n in range(len(alum_interests)-1):
+                alum_temp += alum_interests[n][0]
+                alum_temp += ", "
+            alum_temp += alum_interests[-1][0]
+
+            html += '<td>' + stud_temp + '</td>'
+            html += '<td>' + alum_temp + '</td>'
+
+        html += "</tr>"
+
+    html += "</tbody>"
+    html += "</table>"
 
     # html = render_template('displaymatches.html', student_info=student_info,
     #                      student_careers=student_careers, student_interests=student_interests,
@@ -409,7 +461,7 @@ def match():
         html = render_template('admin.html')
         db = Database()
         db.connect()
-        #db.update_student(profileid, new_info)
+        # db.update_student(profileid, new_info)
         db.disconnect()
     except Exception as e:
         html = "error occurred: " + str(e)
