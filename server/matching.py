@@ -87,44 +87,48 @@ class Matching(object):
     def match(self):
         students = self._students
         alumni = self._alumni
-        #random.shuffle(students)
-        #matches_made = {}
         matches = []
+        finalMatches = []
         while (len(students) > 0):
             if len(alumni) == 0:
-                return matches
+                return finalMatches
 
             svec = students[0]
             students.remove(svec)
             if svec._numMatch > 0:
-                bestSim = 0
-                bestIdx = 0
+                bestSim = -1
+                bestIdx = -1
+                updated = False
                 for idx in range(len(alumni)):
                     avec = alumni[idx]
-                    if avec._numMatch > 0:
+                    # make sure no re-matches EVER
+                    potentialMatch = (svec, avec)
+                    if potentialMatch not in matches and avec._numMatch > 0:
                         sim = self.dotProduct(svec, avec)
                         if sim > bestSim:
                             bestSim = sim
                             bestIdx = idx
-
-                alum = alumni[bestIdx]
-                alum._numMatch -= 1
-                alumni.remove(alum)  
-
-                if alum._numMatch > 0:
-                    alumni.append(alum)
-                
-                #TODO: change to a student
-                match = (svec, alum, svec._name, svec._year, avec._name, avec._year, bestSim)
-                if match not in matches:
+                            updated = True
+                                
+                if updated:
+                    alum = alumni[bestIdx]
+                    match = (svec, alum)
+                    
+                    #match = (svec._name, svec._year, alum._name, alum._year, bestSim)
                     matches.append(match)
+                    finalMatches.append((svec._profileid, alum._profid, svec._name, svec._year, alum._name, alum._year, bestSim))
+                    
+                    del(alumni[bestIdx])
+                    alum._numMatch -= 1
 
-                # assign more matches
-                svec._numMatch -= 1
-                if svec._numMatch > 0:
-                    students.append(svec)
+                    if alum._numMatch > 0:
+                        alumni.append(alum)
 
-        return matches
+                    svec._numMatch -= 1
+                    if svec._numMatch > 0:
+                        students.append(svec)
+
+        return finalMatches
 
 
     #sprefs = weightings for career, major, and organizations
@@ -138,17 +142,25 @@ class Matching(object):
             for career in svec._careers:
                 if career in avec._careers:
                     carS += 1
-                
+
+            totalC = len(list(set().union(svec._careers, avec._careers)))
+            carS /= totalC
+
         orgS = 0
         if svec._organizations != None:
             for org in svec._organizations:
                 if org in avec._organizations:
                     orgS += 1
-        
+
+            totalO = len(list(set().union(svec._organizations, avec._organizations)))
+            orgS /= totalO
+
         vals = [m, carS, orgS]
 
         sim = 0
         for i, weight in enumerate(svec._spref):
             sim += vals[i] * weight
-        
-        return sim
+
+        finalS = round(sim, 2) * 100
+
+        return finalS

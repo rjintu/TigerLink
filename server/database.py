@@ -1,7 +1,7 @@
 from os import environ
 from psycopg2 import connect
 from .post import Post
-
+import os
 
 class Database:
 
@@ -45,11 +45,30 @@ class Database:
                        '(profileid TEXT, interest TEXT)')
         # Timeline posts tables (posts, postgraphics)
         cursor.execute('DROP TABLE IF EXISTS posts')
-        cursor.execute('CREATE TABLE posts ' +
-                       '(postid TEXT, authorid TEXT, posttime TEXT, posttitle TEXT, postcontent TEXT, imgurl TEXT)')
-        cursor.execute('DROP TABLE IF EXISTS postgraphics')
-        cursor.execute('CREATE TABLE postgraphics ' +
-                       '(postid TEXT, postgraphic TEXT)')
+        cursor.execute('CREATE TABLE posts ' + 
+                '(postid TEXT, authorname TEXT, authorid TEXT, posttime TEXT, posttitle TEXT, postcontent TEXT, imgurl TEXT, privacy TEXT, communities TEXT)')
+        cursor.execute('DROP TABLE IF EXISTS comments')
+        cursor.execute('CREATE TABLE comments ' +
+                '(postid TEXT, author TEXT, comment TEXT)')
+        cursor.execute('DROP TABLE IF EXISTS likes')
+        cursor.execute('CREATE TABLE likes ' +
+                '(postid TEXT, authorid TEXT)')
+
+        self._connection.commit()
+        cursor.close()
+
+    def reset_posts(self):
+        cursor = self._connection.cursor()
+        # Timeline posts tables (posts, postgraphics)
+        cursor.execute('DROP TABLE IF EXISTS posts')
+        cursor.execute('CREATE TABLE posts ' + 
+                '(postid TEXT, authorname TEXT, authorid TEXT, posttime TEXT, posttitle TEXT, postcontent TEXT, imgurl TEXT, privacy TEXT, communities TEXT)')
+        cursor.execute('DROP TABLE IF EXISTS comments')
+        cursor.execute('CREATE TABLE comments ' +
+                '(postid TEXT, author TEXT, comment TEXT)')
+        cursor.execute('DROP TABLE IF EXISTS likes')
+        cursor.execute('CREATE TABLE likes ' +
+                '(postid TEXT, authorid TEXT)')
 
         self._connection.commit()
         cursor.close()
@@ -185,7 +204,7 @@ class Database:
         temp = cursor.fetchone()
         interests = []
         while temp is not None:
-            interests.append(temp)
+            interests.append(temp[0])
             temp = cursor.fetchone()
 
         cursor.close()
@@ -204,7 +223,7 @@ class Database:
         temp = cursor.fetchone()
         careers = []
         while temp is not None:
-            careers.append(temp)
+            careers.append(temp[0])
             temp = cursor.fetchone()
 
         # getting this user's groups
@@ -219,6 +238,20 @@ class Database:
         cursor.close()
         return info, careers, interests
 
+    # utility function for looking up a user by their email
+    def get_profileid_by_email(self, email):
+        email = str(email)
+
+        cursor = self._connection.cursor()
+        cursor.execute('SELECT profileid FROM students WHERE email=%s', [email])
+        profileid = cursor.fetchone()
+        if profileid is None:
+            cursor.execute('SELECT profileid FROM alumni WHERE email=%s', [email])
+            profileid = cursor.fetchone()
+            if profileid is None:
+                return None
+        return profileid[0]
+
     # returns student, alumni, or admin. If not in database, returns None
     def get_role(self, profileid):
         profileid = str(profileid)
@@ -227,30 +260,21 @@ class Database:
         cursor.execute(
             'SELECT role FROM roles WHERE profileid=%s', [profileid])
         role = cursor.fetchone()
-        return role[0]
+        return None if role is None else role[0]
 
-    # returns True if user exists, False otherwise.
-    # TODO: refactor to use roles table
-    def user_exists(self, profileid):
+    # used for changing a user between student/alum/admin
+    # TODO: maybe add/remove their row from students/alumni tables?
+    def set_role(self, profileid, newrole):
         profileid = str(profileid)
 
         cursor = self._connection.cursor()
-        cursor.execute('SELECT name, classyear, email, major, zip, ' +
-                       'nummatch FROM students WHERE profileid=%s', [profileid])
-        info = cursor.fetchone()
-        if info is not None:
-            cursor.close()
-            return True
-
-        cursor.execute('SELECT name, classyear, email, major, zip, ' +
-                       'nummatch FROM alumni WHERE profileid=%s', [profileid])
-        info = cursor.fetchone()
-        if info is not None:
-            cursor.close()
-            return True
-
+        cursor.execute('UPDATE roles SET role=%s WHERE profileid=%s', [newrole, profileid])
         cursor.close()
-        return False
+        self._connection.commit()
+
+    # returns True if user exists, False otherwise.
+    def user_exists(self, profileid):
+        return self.get_role(profileid) is not None
 
     # contents must be array of [name, classyear, email, major,
     # zip, nummatch, career]
@@ -422,21 +446,11 @@ class Database:
         cursor.close()
         return output
 
-    def create_timeline(self, posting, postid, authorid, posttime, posttitle, postcontent, imgurl):
-        if posting:
-            cursor = self._connection.cursor()
-            print(postid)
-            print(authorid)
-            print(posttime)
-            print(postcontent)
-            cursor.execute('INSERT INTO posts(postid, authorid, posttime, posttitle, postcontent, imgurl) ' +
-                           'VALUES (%s, %s, %s, %s, %s, %s)', ['1', authorid, posttime, posttitle, postcontent, imgurl])
-            self._connection.commit()
-            cursor.close()
-
+    def get_posts(self):
         cursor = self._connection.cursor()
 
-        stmtStr = "SELECT postid, authorid, posttime, posttitle, postcontent, imgurl FROM posts"
+        stmtStr = "SELECT postid, authorid, authorname, posttime, posttitle, postcontent, " + \
+                  "imgurl, privacy, communities FROM posts"
         cursor.execute(stmtStr)
         row = cursor.fetchone()
         output = []
@@ -446,8 +460,26 @@ class Database:
 
         output.reverse()
         cursor.close()
-        print(output)
         return output
+
+    def delete_post(self, postId):
+        cursor = self._connection.cursor()
+        cursor.execute('DELETE FROM posts WHERE postid=%s', [str(postId)])
+        self._connection.commit()
+        cursor.close()
+
+        # postid TEXT, authorname, authorid TEXT, posttime TEXT, posttitle TEXT, postcontent TEXT, imgurl TEXT, privacy TEXT, communities TEXT
+
+    def create_post(self, authorId, authorName, time, title, content, image_url, private, communities):
+        cursor = self._connection.cursor()
+        postid = str(os.getenv('numposts', 0))
+        cursor.execute('INSERT INTO posts(postid, authorid, authorname, posttime, posttitle, postcontent, imgurl, privacy, communities) ' +
+                        'VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)', 
+                        [postid, authorId, authorName, time, title, content, image_url, private, communities])
+        self._connection.commit()
+        postid = int(postid) + 1
+        environ['postid'] = str(postid +1)
+        cursor.close()
 
     def disconnect(self):
         self._connection.close()
