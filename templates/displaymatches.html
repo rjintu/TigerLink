@@ -47,6 +47,7 @@
     <div class="container">
         <div class="row justify-content-center">
             <!-- col 1 -->
+
             <table class="table table-hover table-responsive">
                 <thead>
                     <tr>
@@ -66,10 +67,16 @@
                         {% endfor %}
                     </tr>
                     {% endif %}
-                    <per id="details"></per>
+                    <!-- <p id="details"></p> -->
                     {% endfor %}
                 </tbody>
             </table>
+            <div class="w-50 justify-content-left">
+                <p id="details"></p>
+            </div>
+            <div class="d-flex justify-content-center">
+                <button type="submit" id="closeMatch" class="btn btn-success">Done</button>
+            </div>
 
             <!-- <a tabindex="0" class="button" id='test123' value='test123' role="button" data-bs-toggle="popover"
                 data-bs-content="testing" data-bs-trigger="focus" title="Match Info">Dismissible
@@ -77,13 +84,12 @@
         </div>
     </div>
 
-    <!-- Button trigger modal -->
-    <button type="button" class="btn btn-primary" id="modalButton" data-bs-toggle="modal"
+    <!-- button and modal -->
+    <!-- <button type="button" class="btn btn-primary" id="modalButton" data-bs-toggle="modal"
         data-bs-target="#staticBackdrop">
         Launch static backdrop modal
     </button>
 
-    <!-- Modal -->
     <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -99,7 +105,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
 
 
 
@@ -136,6 +142,8 @@
 
         function setup() {
 
+            $("#closeMatch").hide();
+
             $('.clickable-row').click(
                 (e) => {
 
@@ -157,14 +165,24 @@
                         url: url,
                         success: handleResponse
                     });
+
+                    $("#details").show();
+                    $("#closeMatch").show();
                 }
             );
 
-            $('#modalButton').click(
-                (e) => {
-                    // $('<p>Text</p>').appendTo('#test123');
-                }
-            );
+
+            $("#closeMatch").click(function () {
+                $("#details").hide();
+                $("#closeMatch").hide();
+            });
+
+
+            // $('#modalButton').click(
+            //     (e) => {
+            //         // $('<p>Text</p>').appendTo('#test123');
+            //     }
+            // );
 
         }
 
