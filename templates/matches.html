@@ -30,13 +30,53 @@
   <nav class="navbar navbar-light navbar-expand-lg" style="background-color: orange;">
     <ul class="navbar-nav mx-auto">
         <li class="nav-item active">
-            <a class="nav-link" href="#">Matches</a>
+            <a class="nav-link" href="/admin/matches" style="color: black"><strong>Matches</strong></a>
         </li>
-        &nbsp
+        &nbsp;
         <li class="nav-item">
             <a class="nav-link" href="#">Users</a>
         </li>
+        &nbsp;
+        <li class="nav-item">
+            <a class="nav-link" href="#">Timeline</a>
+        </li>
+        &nbsp;
+        <li class="nav-item">
+            <a class="nav-link" href="/logout">Sign Out</a>
+        </li>
     </ul>
   </nav>
+
+  <br>
+  <div class="container">
+    <h2>Current Matches</h2>
+    <table class="table table-hover table-responsive">
+      <thead>
+        <tr>
+          <th scope="col">Student Name</th>
+          <th scope="col">Student Year</th>
+          <th scope="col">Alumnus Name</th>
+          <th scope="col">Alumnus Year</th>
+          <th scope="col">Similarity</th>
+        </tr>
+      </thead>
+        <tbody>
+            {% for match in matches: %}
+                        {% if (match|length) > 2 %}
+                            <tr class="clickable-row" id='{{match[0]}}' value='{{match[1]}}'>
+                            {% for i in range (2, match|length): %}
+                                <td>{{ match[i] }}</td>
+                            {% endfor %}
+                            </tr>
+                        {% endif %}
+                        <per id="details"></per>
+                    {% endfor %}
+        </tbody>
+    </table>
+
+    <hr>
+
+    <a class="btn btn-primary" href="#">Click Here to Automatically Create Matches</a>
+  </div>
 </body>
 </html>

@@ -2,6 +2,7 @@ from flask import Blueprint, make_response, redirect, render_template, session, 
 
 from . import loginutil
 from .database import Database
+from .matching import Matching
 
 admin = Blueprint('admin', __name__, 
         template_folder="../templates",
@@ -37,7 +38,9 @@ def matches():
     if action is not None:
         return action
 
-    html = render_template('matches.html')
+    m = Matching()
+    matches = m.match()
+    html = render_template('matches.html', matches=matches)
     return make_response(html)
 
 @admin.errorhandler(403)
