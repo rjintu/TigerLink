@@ -30,11 +30,11 @@
   <nav class="navbar navbar-light navbar-expand-lg" style="background-color: orange;">
     <ul class="navbar-nav mx-auto">
         <li class="nav-item active">
-            <a class="nav-link" href="/admin/matches" style="color: black"><strong>Matches</strong></a>
+            <a class="nav-link" href="/admin/matches">Matches</a>
         </li>
         &nbsp;
         <li class="nav-item">
-            <a class="nav-link" href="/admin/users">Users</a>
+            <a class="nav-link" href="/admin/users" style="color: black"><strong>Users</strong></a>
         </li>
         &nbsp;
         <li class="nav-item">
@@ -49,32 +49,50 @@
 
   <br>
   <div class="container">
-    <h2>Current Matches</h2>
+    <h2>All Students</h2>
     <table class="table table-hover table-responsive">
       <thead>
         <tr>
-          <th scope="col">Student Name</th>
-          <th scope="col">Student Year</th>
-          <th scope="col">Alumnus Name</th>
-          <th scope="col">Alumnus Year</th>
-          <th scope="col">Similarity</th>
+          <th scope="col">Name</th>
+          <th scope="col">Class Year</th>
+          <th scope="col">Email</th>
+          <th scope="col">Major</th>
         </tr>
       </thead>
         <tbody>
-            {% for match in matches: %}
-                        {% if (match|length) > 2 %}
-                            <tr class="clickable-row" id='{{match[0]}}' value='{{match[1]}}'>
-                            {% for i in range (2, match|length): %}
-                                <td>{{ match[i] }}</td>
-                            {% endfor %}
-                            </tr>
-                        {% endif %}
-                        <per id="details"></per>
-                    {% endfor %}
+            {% for student in students %}
+                <tr>
+                  <td>{{ student[1] }} </td>
+                  <td>{{ student[2] }} </td>
+                  <td>{{ student[3] }} </td>
+                  <td>{{ student[4] }} </td>
+                </tr>
+            {% endfor %}
         </tbody>
     </table>
-
-    <a class="btn btn-primary" href="#">Click Here to Automatically Create Matches</a>
+    <div class="my-5"></div>
+    <hr>
+    <h2>All Alumni</h2>
+    <table class="table table-hover table-responsive">
+      <thead>
+        <tr>
+          <th scope="col">Name</th>
+          <th scope="col">Class Year</th>
+          <th scope="col">Email</th>
+          <th scope="col">Major</th>
+        </tr>
+      </thead>
+        <tbody>
+            {% for alum in alumni %}
+                <tr>
+                    <td>{{ alum[1] }} </td>
+                    <td>{{ alum[2] }} </td>
+                    <td>{{ alum[3] }} </td>
+                    <td>{{ alum[4] }} </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
   </div>
 </body>
 </html>

@@ -43,6 +43,21 @@ def matches():
     html = render_template('matches.html', matches=matches)
     return make_response(html)
 
+@admin.route('/users', methods=['GET'])
+def users():
+    action = verify_access(session)
+    if action is not None:
+        return action
+
+    db = Database()
+    db.connect()
+    students, _, _ = db.get_students()
+    alumni, _, _ = db.get_alumni()
+    db.disconnect()
+
+    html = render_template('users.html', students=students, alumni=alumni)
+    return make_response(html)
+
 @admin.errorhandler(403)
 def permissions(err):
     html = render_template('permissions.html')
