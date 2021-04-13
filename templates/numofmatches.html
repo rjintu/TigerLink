@@ -1,0 +1,12 @@
+{% set numbers = ['0',
+'1',
+'2',
+'3'] %}
+
+{% for i in numbers: %}
+{% if i == selectedNumber %}
+<option value="{{ i }}" selected>{{ i }}</option>
+{% else %}
+<option value="{{ i }}">{{ i }}</option>
+{% endif %}
+{% endfor %}
