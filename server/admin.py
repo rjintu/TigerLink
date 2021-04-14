@@ -17,10 +17,10 @@ def verify_access(session):
 
     db = Database()
     db.connect()
-    role = db.get_role(profileid)
+    is_admin = db.get_admin(profileid)
     db.disconnect()
 
-    if role != "admin":
+    if not is_admin:
         abort(403)
 
 @admin.route('/', methods=['GET'])
