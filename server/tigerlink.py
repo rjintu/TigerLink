@@ -170,10 +170,11 @@ def loadpost():
             info, careers, interests = db.get_student_by_id(profileid)
         elif role == 'alum':
             info, careers, interests = db.get_alum_by_id(profileid)
+        is_admin = db.get_admin(profileid)
         db.disconnect()
 
         html = render_template(
-            'createpost.html', picture=session['picture'], interests=interests)
+            'createpost.html', picture=session['picture'], interests=interests, is_admin=is_admin)
     except Exception as e:
         html = "error occurred: " + str(e)
         print(e)
@@ -298,7 +299,9 @@ def getmatches():
         db = Database()
         db.connect()
         matches = db.retrieve_matches(profileid)
-        html = render_template('displaymatches.html', matches=matches, picture=session['picture'])
+        is_admin = db.get_admin(profileid)
+        db.disconnect()
+        html = render_template('displaymatches.html', matches=matches, picture=session['picture'], is_admin=is_admin)
     except Exception as e:
         html = "error occurred: " + str(e)
         print(e)
@@ -467,12 +470,13 @@ def getprofile():
         elif role == 'alum':
             info, careers, interests = db.get_alum_by_id(profileid)
             interests = fix_list_format(interests)
+        is_admin = db.get_admin(profileid)
         db.disconnect()
         print(info)
         print(careers)
         print(interests)
         html = render_template('editprofile.html', info=info,
-                               careers=careers, interests=interests, picture=session['picture'], role=role)
+                               careers=careers, interests=interests, picture=session['picture'], role=role, is_admin=is_admin)
 
     except Exception as e:
         html = "error occurred: " + str(e)
@@ -565,9 +569,11 @@ def search():
         db.connect()
         # FIXME: db.search() will take search_query and two booleans (student and alumni)
         results = db.search(search_query)
+        is_admin = db.get_admin(session['profileid'])
         db.disconnect()
         html = render_template(
-            'search.html', results=results, picture=session['picture'])
+            'search.html', results=results, picture=session['picture'],
+            is_admin=is_admin)
 
     except Exception as e:
         html = str(search_query)
@@ -588,7 +594,13 @@ def dosearch():
         # profile has not been created
         return redirect('/index')
 
-    html = render_template('dosearch.html', picture=session['picture'])
+    db = Database()
+    db.connect()
+    is_admin = db.get_admin(profileid)
+    db.disconnect()
+
+    html = render_template('dosearch.html', picture=session['picture'],
+            is_admin=is_admin)
     response = make_response(html)
     return response
 
@@ -608,6 +620,7 @@ def timeline():
     db.connect()
 
     role = str(db.get_role(profileid))
+    is_admin = db.get_admin(profileid)
     info, careers, interests = None, None, None
     if role == 'student':
         info, careers, interests = db.get_student_by_id(profileid)
@@ -627,7 +640,7 @@ def timeline():
 
     db.disconnect()
     html = render_template('timeline.html', posts=posts,
-                           picture=session['picture'])
+                           picture=session['picture'], is_admin=is_admin)
     response = make_response(html)
     return response
 
@@ -637,6 +650,12 @@ def groups():
     if not loginutil.is_logged_in(session):
         return redirect('/login')
 
-    html = render_template('groups.html', picture=session['picture'])
+    db = Database()
+    db.connect()
+    is_admin = db.get_admin(session['profileid'])
+    db.disconnect()
+
+    html = render_template('groups.html', picture=session['picture'],
+            is_admin=is_admin)
     response = make_response(html)
     return response
