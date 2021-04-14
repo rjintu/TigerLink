@@ -53,6 +53,11 @@ class Database:
         cursor.execute('DROP TABLE IF EXISTS likes')
         cursor.execute('CREATE TABLE likes ' +
                 '(postid TEXT, authorid TEXT)')
+        
+        # Matches table
+        cursor.execute('DROP TABLE IF EXISTS matches')
+        cursor.execute('CREATE TABLE matches ' +
+                       '(studentid TEXT, alumid TEXT)')
 
         self._connection.commit()
         cursor.close()
@@ -480,6 +485,18 @@ class Database:
         postid = int(postid) + 1
         environ['postid'] = str(postid +1)
         cursor.close()
+    # add a set of matches to the matches table in the database
+    # note: will erase previous set of matches in the database (generating new matches)
+    def add_matches(self, matches):
+        # TODO: erase matches?
+        from .student import Student 
+        for match in matches:
+            studentid = match[0].getField('_profileid')
+            print('here')
+            alumid = match[1].getField('_profileid')
+            print(studentid)
+            print(alumid)
+            # TODO: add to the database itself!
 
     def disconnect(self):
         self._connection.close()
