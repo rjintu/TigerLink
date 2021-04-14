@@ -168,7 +168,6 @@
                             data-selected-text-format="count">
                             {% set temp_list = [] %}
                             {% for i in interests:%}
-                            <!-- shouldn't be any [0] after i -->
                             <option selected>{{ i }}</option>
                             {{ temp_list.append(i|string)}}
                             {% endfor %}
