@@ -81,6 +81,11 @@
                     <a class="nav-link" href="editprofile">Profile</span></a>
                 {% endif %}
             </li>
+            {% if is_admin %}
+            <li class="nav-item">
+                <a class="nav-link" href="/admin">Admin</a>
+            </li>
+            {% endif %}
             <li class="nav-item">
                 <a class="nav-link" href="logout">Sign Out</span></a>
             </li>

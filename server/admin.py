@@ -17,10 +17,10 @@ def verify_access(session):
 
     db = Database()
     db.connect()
-    role = db.get_role(profileid)
+    is_admin = db.get_admin(profileid)
     db.disconnect()
 
-    if role != "admin":
+    if not is_admin:
         abort(403)
 
 @admin.route('/', methods=['GET'])
@@ -38,10 +38,46 @@ def matches():
     if action is not None:
         return action
 
-    m = Matching()
-    matches = m.match()
+    db = Database()
+    db.connect()
+    matches = db.retrieve_matches(session['profileid'], display_all=True)
+    db.disconnect()
     html = render_template('matches.html', matches=matches)
     return make_response(html)
+
+@admin.route('/creatematches', methods=['POST'])
+def creatematches():
+    action = verify_access(session)
+    if action is not None:
+        return action
+
+    m = Matching()
+    matches = m.match()
+
+    db = Database()
+    db.connect()
+    db.reset_matches()
+    db.add_matches(matches)
+    db.disconnect()
+
+    # todo: add error handling
+    response = make_response('success!')
+    return response
+
+@admin.route('/deletematches', methods=['POST'])
+def deletematches():
+    action = verify_access(session)
+    if action is not None:
+        return action
+
+    db = Database()
+    db.connect()
+    db.reset_matches()
+    db.disconnect()
+
+    # todo: add error handling
+    response = make_response('success!')
+    return response
 
 @admin.route('/users', methods=['GET'])
 def users():

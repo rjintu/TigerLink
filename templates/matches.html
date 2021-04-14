@@ -12,7 +12,8 @@
 
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans">
 
-  <!-- Optional JavaScript; choose one of the two! -->
+  <!-- JQuery -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
 
   <!-- Option 1: Bootstrap Bundle with Popper -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
@@ -27,7 +28,7 @@
     <h1>TigerLink Admin</h1>
   </center>
 
-  <nav class="navbar navbar-light navbar-expand-lg" style="background-color: orange;">
+  <nav class="navbar navbar-light navbar-expand" style="background-color: orange;">
     <ul class="navbar-nav mx-auto">
         <li class="nav-item active">
             <a class="nav-link" href="/admin/matches" style="color: black"><strong>Matches</strong></a>
@@ -39,6 +40,10 @@
         &nbsp;
         <li class="nav-item">
             <a class="nav-link" href="#">Timeline</a>
+        </li>
+        &nbsp;
+        <li class="nav-item">
+            <a class="nav-link" href="/">Homepage</a>
         </li>
         &nbsp;
         <li class="nav-item">
@@ -74,7 +79,32 @@
         </tbody>
     </table>
 
-    <a class="btn btn-primary" href="#">Click Here to Automatically Create Matches</a>
+    <a class="btn btn-primary" id="creatematches" href="#">Create New Matches</a>
+    <a class="btn btn-danger" id="deletematches" href="#">Delete Matches</a>
   </div>
+
+  <script>
+    "use strict";
+
+    function setup() {
+        let createBtn = document.getElementById("creatematches");
+        createBtn.onclick = function() {
+            $.post("/admin/creatematches")
+                .done(function() { alert('New matches created!'); location.reload(); })
+                .fail(function() { alert('An error occurred.'); });
+        };
+
+        let deleteBtn = document.getElementById("deletematches");
+        deleteBtn.onclick = function() {
+            if(confirm('Are you sure you want to delete all matches?')) {
+                $.post("/admin/deletematches")
+                    .done(function() { location.reload(); })
+                    .fail(function() { alert('An error occurred.'); });
+            }
+        };
+    }
+
+    $(document).ready(setup);
+  </script>
 </body>
 </html>
