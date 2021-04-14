@@ -252,6 +252,37 @@ def getstudents():
     return response
 
 
+# this page is for creating matches
+# TODO: connect this to the admin side
+@app.route('/creatematches', methods=['GET'])
+def creatematches():
+    if not loginutil.is_logged_in(session):
+        return redirect('/login')
+    
+    try:
+        # creates matches from matching.py file. returns a list of tuples.
+        m = Matching()
+        matches = m.match()
+        print(matches)
+
+        # add the matches to the database. 
+        db = Database()
+        db.connect()
+        db.reset_matches() # TODO: remove this line once we've updated the db on Heroku/implemented admin
+        db.add_matches(matches)
+        db.disconnect()
+
+        # display something that says "matches have been created"
+        # TODO: make this a nicer-looking page
+        html = "matches successfully created. <a href = 'displayallmatches'>See all matches.</a>"
+
+    except Exception as e:
+        html = "error occurred: " + str(e)
+        print(e)
+    
+    response = make_response(html)
+    return response
+
 @app.route('/displaymatches', methods=['GET'])
 def getmatches():
     if not loginutil.is_logged_in(session):
@@ -263,11 +294,36 @@ def getmatches():
         return redirect('/index')
 
     try:
-        # creates matches from matching.py file. returns a list of tuples.
-        m = Matching()
-        matches = m.match()
-        html = render_template('displaymatches.html', matches=matches,
-                               picture=session['picture'])
+        # pull all of the matches that have been created so far (from database)
+        db = Database()
+        db.connect()
+        matches = db.retrieve_matches(profileid)
+        html = render_template('displaymatches.html', matches=matches, picture=session['picture'])
+    except Exception as e:
+        html = "error occurred: " + str(e)
+        print(e)
+
+    response = make_response(html)
+    return response
+
+# TODO: remove this once debugging is done! This should be implemented on the admin side — display all matches
+# TODO: make it so that this page is only accessible if you are an admin (security issue)
+@app.route('/displayallmatches', methods=['GET'])
+def getallmatches():
+    if not loginutil.is_logged_in(session):
+        return redirect('/login')
+
+    profileid = session['profileid']
+    if not user_exists(profileid):
+        # profile has not been created
+        return redirect('/index')
+
+    try:
+        # pull all of the matches that have been created so far (from database)
+        db = Database()
+        db.connect()
+        matches = db.retrieve_matches(profileid, display_all=True)
+        html = render_template('displaymatches.html', matches=matches, picture=session['picture'])
     except Exception as e:
         html = "error occurred: " + str(e)
         print(e)
@@ -276,8 +332,6 @@ def getmatches():
     return response
 
 # input (from get request): studentid, alumid
-
-
 @app.route('/matchdetails', methods=['GET'])
 def matchdetails():
     if not loginutil.is_logged_in(session):
@@ -294,8 +348,7 @@ def matchdetails():
         db.connect()
         student = request.args.get('student')
         alum = request.args.get('alum')
-        student_info, student_careers, student_interests = db.get_student_by_id(
-            student)
+        student_info, student_careers, student_interests = db.get_student_by_id(student)
 
         # student_careers is being returned as a list of tuples
         # this block fixes that
