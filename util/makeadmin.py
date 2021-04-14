@@ -16,6 +16,6 @@ if __name__ == '__main__':
     if profileid is None:
         print('No profile with email ' + email + ' exists.')
         exit(0)
-    db.set_role(profileid, 'admin')
+    db.set_admin(profileid, True)
     print('Set ' + email + ' to admin role.')
     db.disconnect()
