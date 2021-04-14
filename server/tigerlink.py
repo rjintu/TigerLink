@@ -200,9 +200,10 @@ def createpost():
         content = acct_info.get('content', '')
         email = acct_info.get('email', '')
         private = acct_info.get('role', '')
-        communities = acct_info.getlist('communities')  # FIXME: verify this works
+        communities = acct_info.getlist(
+            'communities')  # FIXME: verify this works
         imgurl = acct_info.get('imgurl', '')
-        
+
         db = Database()
         db.connect()
         profileid = session['profileid']
@@ -221,8 +222,8 @@ def createpost():
 
     # def create_post(self, authorId, authorName, time, title, content, image_url, private, communities):
 
-        db.create_post(str(profileid), str(name), str(currDate), str(title), 
-            str(content), str(imgurl), str(private), json.dumps(communities))
+        db.create_post(str(profileid), str(name), str(currDate), str(title),
+                       str(content), str(imgurl), str(private), json.dumps(communities))
         db.disconnect()
         return redirect('/timeline')
     except Exception as e:
@@ -295,7 +296,15 @@ def matchdetails():
         alum = request.args.get('alum')
         student_info, student_careers, student_interests = db.get_student_by_id(
             student)
+
+        # student_careers is being returned as a list of tuples
+        # this block fixes that
+        student_careers = fix_list_format(student_careers)
+
         alum_info, alum_careers, alum_interests = db.get_alum_by_id(alum)
+        # alum_interests is being returned as a list of tuples
+        # this block fixes that
+        alum_interests = fix_list_format(alum_interests)
 
     except Exception as e:
         html = "error occurred: " + str(e)
@@ -339,14 +348,14 @@ def matchdetails():
             alum_temp = ""
 
             for m in range(len(student_careers)-1):
-                stud_temp += student_careers[m][0]
+                stud_temp += student_careers[m]
                 stud_temp += ", "
-            stud_temp += student_careers[-1][0]
+            stud_temp += student_careers[-1]
 
             for n in range(len(alum_careers)-1):
-                alum_temp += alum_careers[n][0]
+                alum_temp += alum_careers[n]
                 alum_temp += ", "
-            alum_temp += alum_careers[-1][0]
+            alum_temp += alum_careers[-1]
 
             html += '<td>' + stud_temp + '</td>'
             html += '<td>' + alum_temp + '</td>'
@@ -356,14 +365,14 @@ def matchdetails():
             alum_temp = ""
 
             for m in range(len(student_interests)-1):
-                stud_temp += student_interests[m][0]
+                stud_temp += student_interests[m]
                 stud_temp += ", "
-            stud_temp += student_interests[-1][0]
+            stud_temp += student_interests[-1]
 
             for n in range(len(alum_interests)-1):
-                alum_temp += alum_interests[n][0]
+                alum_temp += alum_interests[n]
                 alum_temp += ", "
-            alum_temp += alum_interests[-1][0]
+            alum_temp += alum_interests[-1]
 
             html += '<td>' + stud_temp + '</td>'
             html += '<td>' + alum_temp + '</td>'
@@ -401,12 +410,17 @@ def getprofile():
         print(role)
         if role == 'student':
             info, careers, interests = db.get_student_by_id(profileid)
+            careers = fix_list_format(careers)
         elif role == 'alum':
             info, careers, interests = db.get_alum_by_id(profileid)
+            interests = fix_list_format(interests)
         db.disconnect()
+        print(info)
+        print(careers)
+        print(interests)
         html = render_template('editprofile.html', info=info,
                                careers=careers, interests=interests, picture=session['picture'], role=role)
-        
+
     except Exception as e:
         html = "error occurred: " + str(e)
         print(e)
@@ -414,7 +428,15 @@ def getprofile():
     response = make_response(html)
     return response
 
-  # updates profile on save click
+# method to fix formatting of returned lists
+
+
+def fix_list_format(thisList):
+    for i in range(len(thisList)):
+        thisList[i] = thisList[i][0]
+    return thisList
+
+# updates profile on save click
 
 
 @app.route('/updateprofile', methods=['POST'])
@@ -462,6 +484,8 @@ def changeprofile():
 
 # Note: search will automatically query both students and alumni
 # TODO: implement this page in the frontend
+
+
 @app.route('/search', methods=['GET'])
 def search():
     if not loginutil.is_logged_in(session):
@@ -535,7 +559,7 @@ def timeline():
     if role == 'student':
         info, careers, interests = db.get_student_by_id(profileid)
     elif role == 'alum':
-        info, careers, interests = db.get_alum_by_id(profileid)    
+        info, careers, interests = db.get_alum_by_id(profileid)
 
     posts = []
     output = db.get_posts()
@@ -549,7 +573,8 @@ def timeline():
             posts.append(i)
 
     db.disconnect()
-    html = render_template('timeline.html', posts=posts, picture=session['picture'])
+    html = render_template('timeline.html', posts=posts,
+                           picture=session['picture'])
     response = make_response(html)
     return response
 
