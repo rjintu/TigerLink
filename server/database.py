@@ -34,7 +34,7 @@ class Database:
         # Roles table
         cursor.execute('DROP TABLE IF EXISTS roles')
         cursor.execute('CREATE TABLE roles ' +
-                       '(profileid TEXT, role TEXT)')
+                       '(profileid TEXT, role TEXT, isadmin TEXT)')
         # Careers table
         cursor.execute('DROP TABLE IF EXISTS careers')
         cursor.execute('CREATE TABLE careers ' +
@@ -102,8 +102,8 @@ class Database:
         profileid = student_elems[0]
         industry = student[-2]
         interests = student[-1]
-        cursor.execute('INSERT INTO roles(profileid, role) ' +
-                       'VALUES (%s, %s)', [profileid, 'student'])
+        cursor.execute('INSERT INTO roles(profileid, role, isadmin) ' +
+                       'VALUES (%s, %s, %s)', [profileid, 'student', 'false'])
         cursor.execute('INSERT INTO students(profileid, name, classyear, email, ' +
                        'major, zip, numMatch) ' +
                        'VALUES (%s, %s, %s, %s, %s, %s, %s)', student_elems)
@@ -122,8 +122,8 @@ class Database:
         profileid = alum_elems[0]
         industry = alum[-2]
         interests = alum[-1]
-        cursor.execute('INSERT INTO roles(profileid, role) ' +
-                       'VALUES (%s, %s)', [profileid, 'alum'])
+        cursor.execute('INSERT INTO roles(profileid, role, isadmin) ' +
+                       'VALUES (%s, %s, %s)', [profileid, 'alum', 'false'])
         cursor.execute('INSERT INTO alumni(profileid, name, classyear, email, ' +
                        'major, zip, numMatch) ' +
                        'VALUES (%s, %s, %s, %s, %s, %s, %s)', alum_elems)
@@ -266,15 +266,37 @@ class Database:
         cursor.execute(
             'SELECT role FROM roles WHERE profileid=%s', [profileid])
         role = cursor.fetchone()
+        cursor.close()
         return None if role is None else role[0]
 
-    # used for changing a user between student/alum/admin
-    # TODO: maybe add/remove their row from students/alumni tables?
+    # used for changing a user between student/alum
+    # NOTE: this function is not safe yet! if you plan on using it, also
+    # make sure to change the students/alum tables
     def set_role(self, profileid, newrole):
         profileid = str(profileid)
 
         cursor = self._connection.cursor()
         cursor.execute('UPDATE roles SET role=%s WHERE profileid=%s', [newrole, profileid])
+        cursor.close()
+        self._connection.commit()
+
+    def get_admin(self, profileid):
+        profileid = str(profileid)
+
+        cursor = self._connection.cursor()
+        cursor.execute('SELECT isadmin FROM roles WHERE profileid=%s', [profileid])
+        isadmin = cursor.fetchone()
+        cursor.close()
+        return False if isadmin is None else isadmin[0] == 'true'
+
+    def set_admin(self, profileid, is_admin):
+        profileid = str(profileid)
+
+        cursor = self._connection.cursor()
+        if is_admin:
+            cursor.execute('UPDATE roles SET isadmin=%s WHERE profileid=%s', ['true', profileid])
+        else:
+            cursor.execute('UPDATE roles SET isadmin=%s WHERE profileid=%s', ['false', profileid])
         cursor.close()
         self._connection.commit()
 

@@ -170,10 +170,11 @@ def loadpost():
             info, careers, interests = db.get_student_by_id(profileid)
         elif role == 'alum':
             info, careers, interests = db.get_alum_by_id(profileid)
+        is_admin = db.get_admin(profileid)
         db.disconnect()
 
         html = render_template(
-            'createpost.html', picture=session['picture'], interests=interests)
+            'createpost.html', picture=session['picture'], interests=interests, is_admin=is_admin)
     except Exception as e:
         html = "error occurred: " + str(e)
         print(e)
@@ -233,56 +234,6 @@ def createpost():
 
     return html
 
-# TODO: remove this page (currently for debugging only)
-
-
-@app.route('/getstudents', methods=['GET'])
-def getstudents():
-    try:
-        db = Database()
-        db.connect()
-        students = db.get_students()
-        db.disconnect()
-        html = render_template('getstudents.html', students=students)
-    except Exception as e:
-        html = "error occurred: " + str(e)
-        print(e)
-
-    response = make_response(html)
-    return response
-
-
-# this page is for creating matches
-# TODO: connect this to the admin side
-@app.route('/creatematches', methods=['GET'])
-def creatematches():
-    if not loginutil.is_logged_in(session):
-        return redirect('/login')
-    
-    try:
-        # creates matches from matching.py file. returns a list of tuples.
-        m = Matching()
-        matches = m.match()
-        print(matches)
-
-        # add the matches to the database. 
-        db = Database()
-        db.connect()
-        db.reset_matches() # TODO: remove this line once we've updated the db on Heroku/implemented admin
-        db.add_matches(matches)
-        db.disconnect()
-
-        # display something that says "matches have been created"
-        # TODO: make this a nicer-looking page
-        html = "matches successfully created. <a href = 'displayallmatches'>See all matches.</a>"
-
-    except Exception as e:
-        html = "error occurred: " + str(e)
-        print(e)
-    
-    response = make_response(html)
-    return response
-
 @app.route('/displaymatches', methods=['GET'])
 def getmatches():
     if not loginutil.is_logged_in(session):
@@ -298,32 +249,9 @@ def getmatches():
         db = Database()
         db.connect()
         matches = db.retrieve_matches(profileid)
-        html = render_template('displaymatches.html', matches=matches, picture=session['picture'])
-    except Exception as e:
-        html = "error occurred: " + str(e)
-        print(e)
-
-    response = make_response(html)
-    return response
-
-# TODO: remove this once debugging is done! This should be implemented on the admin side — display all matches
-# TODO: make it so that this page is only accessible if you are an admin (security issue)
-@app.route('/displayallmatches', methods=['GET'])
-def getallmatches():
-    if not loginutil.is_logged_in(session):
-        return redirect('/login')
-
-    profileid = session['profileid']
-    if not user_exists(profileid):
-        # profile has not been created
-        return redirect('/index')
-
-    try:
-        # pull all of the matches that have been created so far (from database)
-        db = Database()
-        db.connect()
-        matches = db.retrieve_matches(profileid, display_all=True)
-        html = render_template('displaymatches.html', matches=matches, picture=session['picture'])
+        is_admin = db.get_admin(profileid)
+        db.disconnect()
+        html = render_template('displaymatches.html', matches=matches, picture=session['picture'], is_admin=is_admin)
     except Exception as e:
         html = "error occurred: " + str(e)
         print(e)
@@ -378,25 +306,25 @@ def matchdetails():
     for i in range(len(student_info)+1):
         html += "<tr>"
 
-        if i is 0:
+        if i == 0:
             html += "<td ><strong>Name:</strong></td>"
-        elif i is 1:
+        elif i == 1:
             html += "<td><strong>Class Year:</strong></td>"
-        elif i is 2:
+        elif i == 2:
             html += "<td><strong>Email:</strong></td>"
-        elif i is 3:
+        elif i == 3:
             html += "<td><strong>Major:</strong></td>"
-        elif i is 4:
+        elif i == 4:
             html += "<td><strong>Zip Code:</strong></td>"
-        elif i is 5:
+        elif i == 5:
             html += "<td><strong>Careers:</strong></td>"
-        elif i is 6:
+        elif i == 6:
             html += "<td><strong>Groups:</strong></td>"
 
         if (i <= 4):
             html += '<td>' + student_info[i] + '</td>'
             html += '<td>' + alum_info[i] + '</td>'
-        elif i is 5:
+        elif i == 5:
             stud_temp = ""
             alum_temp = ""
 
@@ -413,7 +341,7 @@ def matchdetails():
             html += '<td>' + stud_temp + '</td>'
             html += '<td>' + alum_temp + '</td>'
 
-        elif i is 6:
+        elif i == 6:
             stud_temp = ""
             alum_temp = ""
 
@@ -467,12 +395,13 @@ def getprofile():
         elif role == 'alum':
             info, careers, interests = db.get_alum_by_id(profileid)
             interests = fix_list_format(interests)
+        is_admin = db.get_admin(profileid)
         db.disconnect()
         print(info)
         print(careers)
         print(interests)
         html = render_template('editprofile.html', info=info,
-                               careers=careers, interests=interests, picture=session['picture'], role=role)
+                               careers=careers, interests=interests, picture=session['picture'], role=role, is_admin=is_admin)
 
     except Exception as e:
         html = "error occurred: " + str(e)
@@ -565,9 +494,11 @@ def search():
         db.connect()
         # FIXME: db.search() will take search_query and two booleans (student and alumni)
         results = db.search(search_query)
+        is_admin = db.get_admin(session['profileid'])
         db.disconnect()
         html = render_template(
-            'search.html', results=results, picture=session['picture'])
+            'search.html', results=results, picture=session['picture'],
+            is_admin=is_admin)
 
     except Exception as e:
         html = str(search_query)
@@ -588,7 +519,13 @@ def dosearch():
         # profile has not been created
         return redirect('/index')
 
-    html = render_template('dosearch.html', picture=session['picture'])
+    db = Database()
+    db.connect()
+    is_admin = db.get_admin(profileid)
+    db.disconnect()
+
+    html = render_template('dosearch.html', picture=session['picture'],
+            is_admin=is_admin)
     response = make_response(html)
     return response
 
@@ -608,6 +545,7 @@ def timeline():
     db.connect()
 
     role = str(db.get_role(profileid))
+    is_admin = db.get_admin(profileid)
     info, careers, interests = None, None, None
     if role == 'student':
         info, careers, interests = db.get_student_by_id(profileid)
@@ -627,7 +565,7 @@ def timeline():
 
     db.disconnect()
     html = render_template('timeline.html', posts=posts,
-                           picture=session['picture'])
+                           picture=session['picture'], is_admin=is_admin)
     response = make_response(html)
     return response
 
@@ -637,6 +575,12 @@ def groups():
     if not loginutil.is_logged_in(session):
         return redirect('/login')
 
-    html = render_template('groups.html', picture=session['picture'])
+    db = Database()
+    db.connect()
+    is_admin = db.get_admin(session['profileid'])
+    db.disconnect()
+
+    html = render_template('groups.html', picture=session['picture'],
+            is_admin=is_admin)
     response = make_response(html)
     return response
