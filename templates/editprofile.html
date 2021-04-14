@@ -148,8 +148,8 @@
                             data-selected-text-format="count" required>
                             {% set temp_list = [] %}
                             {% for c in careers:%}
-                            <option selected>{{ c[0] }}</option>
-                            {{ temp_list.append(c[0]|string)}}
+                            <option selected>{{ c }}</option>
+                            {{ temp_list.append(c|string)}}
                             {% endfor %}
                             <!-- send selected careers to template via Jinja -->
                             {% with selectedCareers=temp_list %}
