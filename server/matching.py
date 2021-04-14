@@ -116,7 +116,7 @@ class Matching(object):
                     
                     #match = (svec._name, svec._year, alum._name, alum._year, bestSim)
                     matches.append(match)
-                    finalMatches.append((svec._profileid, alum._profid, svec._name, svec._year, alum._name, alum._year, bestSim))
+                    finalMatches.append((svec._profileid, alum._profileid, svec._name, svec._year, alum._name, alum._year, bestSim))
                     
                     del(alumni[bestIdx])
                     alum._numMatch -= 1

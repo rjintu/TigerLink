@@ -57,10 +57,11 @@ class Database:
         # Matches table
         cursor.execute('DROP TABLE IF EXISTS matches')
         cursor.execute('CREATE TABLE matches ' +
-                       '(studentid TEXT, alumid TEXT)')
+                       '(studentid TEXT, alumid TEXT, similarity TEXT)')
 
         self._connection.commit()
         cursor.close()
+        print('Database reset successfully')
 
     def reset_posts(self):
         cursor = self._connection.cursor()
@@ -485,18 +486,69 @@ class Database:
         postid = int(postid) + 1
         environ['postid'] = str(postid +1)
         cursor.close()
-    # add a set of matches to the matches table in the database
-    # note: will erase previous set of matches in the database (generating new matches)
+
+    # reset all matches in the matches table
+    def reset_matches(self):
+        cursor = self._connection.cursor()
+        # TODO: maybe there's a cleaner way to TRUNCATE the rows instead of dropping/creating table (performance issues?)
+        cursor.execute('DROP TABLE IF EXISTS matches')
+        cursor.execute('CREATE TABLE matches (studentid TEXT, alumid TEXT, similarity TEXT)')
+        self._connection.commit()
+        cursor.close()
+
+    # add matches to the matches table
+    # note: it is possible for duplicates to be added to the database, so make sure to reset first. 
+    # potential TODO: check for duplicates?
     def add_matches(self, matches):
-        # TODO: erase matches?
-        from .student import Student 
+        cursor = self._connection.cursor()
         for match in matches:
-            studentid = match[0].getField('_profileid')
-            print('here')
-            alumid = match[1].getField('_profileid')
-            print(studentid)
-            print(alumid)
-            # TODO: add to the database itself!
+            studentid = match[0]
+            alumid = match[1]
+            similarity = match[6]
+            cursor.execute('INSERT INTO matches(studentid, alumid, similarity) VALUES (%s, %s, %s)', [studentid, alumid, similarity])
+        self._connection.commit()
+        cursor.close()
+    
+    # retrieve matches for a specific profileid
+    # if display_all is set to True, then output all matches for all individuals
+    # FIXME: add security so that only the admin can have display_all True
+    def retrieve_matches(self, profileid, display_all=False):
+        cursor = self._connection.cursor()
+        role = self.get_role(profileid)
+        stmtStr = ""
+        if display_all:
+            stmtStr = "SELECT studentid, alumid, similarity FROM matches"
+            cursor.execute(stmtStr)
+        
+        else:
+            if role == 'student':
+                stmtStr = "SELECT studentid, alumid, similarity FROM matches WHERE studentid LIKE %s"
+            elif role == 'alum':
+                stmtStr = "SELECT studentid, alumid, similarity FROM matches WHERE alumid LIKE %s"
+            cursor.execute(stmtStr, [profileid])
+
+        row = cursor.fetchone()
+
+        det_cursor = self._connection.cursor() # use this to fetch other info about each person
+        output = [] # will store (studname, studyear, alumname, alumyear)
+        while row is not None:
+            curr_stud = row[0] # get the profileid of the student in the match
+            curr_alum = row[1] # get the profileid of the alum in the match
+            curr_sim = row[2] # get the similarity of the match itself
+
+            det_cursor.execute('SELECT name, classyear FROM students WHERE profileid LIKE %s', [curr_stud])
+            studname, studyear = det_cursor.fetchone()
+
+            det_cursor.execute('SELECT name, classyear FROM alumni WHERE profileid LIKE %s', [curr_alum])
+            alumname, alumyear = det_cursor.fetchone()
+
+            # note: we currently need to return the profileids in the tuple because they are used for matchdetails JS
+            output.append((curr_stud, curr_alum, studname, studyear, alumname, alumyear, curr_sim))
+
+            row = cursor.fetchone()
+
+        return output
+            
 
     def disconnect(self):
         self._connection.close()
