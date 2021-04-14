@@ -168,8 +168,8 @@
                             data-selected-text-format="count">
                             {% set temp_list = [] %}
                             {% for i in interests:%}
-                            <option selected>{{ i[0] }}</option>
-                            {{ temp_list.append(i[0]|string)}}
+                            <option selected>{{ i }}</option>
+                            {{ temp_list.append(i|string)}}
                             {% endfor %}
                             <!-- send selected interests to template via Jinja -->
                             {% with selectedInterests=temp_list %}
