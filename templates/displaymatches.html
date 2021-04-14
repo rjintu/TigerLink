@@ -62,22 +62,23 @@
                     {% for match in matches: %}
                     {% if (match|length) > 2 %}
                     <tr class="clickable-row" id='{{match[0]}}' value='{{match[1]}}'>
-                        {% for i in range (2, match|length): %}
+                        {% for i in range (2, 6): %}
                         <td>{{ match[i] }}</td>
                         {% endfor %}
+                        <td> {{ match[6] }}%</td>
                     </tr>
                     {% endif %}
                     <!-- <p id="details"></p> -->
+                    <td></td><td>
+                        <per id="details"></per>
+                        <div class="d-flex justify-content-center">
+                            <button type="submit" id="closeMatch" class="btn btn-success">Done</button>
+                        </div>
+                    </td>
 
                     {% endfor %}
                 </tbody>
             </table>
-            <div class="w-50 justify-content-left">
-                <p id="details"></p>
-            </div>
-            <div class="d-flex justify-content-center">
-                <button type="submit" id="closeMatch" class="btn btn-success">Done</button>
-            </div>
 
             <!-- <a tabindex="0" class="button" id='test123' value='test123' role="button" data-bs-toggle="popover"
                 data-bs-content="testing" data-bs-trigger="focus" title="Match Info">Dismissible
