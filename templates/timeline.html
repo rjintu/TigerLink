@@ -22,16 +22,44 @@
         integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
         crossorigin="anonymous"></script>
 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+
     <!-- Option 2: Separate Popper and Bootstrap JS -->
     <!--
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js" integrity="sha384-SR1sx49pcuLnqZUnnPwx6FCym0wLsk5JZuNx2bPPENzswTNFaQU1RDvt3wT4gWFG" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.min.js" integrity="sha384-j0CNLUeiqtyaRmlzUHCPZ+Gy5fQu0dQ6eZ/xAww941Ai1SxSY+0EQqNXNE6DZiVc" crossorigin="anonymous"></script>
   -->
-  <body>
+
+<body>
 
     <!-- heading -->
     <h2 style="text-align: center;">Timeline Page</h2>
 </body>
+
+<script>
+    'use strict';
+
+    $(document).ready(function () {
+
+        // pull firstLogin from URL
+        const queryString = window.location.search;
+        // console.log(queryString);
+        const urlParams = new URLSearchParams(queryString);
+        const firstLogin = urlParams.get('firstLogin')
+        //console.log(firstLogin)
+
+        var myModal = new bootstrap.Modal(document.getElementById('firstTimeUser'), {
+            keyboard: false
+        })
+
+        // show if URL includes firstLogin as 'True'
+        if (firstLogin == 'True') {
+            myModal.show()
+        }
+
+    });
+
+</script>
 
 </head>
 <header>
@@ -39,14 +67,16 @@
     {% include "navbar.html" %}
     {% endwith %}
 </header>
+
 <body>
     <div class="container">
         <a href='loadpost'>
             <div class="row justify-content-start">
-            <button type="button" style="background-color: orange" class="btn btn-primary btn-lg btn-block">Create a timeline post.</button>
+                <button type="button" style="background-color: orange" class="btn btn-primary btn-lg btn-block">Create a
+                    timeline post.</button>
             </div>
         </a>
-        </div>
+    </div>
     </div>
 
     <!-- postid TEXT, authorname TEXT, authorid TEXT, posttime TEXT, posttitle TEXT, postcontent TEXT, imgurl TEXT, privacy TEXT, communities TEXT -->
@@ -54,25 +84,45 @@
     <div class="container mt-5 mb-5">
         <div class="row justify-content-center">
             <!-- <div class="d-flex flex-row"></div> -->
-                <div class="col-md-4 ">
-                    <div><img src= {{res[6]}} width="100" height="100"></div>
-                </div>
-                <div class="col-md-4 ">
-                    <h5>Posted by: {{res[2]}}</h5>
-                    <h9>Time Posted: {{res[3]}}</h9>
-                    <br>
-                    <br>
-                    <h5>{{res[4]}}</h5>
-                    <h7>
-                        Content: {{res[5]}}
-                    </h7>
-                </div>
-
-
+            <div class="col-md-4 ">
+                <div><img src={{res[6]}} width="100" height="100"></div>
+            </div>
+            <div class="col-md-4 ">
+                <h5>Posted by: {{res[2]}}</h5>
+                <h9>Time Posted: {{res[3]}}</h9>
+                <br>
+                <br>
+                <h5>{{res[4]}}</h5>
+                <h7>
+                    Content: {{res[5]}}
+                </h7>
+            </div>
         </div>
 
     </div>
     {% endfor %}
 
+    <!-- for testing: https://localhost:8888/timeline?firstLogin=True -->
+    <!-- Modal -->
+    <div id="firstTimeUser" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel"><strong>Success!</strong></h5>
+                    <!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
+                </div>
+                <div class="modal-body" id="test123">
+                    Welcome to TigerLink! Your account has been successfully created. Please take a moment to
+                    familiarize yourself with the navigation bar at the top. Enjoy!
+                </div>
+                <div class="modal-footer">
+                    <a href="/timeline" class="btn btn-secondary mx-auto d-block">Got it!</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </body>
+
 </html>
