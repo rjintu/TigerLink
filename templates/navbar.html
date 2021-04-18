@@ -27,12 +27,25 @@
     background-color: #D3D3D3;
     
 }
-.navbar-nav > li > a {
-    margin: 70px 70px;
+#one > li > a {
+    margin: 100px 100px;
     /* padding: 6px 7px; */
     text-align: center;
     /* min-width: 70px; */
 }
+#two  {
+    margin: 0px 0px;
+    /* padding: 6px 7px; */
+    text-align: center;
+    /* min-width: 70px; */
+}
+#three {
+    margin: 0px 0px;
+    /* padding: 6px 7px; */
+    text-align: center;
+    /* min-width: 70px; */
+}
+
 .navbar .navbar-nav [class^="pe"]{
     font-size: 28px;
     display: block;
@@ -51,15 +64,16 @@
 </style>
 <nav class="navbar navbar-expand fixed-top" style="background-color: #E8E8E8;">
   <div class="container-fluid">
-    <ul class="nav navbar-nav navbar-left">  
+    <ul class="nav navbar-nav navbar-left" id="two">  
         <li>
             <a href="timeline" data-toggle="search">
                 <img src="../static/img/logo.png" alt="">
             </a>
         </li>
     <!-- </a> -->
+
     </ul>
-        <ul class="nav navbar-nav navbar-right">             
+        <ul class="nav navbar-nav navbar-right" id="one">             
             <li>
             <a href="timeline" data-toggle="search">
                 <i class="pe-7s-home"></i>
@@ -72,7 +86,6 @@
                 <p>Search</p>
             </a>
         </li>
-
         <li>
             <a href="displaymatches" data-toggle="Matches">
                 <i class="pe-7s-gift"></i>
@@ -85,17 +98,17 @@
                 <p>Post</p>
             </a>
         </li>
-
-
     </ul>
-    <ul class="nav navbar-nav navbar-right"> 
+    <ul class="nav navbar-nav navbar-right" id="three"> 
         <li>
             <a href="editprofile" data-toggle="Messages" class="hidden-xs">
                <img src="{{picture}}" height=40px width=40px class="rounded-circle" alt="">
+            Profile
             </a>
-            </li>
-    
+            
+            </li>    
     </ul>
+    
 </div>
   </nav>
 
