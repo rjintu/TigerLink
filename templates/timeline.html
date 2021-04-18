@@ -66,34 +66,23 @@
 </head>
 <style>
     body { 
-    padding-top: 80px; 
+    padding-top: 65px; 
 }
 
 </style>
 <header>
     {% include "navbar.html" %}
 </header>
-
-<body>
-    <div class="container">
-        <a href='loadpost'>
-            <div class="row justify-content-start">
-                <button type="button" style="background-color: orange" class="btn btn-primary btn-lg btn-block">Create a
-                    timeline post.</button>
-            </div>
-        </a>
-    </div>
-    </div>
-
+<body style="background-color: #e8f4f8;">
     <!-- postid TEXT, authorname TEXT, authorid TEXT, posttime TEXT, posttitle TEXT, postcontent TEXT, imgurl TEXT, privacy TEXT, communities TEXT -->
     {% for res in posts: %}
     <div class="container mt-5 mb-5">
         <div class="row justify-content-center">
             <!-- <div class="d-flex flex-row"></div> -->
-                <div class="col-md-4 ">
+                <div class="col-md-4 " style="background-color: white;">
                     <div><img src= {{res[6]}} width="100" height="100"></div>
                 </div>
-                <div class="col-md-4 ">
+                <div class="col-md-4 " style="background-color: white;">
                     <h5>Posted by: {{res[2]}}</h5>
                     <h9>Time Posted: {{res[3]}}</h9>
                     <br>
