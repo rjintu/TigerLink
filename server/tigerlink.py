@@ -145,7 +145,7 @@ def createuser():
         print(e)
         return make_response(html)
 
-    return redirect(url_for('timeline'))
+    return redirect(url_for('timeline', firstLogin='True'))
 
 
 @app.route('/loadpost', methods=['GET'])
