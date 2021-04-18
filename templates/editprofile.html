@@ -71,11 +71,15 @@
             $("#studGroup1").show();
             $("#studGroup2").show();
             $("#studGroup3").show();
+            $("#classYear").attr("min", "2021");
+            $("#classYear").attr("max", "2025");
         }
         else {
             $("#alumGroup1").show();
             $("#alumGroup2").show();
             $("#alumGroup3").show();
+            $("#classYear").attr("min", "1920");
+            $("#classYear").attr("max", "2020");
         }
 
     });
@@ -101,7 +105,7 @@
                     <br>
                     <div class="form-group">
                         <label for="classYear"><strong>Class Year</strong></label>
-                        <input type="number" min="1920" max="2025" placeholder="Ex: 2023" class="form-control"
+                        <input type="number" min="2021" max="2025" placeholder="Ex: 2023" class="form-control"
                             name="classYear" id="classYear" aria-describedby="emailHelp" value="{{ info[1] }}" required>
                     </div>
                     <br>
