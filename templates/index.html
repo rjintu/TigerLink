@@ -53,6 +53,9 @@
       $("#studGroup1").show();
       $("#studGroup2").show();
       $("#studGroup3").show();
+      $("#classYear").attr("min", "2021");
+      $("#classYear").attr("max", "2025");
+
     });
 
     $("#alum").click(function () {
@@ -65,6 +68,8 @@
       $("#alumGroup1").show();
       $("#alumGroup2").show();
       $("#alumGroup3").show();
+      $("#classYear").attr("min", "1920");
+      $("#classYear").attr("max", "2020");
     });
   });
 </script>
@@ -97,8 +102,8 @@
           <br>
           <strong>Class Year</strong>
           <div class="form-group">
-            <input type="number" min="1920" max="2025" placeholder="Ex: 2023" class="form-control" name="classYear"
-              id="classYear" required>
+            <input id="classYear" type="number" min="1920" max="2020" placeholder="Ex: 2023" class="form-control"
+              name="classYear" required>
           </div>
           <br>
           <strong>Major</strong>
