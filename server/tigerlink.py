@@ -227,7 +227,7 @@ def createpost():
         # currDate = str(datetime.now())
 
         db.create_post(str(profileid), str(name), str(currDate), str(title),
-                       str(content), str(imgurl), str(private), json.dumps(communities))
+                       str(content), str(imgurl), str(private), json.dumps(communities), str(session['picture']))
         db.disconnect()
         return redirect('/timeline')
     except Exception as e:
@@ -581,18 +581,3 @@ def timeline():
     response = make_response(html)
     return response
 
-
-@app.route('/groups', methods=['GET'])
-def groups():
-    if not loginutil.is_logged_in(session):
-        return redirect('/login')
-
-    db = Database()
-    db.connect()
-    is_admin = db.get_admin(session['profileid'])
-    db.disconnect()
-
-    html = render_template('groups.html', picture=session['picture'],
-            is_admin=is_admin)
-    response = make_response(html)
-    return response
