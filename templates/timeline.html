@@ -77,24 +77,35 @@
     <!-- postid TEXT, authorname TEXT, authorid TEXT, posttime TEXT, posttitle TEXT, postcontent TEXT, imgurl TEXT, privacy TEXT, communities TEXT -->
     {% for res in posts: %}
     <div class="container mt-5 mb-5">
-        <div class="row justify-content-center">
-            <!-- <div class="d-flex flex-row"></div> -->
-                <div class="col-md-4 " style="background-color: white;">
-                    <div><img src= {{res[6]}} width="100" height="100"></div>
+        <div class="row">
+            <div class="col-md-2 col-12 offset-2" style="display: block; text-align: center;">
+                <table>
+                    <tbody>
+                        <tr style="text-align: center;">
+                            <a target="_blank">
+                                <img src = https://i.pinimg.com/originals/0c/3b/3a/0c3b3adb1a7530892e55ef36d3be6cb8.png style="width: 100%; max-width: 125px;" class="rounded-circle">
+                            </a>
+                            <br>
+                            <p stlye="text-align: center">{{ res[2] }}</p>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col" style="display: block;">
+                <div class="card bg-light border-light w-50">
+                    <img src={{res[6]}} class="card-img-top" alt="...">
+                    <div class="card-body">
+                        <div class="card-title h5"> {{res[4]}} </div>
+                        <div class="mb-2 text-muted card-subtitle h6">
+                            {{res[3]}}
+                        </div>  
+                        <div class="mb-2 h6">
+                            {{res[5]}}
+                        </div>      
+                    </div>
                 </div>
-                <div class="col-md-4 " style="background-color: white;">
-                    <h5>Posted by: {{res[2]}}</h5>
-                    <h9>Time Posted: {{res[3]}}</h9>
-                    <br>
-                    <br>
-                    <h5>{{res[4]}}</h5>
-                    <h7>
-                        Content: {{res[5]}}
-                    </h7>
-                </div>
-
+            </div>
         </div>
-
     </div>
 
     {% endfor %}
