@@ -62,7 +62,11 @@
                     {% if (match|length) > 2 %}
                     <tr class="clickable-row" id='{{match[0]}}' value='{{match[1]}}'>
                         {% for i in range (2, 7): %}
-                        <td>{{ match[i] }}</td>
+                            {% if (i == 6) %}
+                                <td>{{ match[i] }}%</td>
+                            {% else %}
+                                <td>{{ match[i] }}</td>
+                            {% endif %}
                         {% endfor %}
                     </tr>
                     {% endif %}

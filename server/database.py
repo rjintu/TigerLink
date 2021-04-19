@@ -482,7 +482,7 @@ class Database:
         cursor.execute(stmtStr)
         row = cursor.fetchone()
         output = []
-        while (row is not None):
+        while row is not None:
             output.append(row)
             row = cursor.fetchone()
 
