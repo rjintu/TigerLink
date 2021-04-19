@@ -46,7 +46,7 @@ class Database:
         # Timeline posts tables (posts, postgraphics)
         cursor.execute('DROP TABLE IF EXISTS posts')
         cursor.execute('CREATE TABLE posts ' + 
-                '(postid TEXT, authorname TEXT, authorid TEXT, posttime TEXT, posttitle TEXT, postcontent TEXT, imgurl TEXT, privacy TEXT, communities TEXT, profpic TEXT)')
+                '(postid TEXT, authorname TEXT, authorid TEXT, posttime TEXT, posttitle TEXT, postcontent TEXT, imgurl TEXT, privacy TEXT, communities TEXT, propic TEXT)')
         cursor.execute('DROP TABLE IF EXISTS comments')
         cursor.execute('CREATE TABLE comments ' +
                 '(postid TEXT, author TEXT, comment TEXT)')
@@ -68,7 +68,7 @@ class Database:
         # Timeline posts tables (posts, postgraphics)
         cursor.execute('DROP TABLE IF EXISTS posts')
         cursor.execute('CREATE TABLE posts ' + 
-                '(postid TEXT, authorname TEXT, authorid TEXT, posttime TEXT, posttitle TEXT, postcontent TEXT, imgurl TEXT, privacy TEXT, communities TEXT, profpic TEXT)')
+                '(postid TEXT, authorname TEXT, authorid TEXT, posttime TEXT, posttitle TEXT, postcontent TEXT, imgurl TEXT, privacy TEXT, communities TEXT, propic TEXT)')
         cursor.execute('DROP TABLE IF EXISTS comments')
         cursor.execute('CREATE TABLE comments ' +
                 '(postid TEXT, author TEXT, comment TEXT)')
@@ -538,7 +538,7 @@ class Database:
         cursor = self._connection.cursor()
 
         stmtStr = "SELECT postid, authorid, authorname, posttime, posttitle, postcontent, " + \
-                  "imgurl, privacy, communities, profpic FROM posts"
+                  "imgurl, privacy, communities, propic FROM posts"
         cursor.execute(stmtStr)
         row = cursor.fetchone()
         output = []
@@ -558,12 +558,12 @@ class Database:
 
         # postid TEXT, authorname, authorid TEXT, posttime TEXT, posttitle TEXT, postcontent TEXT, imgurl TEXT, privacy TEXT, communities TEXT
 
-    def create_post(self, authorId, authorName, time, title, content, image_url, private, communities, profpic):
+    def create_post(self, authorId, authorName, time, title, content, image_url, private, communities, propic):
         cursor = self._connection.cursor()
         postid = str(os.getenv('numposts', 0))
-        cursor.execute('INSERT INTO posts(postid, authorid, authorname, posttime, posttitle, postcontent, imgurl, privacy, communities, profpic) ' +
+        cursor.execute('INSERT INTO posts(postid, authorid, authorname, posttime, posttitle, postcontent, imgurl, privacy, communities, propic) ' +
                         'VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)', 
-                        [postid, authorId, authorName, time, title, content, image_url, private, communities, profpic])
+                        [postid, authorId, authorName, time, title, content, image_url, private, communities, propic])
         self._connection.commit()
         postid = int(postid) + 1
         environ['postid'] = str(postid +1)
