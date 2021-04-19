@@ -120,8 +120,8 @@
                     <br>
                     <div class="form-group">
                         <label for="zipcode"><strong>Zip Code</strong></label>
-                        <input type="number" min="000001" max="99999" class="form-control" name="zipcode" id="zipcode"
-                            aria-describedby="emailHelp" value="{{ info[4] }}" required>
+                        <input type="tel" minlength="5" maxlength="5" class="form-control" name="zipcode" id="zipcode"
+                            aria-describedby="emailHelp" pattern="[0-9]*" value="{{ info[4] }}" required>
                     </div>
                     <br>
 
