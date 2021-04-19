@@ -23,33 +23,7 @@
 </head>
 
 <body>
-  <center>
-    <h1>TigerLink Admin</h1>
-  </center>
-
-  <nav class="navbar navbar-light navbar-expand-lg" style="background-color: orange;">
-    <ul class="navbar-nav mx-auto">
-        <li class="nav-item active">
-            <a class="nav-link" href="/admin/matches">Matches</a>
-        </li>
-        &nbsp;
-        <li class="nav-item">
-            <a class="nav-link" href="/admin/users" style="color: black"><strong>Users</strong></a>
-        </li>
-        &nbsp;
-        <li class="nav-item">
-            <a class="nav-link" href="#">Timeline</a>
-        </li>
-        &nbsp;
-        <li class="nav-item">
-            <a class="nav-link" href="/">Homepage</a>
-        </li>
-        &nbsp;
-        <li class="nav-item">
-            <a class="nav-link" href="/logout">Sign Out</a>
-        </li>
-    </ul>
-  </nav>
+  {% include "admin-navbar.html" %}
 
   <br>
   <div class="container">

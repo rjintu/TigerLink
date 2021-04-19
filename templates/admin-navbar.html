@@ -1,0 +1,88 @@
+<style>
+a { text-decoration: None; } 
+
+b { color: #FF7700; }
+
+.navbar{
+    height: 75px;
+    border: 0 none;
+    transition: all 0.4s;
+    -webkit-transition: all 0.4s;
+    font-size: 14px;
+}
+.navbar-default {
+    background-color: #D3D3D3;
+    
+}
+#one > li > a {
+    margin: 100px 100px;
+    /* padding: 6px 7px; */
+    text-align: center;
+    /* min-width: 70px; */
+}
+#two  {
+    margin: 0px 0px;
+    /* padding: 6px 7px; */
+    text-align: center;
+    /* min-width: 70px; */
+}
+#three {
+    margin: 0px 0px;
+    /* padding: 6px 7px; */
+    text-align: center;
+    /* min-width: 70px; */
+}
+
+.navbar .navbar-nav [class^="pe"]{
+    font-size: 28px;
+    display: block;
+}
+.navbar .navbar-nav p{
+    display:block;
+
+    margin: 0px 0 0;
+    font-size: 15px;
+}
+.navbar-nav > li > a {
+    color: black;
+}
+/* .navbar {margin-bottom: 200px;} */
+</style>
+
+<nav class="navbar navbar-expand fixed-top" style="background-color: #E8E8E8;">
+  <div class="container-fluid">
+    <ul class="nav navbar-nav navbar-left" id="two">  
+        <li>
+            <a href="/admin" data-toggle="search">
+                <b>TigerLink Admin</b>
+            </a>
+        </li>
+    </ul>
+    <ul class="nav navbar-nav navbar-right" id="one">             
+        <li>
+            <a href="/admin/matches" data-toggle="search">
+                <p>Matches</p>
+            </a>
+        </li>
+        <li>
+            <a href="/admin/users" data-toggle="search">
+                <p>Users</p>
+            </a>
+        </li>
+        <!--li>
+            <a href="/admin/timeline" data-toggle="search">
+                <p>Post</p>
+            </a>
+        </li-->
+    </ul>
+    <ul class="nav navbar-nav navbar-right" id="three"> 
+        <li>
+           <a href="/">Homepage</a> 
+        </li>    
+    </ul>
+    
+</div>
+  </nav>
+
+<!-- for extra spacing -->
+<div class="navbar"> </div>
