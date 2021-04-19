@@ -1,7 +1,8 @@
 from flask import Flask, request, make_response, redirect, url_for, session, flash
 from flask import render_template
 from flask_talisman import Talisman
-import datetime
+from datetime import datetime, timezone
+from tzlocal import get_localzone
 import json
 
 from .database import Database
@@ -219,9 +220,10 @@ def createpost():
 
         # info[0] is the author name
         name = info[0]
-        currDate = str(datetime.datetime.now())
 
-    # def create_post(self, authorId, authorName, time, title, content, image_url, private, communities):
+        # store date and time in UTC (convert on client side)
+        currDate = datetime.utcnow().isoformat() # store in UTC, convert on client side
+        # currDate = str(datetime.now())
 
         db.create_post(str(profileid), str(name), str(currDate), str(title),
                        str(content), str(imgurl), str(private), json.dumps(communities))
@@ -558,13 +560,19 @@ def timeline():
     posts = []
     output = db.get_posts()
     for i in output:
+        # TODO: get the user's time zone and put it in a session cookie. 
+        curr_time = datetime.fromisoformat(i[3])
+        local_tz = get_localzone()  # TODO: replace this line with the timezone of the user
+        curr_time = curr_time.replace(tzinfo=timezone.utc).astimezone(tz=local_tz)
+        formatted_time = curr_time.strftime("%A, %B %d at %I:%M %p")
+        copy = i[:3] + (formatted_time,) + i[4:] # note: this does not modify the database entry! Only the list when being displayed
         if (role == i[7]):
-            posts.append(i)
+            posts.append(copy)
         elif (i[7] == 'private'):
             if not set(interests).isdisjoint(set(json.loads(i[8]))):
-                posts.append(i)
+                posts.append(copy)
         elif (i[7] == 'everyone'):
-            posts.append(i)
+            posts.append(copy)
 
     db.disconnect()
     html = render_template('timeline.html', posts=posts,
