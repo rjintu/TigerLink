@@ -17,8 +17,8 @@
 
   <!-- Option 1: Bootstrap Bundle with Popper -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
-  integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
-  crossorigin="anonymous"></script>
+    integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+    crossorigin="anonymous"></script>
 
   <!-- Option 2: Separate Popper and Bootstrap JS -->
   <!--
@@ -27,55 +27,52 @@
   -->
 </head>
 <header>
-{% with bold='search' %}
-{% include "navbar.html" %}
-{% endwith %}
+  {% with bold='search' %}
+  {% include "navbar.html" %}
+  {% endwith %}
 </header>
-<style>
-    body { 
-    padding-top: 80px; 
-}
 
-</style>
-
-<body style="background-color: #e8f4f8;">
+<body id="generic-body">
   <br>
-        <div class="container">
-            <div class="row justify-content-center">
-                <!-- col 1 -->
-                  <table class="table table-hover table-responsive">
-                    <thead>
-                      <tr>
-                        <th>Name</th>
-                        <th>Year</th>
-                        <th>Major</th>
-                        <th>Zip Code</th>
-                        <th>Number of Matches</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                        {% for res in results: %}
-                            <tr>    
-                            <td>{{ res[2] }}</td>
-                            <td>{{ res[1] }}</td>
-                            <td>{{ res[3] }}</td>
-                            <td>{{ res[4] }}</td>
-                            <td>{{ res[5] }}</td>
-                            </tr>  
-                        {% endfor %}
-                    </tbody>
-                    </table>
-                    </div>
+      <div class="container">
+          <div class="row justify-content-center">
+              <!-- col 1 -->
+              {% if (results|length) > 0 %}
+                <table class="table table-hover table-responsive">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Year</th>
+                      <th>Major</th>
+                      <th>Email</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                      {% for res in results: %}
+                          <tr>    
+                          <td>{{ res[2] }}</td>
+                          <td>{{ res[1] }}</td>
+                          <td>{{ res[3] }}</td>
+                          <td>{{ res[4] }}</td>
+                          </tr>  
+                      {% endfor %}
+                  </tbody>
+                </table>
+              {% else %}
+              <p>No results.</p> <!-- style this more -->
+              {% endif %}
             </div>
+      </div>
 </body>
+
 <body>
   <br>
   <div class="container">
-      <div class="row justify-content-center">
-          <div class="col-1">
-            <a href = '/dosearch'><button type="submit" name="submit" class="btn btn-primary">Back</button></a>
-          </div>
+    <div class="row justify-content-center">
+      <div class="col-1">
+        <a href='/dosearch'><button type="submit" name="submit" class="btn btn-primary">Back</button></a>
       </div>
+    </div>
   </div>
 </body>
 

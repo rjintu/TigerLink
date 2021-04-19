@@ -46,7 +46,7 @@ class Database:
         # Timeline posts tables (posts, postgraphics)
         cursor.execute('DROP TABLE IF EXISTS posts')
         cursor.execute('CREATE TABLE posts ' + 
-                '(postid TEXT, authorname TEXT, authorid TEXT, posttime TEXT, posttitle TEXT, postcontent TEXT, imgurl TEXT, privacy TEXT, communities TEXT)')
+                '(postid TEXT, authorname TEXT, authorid TEXT, posttime TEXT, posttitle TEXT, postcontent TEXT, imgurl TEXT, privacy TEXT, communities TEXT, propic TEXT)')
         cursor.execute('DROP TABLE IF EXISTS comments')
         cursor.execute('CREATE TABLE comments ' +
                 '(postid TEXT, author TEXT, comment TEXT)')
@@ -68,7 +68,7 @@ class Database:
         # Timeline posts tables (posts, postgraphics)
         cursor.execute('DROP TABLE IF EXISTS posts')
         cursor.execute('CREATE TABLE posts ' + 
-                '(postid TEXT, authorname TEXT, authorid TEXT, posttime TEXT, posttitle TEXT, postcontent TEXT, imgurl TEXT, privacy TEXT, communities TEXT)')
+                '(postid TEXT, authorname TEXT, authorid TEXT, posttime TEXT, posttitle TEXT, postcontent TEXT, imgurl TEXT, privacy TEXT, communities TEXT, propic TEXT)')
         cursor.execute('DROP TABLE IF EXISTS comments')
         cursor.execute('CREATE TABLE comments ' +
                 '(postid TEXT, author TEXT, comment TEXT)')
@@ -363,48 +363,67 @@ class Database:
         for i in range(0, len(search_values)):
             if (search_values[i] == ''):
                 search_values[i] = '%%%%'
-        name, email, major, zipcode, career, typeofSearch = search_values
-        career = search_query[-2]
+        name, email, major, zipcode, _, _, typeofSearch = search_values
+        career = search_query[-3]
+        interest = search_query[-2]
 
         name = '%%' + name + '%%'
         name = name.lower()
 
+        major = major.lower()
+
         output = []
         cursor = self._connection.cursor()
         cursor2 = self._connection.cursor()
+        cursor3 = self._connection.cursor()
+
         if typeofSearch in 'stud':
-            stmtStr = "SELECT profileid, classyear, name, major, zip, numMatch, propic FROM students WHERE lower(name) LIKE %s " + \
-                "AND email LIKE %s AND major LIKE %s AND zip LIKE %s"
+            stmtStr = "SELECT profileid, classyear, name, major, email FROM students WHERE lower(name) LIKE %s " + \
+                "AND email LIKE %s AND lower(major) LIKE %s AND zip LIKE %s"
             cursor.execute(stmtStr, [name, email, major, zipcode])
             row = cursor.fetchone()
 
             while row is not None:
-                # look up all the careers for that person and filter out those who aren't valid.
-                contains = False
+                # look up all the careers for that person and filter out those which don't match.
+                contains_career = False
                 smtr = 'SELECT profileid, career FROM careers WHERE profileid LIKE %s'
                 cursor2.execute(smtr, [row[0]])
                 row2 = cursor2.fetchone()
                 if (len(career) != 0):
                     while row2 is not None:
                         if (row2[1] in career):
-                            contains = True
+                            contains_career = True
                         row2 = cursor2.fetchone()
                 else:
-                    contains = True
+                    contains_career = True
 
-                if contains:
+                # look up all the interests for that person and filter out those which don't match.
+                contains_interest = False
+                smtr = 'SELECT profileid, interest FROM interests WHERE profileid LIKE %s'
+                cursor3.execute(smtr, [row[0]])
+                row3 = cursor3.fetchone()
+                if (len(interest) != 0):
+                    while row3 is not None:
+                        if (row3[1] in interest):
+                            contains_interest = True
+                        row3 = cursor3.fetchone()
+                else:
+                    contains_interest = True
+
+
+                if contains_career and contains_interest:
                     output.append(row)
                 row = cursor.fetchone()
 
         elif typeofSearch in 'alum':
-            stmtStr = "SELECT profileid, classyear, name, major, zip, numMatch, propic FROM alumni WHERE lower(name) LIKE %s " + \
-                "AND email LIKE %s AND major LIKE %s AND zip LIKE %s"
+            stmtStr = "SELECT profileid, classyear, name, major, email FROM alumni WHERE lower(name) LIKE %s " + \
+                "AND email LIKE %s AND lower(major) LIKE %s AND zip LIKE %s"
             cursor.execute(stmtStr, [name, email, major, zipcode])
             row = cursor.fetchone()
 
             while row is not None:
-                # look up all the careers for that person and filter out those who aren't valid.
-                contains = False
+                # look up all the careers for that person and filter out those which don't match.
+                contains_career = False
                 smtr = 'SELECT profileid, career FROM careers WHERE profileid LIKE %s'
                 cursor2.execute(smtr, [row[0]])
                 row2 = cursor2.fetchone()
@@ -412,62 +431,103 @@ class Database:
                     while row2 is not None:
                         if (row2[1] in career):
                             print(row2[1])
-                            contains = True
+                            contains_career = True
                         row2 = cursor2.fetchone()
                 else:
-                    contains = True
+                    contains_career = True
+                
+                # look up all the interests for that person and filter out those which don't match.
+                contains_interest = False
+                smtr = 'SELECT profileid, interest FROM interests WHERE profileid LIKE %s'
+                cursor3.execute(smtr, [row[0]])
+                row3 = cursor3.fetchone()
+                if (len(interest) != 0):
+                    while row3 is not None:
+                        if (row3[1] in interest):
+                            contains_interest = True
+                        row3 = cursor3.fetchone()
+                else:
+                    contains_interest = True
 
-                if contains:
+                if contains_career and contains_interest:
                     output.append(row)
                 row = cursor.fetchone()
 
+        # both student and alum
         else:
-            stmtStr = "SELECT profileid, classyear, name, major, zip, numMatch, propic FROM students WHERE lower(name) LIKE %s " + \
-                "AND email LIKE %s AND major LIKE %s AND zip LIKE %s"
+            stmtStr = "SELECT profileid, classyear, name, major, email FROM students WHERE lower(name) LIKE %s " + \
+                "AND email LIKE %s AND lower(major) LIKE %s AND zip LIKE %s"
             cursor.execute(stmtStr, [name, email, major, zipcode])
             row = cursor.fetchone()
 
             while row is not None:
-                # look up all the careers for that person and filter out those who aren't valid.
-                contains = False
+                # look up all the careers for that person and filter out those which don't match.
+                contains_career = False
                 smtr = 'SELECT profileid, career FROM careers WHERE profileid LIKE %s'
                 cursor2.execute(smtr, [row[0]])
                 row2 = cursor2.fetchone()
                 if (len(career) != 0):
                     while row2 is not None:
                         if (row2[1] in career):
-                            contains = True
+                            contains_career = True
                         row2 = cursor2.fetchone()
                 else:
-                    contains = True
+                    contains_career = True
+                
+                # look up all the interests for that person and filter out those which don't match.
+                contains_interest = False
+                smtr = 'SELECT profileid, interest FROM interests WHERE profileid LIKE %s'
+                cursor3.execute(smtr, [row[0]])
+                row3 = cursor3.fetchone()
+                if (len(interest) != 0):
+                    while row3 is not None:
+                        if (row3[1] in interest):
+                            contains_interest = True
+                        row3 = cursor3.fetchone()
+                else:
+                    contains_interest = True
 
-                if contains:
+                if contains_career and contains_interest:
                     output.append(row)
                 row = cursor.fetchone()
 
             cursor = self._connection.cursor()
             cursor2 = self._connection.cursor()
 
-            stmtStr = "SELECT profileid, classyear, name, major, zip, numMatch, propic FROM alumni WHERE name LIKE %s " + \
+            stmtStr = "SELECT profileid, classyear, name, major, email FROM alumni WHERE name LIKE %s " + \
                 "AND email LIKE %s AND major LIKE %s AND zip LIKE %s"
             cursor.execute(stmtStr, [name, email, major, zipcode])
             row = cursor.fetchone()
 
             while row is not None:
-                # look up all the careers for that person and filter out those who aren't valid.
-                contains = False
+                # look up all the careers for that person and filter out those which don't match.
+                contains_career = False
                 smtr = 'SELECT profileid, career FROM careers WHERE profileid LIKE %s'
                 cursor2.execute(smtr, [row[0]])
                 row2 = cursor2.fetchone()
                 if (len(career) != 0):
                     while row2 is not None:
                         if (row2[1] in career):
-                            contains = True
+                            contains_career = True
                         row2 = cursor2.fetchone()
                 else:
-                    contains = True
+                    contains_career = True
 
-                if contains:
+                # look up all the interests for that person and filter out those which don't match.
+                contains_interest = False
+                smtr = 'SELECT profileid, interest FROM interests WHERE profileid LIKE %s'
+                cursor3.execute(smtr, [row[0]])
+                row3 = cursor3.fetchone()
+                print(row3)
+                if (len(interest) != 0):
+                    while row3 is not None:
+                        if (row3[1] in interest):
+                            contains_interest = True
+                        row3 = cursor3.fetchone()
+                else:
+                    contains_interest = True
+
+                if contains_career and contains_interest:
                     output.append(row)
                 row = cursor.fetchone()
 
@@ -478,7 +538,7 @@ class Database:
         cursor = self._connection.cursor()
 
         stmtStr = "SELECT postid, authorid, authorname, posttime, posttitle, postcontent, " + \
-                  "imgurl, privacy, communities FROM posts"
+                  "imgurl, privacy, communities, propic FROM posts"
         cursor.execute(stmtStr)
         row = cursor.fetchone()
         output = []
@@ -498,12 +558,12 @@ class Database:
 
         # postid TEXT, authorname, authorid TEXT, posttime TEXT, posttitle TEXT, postcontent TEXT, imgurl TEXT, privacy TEXT, communities TEXT
 
-    def create_post(self, authorId, authorName, time, title, content, image_url, private, communities):
+    def create_post(self, authorId, authorName, time, title, content, image_url, private, communities, propic):
         cursor = self._connection.cursor()
         postid = str(os.getenv('numposts', 0))
-        cursor.execute('INSERT INTO posts(postid, authorid, authorname, posttime, posttitle, postcontent, imgurl, privacy, communities) ' +
-                        'VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)', 
-                        [postid, authorId, authorName, time, title, content, image_url, private, communities])
+        cursor.execute('INSERT INTO posts(postid, authorid, authorname, posttime, posttitle, postcontent, imgurl, privacy, communities, propic) ' +
+                        'VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)', 
+                        [postid, authorId, authorName, time, title, content, image_url, private, communities, propic])
         self._connection.commit()
         postid = int(postid) + 1
         environ['postid'] = str(postid +1)
@@ -533,7 +593,6 @@ class Database:
     
     # retrieve matches for a specific profileid
     # if display_all is set to True, then output all matches for all individuals
-    # FIXME: add security so that only the admin can have display_all True
     def retrieve_matches(self, profileid, display_all=False):
         cursor = self._connection.cursor()
         role = self.get_role(profileid)
