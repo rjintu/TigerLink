@@ -172,6 +172,8 @@ def loadpost():
             info, careers, interests = db.get_student_by_id(profileid)
         elif role == 'alum':
             info, careers, interests = db.get_alum_by_id(profileid)
+            for i in range(0, len(interests)):
+                interests[i] = interests[i][0]
         is_admin = db.get_admin(profileid)
         db.disconnect()
 
@@ -556,6 +558,8 @@ def timeline():
         info, careers, interests = db.get_student_by_id(profileid)
     elif role == 'alum':
         info, careers, interests = db.get_alum_by_id(profileid)
+        for i in range(0, len(interests)):
+            interests[i] = interests[i][0]
 
     posts = []
     output = db.get_posts()
