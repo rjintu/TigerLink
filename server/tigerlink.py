@@ -1,4 +1,4 @@
-from flask import Flask, request, make_response, redirect, url_for, session
+from flask import Flask, request, make_response, redirect, url_for, session, flash
 from flask import render_template
 from flask_talisman import Talisman
 import datetime
@@ -418,9 +418,8 @@ def fix_list_format(thisList):
         thisList[i] = thisList[i][0]
     return thisList
 
+
 # updates profile on save click
-
-
 @app.route('/updateprofile', methods=['POST'])
 def changeprofile():
     try:
@@ -436,8 +435,8 @@ def changeprofile():
         major = acct_info.get('major', '')
         zipcode = acct_info.get('zipcode', '')
         nummatches = acct_info.get('numMatches', '')
-        careers = acct_info.getlist('career')  # FIXME: verify this works
-        interests = acct_info.getlist('interests')  # FIXME: verify this works
+        careers = acct_info.getlist('career')
+        interests = acct_info.getlist('interests')
 
         new_info = [name, classyear,
                     email, major, zipcode, nummatches]
@@ -451,16 +450,18 @@ def changeprofile():
             db.update_alum(profileid, new_info, careers, interests)
 
         db.disconnect()
-
+        flash("Your profile has been updated successfully.")
         # reload the editprofile page
-        db = Database()
-        db.connect()
-        info = db.get_student_by_id(profileid)
-        db.disconnect()
+        # db = Database()
+        # db.connect()
+        # info = db.get_student_by_id(profileid)
+        # db.disconnect()
         # return redirect(url_for('editprofile', info=info))
     except Exception as e:
         html = "error occurred: " + str(e)
         print(e)
+        response = make_response(html)
+        return response
 
     return redirect('editprofile')
 
