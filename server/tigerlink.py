@@ -486,19 +486,18 @@ def search():
         return redirect('/index')
 
     search_query = None
-    search_form = None
     try:
         name = request.args.get('namesearch', '%')
         email = request.args.get('email-address', '%')
         major = request.args.get('major', '%')
         zipcode = request.args.get('zipcode', '%')
         career = request.args.getlist('industry')
-        search_req = request.args.get('student', '%')
-        search_query = [name, email, major, zipcode, career, search_req]
+        interest = request.args.getlist('interest')
+        search_req = request.args.get('searchreq', '%')
+        search_query = [name, email, major, zipcode, career, interest, search_req]
         # database queries
         db = Database()
         db.connect()
-        # FIXME: db.search() will take search_query and two booleans (student and alumni)
         results = db.search(search_query)
         is_admin = db.get_admin(session['profileid'])
         db.disconnect()
