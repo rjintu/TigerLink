@@ -24,12 +24,12 @@ class Database:
         cursor.execute('DROP TABLE IF EXISTS students')
         cursor.execute('CREATE TABLE students ' +
                        '(profileid TEXT, name TEXT, classyear TEXT, \
-                    email TEXT, major TEXT, zip TEXT, numMatch TEXT)')
+                    email TEXT, major TEXT, zip TEXT, numMatch TEXT, propic TEXT)')
         # Alumni table
         cursor.execute('DROP TABLE IF EXISTS alumni')
         cursor.execute('CREATE TABLE alumni ' +
                        '(profileid TEXT, name TEXT, classyear TEXT, \
-                    email TEXT, major TEXT, zip TEXT, numMatch TEXT)')
+                    email TEXT, major TEXT, zip TEXT, numMatch TEXT, propic TEXT)')
 
         # Roles table
         cursor.execute('DROP TABLE IF EXISTS roles')
@@ -105,8 +105,8 @@ class Database:
         cursor.execute('INSERT INTO roles(profileid, role, isadmin) ' +
                        'VALUES (%s, %s, %s)', [profileid, 'student', 'false'])
         cursor.execute('INSERT INTO students(profileid, name, classyear, email, ' +
-                       'major, zip, numMatch) ' +
-                       'VALUES (%s, %s, %s, %s, %s, %s, %s)', student_elems)
+                       'major, zip, numMatch, propic) ' +
+                       'VALUES (%s, %s, %s, %s, %s, %s, %s, %s)', student_elems)
         for elem in industry:
             cursor.execute('INSERT INTO careers(profileid, career) ' +
                            'VALUES (%s, %s)', [student[0], elem])
@@ -125,8 +125,8 @@ class Database:
         cursor.execute('INSERT INTO roles(profileid, role, isadmin) ' +
                        'VALUES (%s, %s, %s)', [profileid, 'alum', 'false'])
         cursor.execute('INSERT INTO alumni(profileid, name, classyear, email, ' +
-                       'major, zip, numMatch) ' +
-                       'VALUES (%s, %s, %s, %s, %s, %s, %s)', alum_elems)
+                       'major, zip, numMatch, propic) ' +
+                       'VALUES (%s, %s, %s, %s, %s, %s, %s, %s)', alum_elems)
         for elem in industry:
             cursor.execute('INSERT INTO careers(profileid, career) ' +
                            'VALUES (%s, %s)', (alum[0], elem))
@@ -137,7 +137,7 @@ class Database:
     def get_students(self):
         cursor = self._connection.cursor()
         cursor.execute('SELECT profileid, name, classyear, email, \
-        major, zip, numMatch FROM students')
+        major, zip, numMatch, propic FROM students')
         row = cursor.fetchone()
         output = []
         while row is not None:
@@ -164,7 +164,7 @@ class Database:
     def get_alumni(self):
         cursor = self._connection.cursor()
         cursor.execute('SELECT profileid, name, classyear, email, \
-        major, zip, numMatch FROM alumni')
+        major, zip, numMatch, propic FROM alumni')
         row = cursor.fetchone()
         output = []
         while row is not None:
@@ -192,7 +192,7 @@ class Database:
         profileid = str(profileid)
         cursor = self._connection.cursor()
         cursor.execute('SELECT name, classyear, email, major, zip, ' +
-                       'nummatch FROM students WHERE profileid=%s', [profileid])
+                       'nummatch, propic FROM students WHERE profileid=%s', [profileid])
         info = cursor.fetchone()
 
         # getting this user's career interests
@@ -220,7 +220,7 @@ class Database:
         profileid = str(profileid)
         cursor = self._connection.cursor()
         cursor.execute('SELECT name, classyear, email, major, zip, ' +
-                       'nummatch FROM alumni WHERE profileid=%s', [profileid])
+                       'nummatch, propic FROM alumni WHERE profileid=%s', [profileid])
         info = cursor.fetchone()
 
         # getting this user's career interests
@@ -373,7 +373,7 @@ class Database:
         cursor = self._connection.cursor()
         cursor2 = self._connection.cursor()
         if typeofSearch in 'stud':
-            stmtStr = "SELECT profileid, classyear, name, major, zip, numMatch FROM students WHERE lower(name) LIKE %s " + \
+            stmtStr = "SELECT profileid, classyear, name, major, zip, numMatch, propic FROM students WHERE lower(name) LIKE %s " + \
                 "AND email LIKE %s AND major LIKE %s AND zip LIKE %s"
             cursor.execute(stmtStr, [name, email, major, zipcode])
             row = cursor.fetchone()
@@ -397,7 +397,7 @@ class Database:
                 row = cursor.fetchone()
 
         elif typeofSearch in 'alum':
-            stmtStr = "SELECT profileid, classyear, name, major, zip, numMatch FROM alumni WHERE lower(name) LIKE %s " + \
+            stmtStr = "SELECT profileid, classyear, name, major, zip, numMatch, propic FROM alumni WHERE lower(name) LIKE %s " + \
                 "AND email LIKE %s AND major LIKE %s AND zip LIKE %s"
             cursor.execute(stmtStr, [name, email, major, zipcode])
             row = cursor.fetchone()
@@ -422,7 +422,7 @@ class Database:
                 row = cursor.fetchone()
 
         else:
-            stmtStr = "SELECT profileid, classyear, name, major, zip, numMatch FROM students WHERE lower(name) LIKE %s " + \
+            stmtStr = "SELECT profileid, classyear, name, major, zip, numMatch, propic FROM students WHERE lower(name) LIKE %s " + \
                 "AND email LIKE %s AND major LIKE %s AND zip LIKE %s"
             cursor.execute(stmtStr, [name, email, major, zipcode])
             row = cursor.fetchone()
@@ -448,7 +448,7 @@ class Database:
             cursor = self._connection.cursor()
             cursor2 = self._connection.cursor()
 
-            stmtStr = "SELECT profileid, classyear, name, major, zip, numMatch FROM alumni WHERE name LIKE %s " + \
+            stmtStr = "SELECT profileid, classyear, name, major, zip, numMatch, propic FROM alumni WHERE name LIKE %s " + \
                 "AND email LIKE %s AND major LIKE %s AND zip LIKE %s"
             cursor.execute(stmtStr, [name, email, major, zipcode])
             row = cursor.fetchone()
