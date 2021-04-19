@@ -26,7 +26,8 @@
   {% include "admin-navbar.html" %}
 
   <br>
-  <div class="container">
+  <div class="container card bg-light shadow">
+  <div class="card-body">
     <h2>All Students</h2>
     <table class="table table-hover table-responsive">
       <thead>
@@ -48,8 +49,11 @@
             {% endfor %}
         </tbody>
     </table>
-    <div class="my-5"></div>
-    <hr>
+  </div>
+  </div>
+  <br>
+  <div class="container card bg-light shadow">
+  <div class="card-body">
     <h2>All Alumni</h2>
     <table class="table table-hover table-responsive">
       <thead>
@@ -71,6 +75,7 @@
             {% endfor %}
         </tbody>
     </table>
+  </div>
   </div>
 </body>
 </html>

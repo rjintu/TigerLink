@@ -63,24 +63,90 @@
   </div>
   </div>
 
+  <div id="successModal" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body text-center">
+                  New matches successfully created! Click Continue to see all current matches
+                  between students and alumni.
+                </div>
+                <div class="modal-footer">
+                    <a href="/admin/matches" class="btn btn-secondary mx-auto d-block">Continue</a>
+                </div>
+            </div>
+        </div>
+  </div>
+
+  <div id="failureModal" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-danger">Error</h5>
+                </div>
+                <div class="modal-body">
+                  Something went wrong when trying to edit matches in the server. Please contact the TigerLink
+                  developers for support.
+                </div>
+                <div class="modal-footer">
+                    <a href="/admin/matches" class="btn btn-secondary mx-auto d-block">Continue</a>
+                </div>
+            </div>
+        </div>
+  </div>
+
+  <div id="warningModal" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Please Confirm</h5>
+                </div>
+                <div class="modal-body">
+                  Are you sure you want to delete all matches? This cannot be undone.
+                </div>
+                <div class="modal-footer">
+                    <a href="#" id="deleteConfirmBtn" class="btn btn-danger d-block">Yes</a>
+                    <a href="/admin/matches" class="btn btn-secondary d-block">No</a>
+                </div>
+            </div>
+        </div>
+  </div>
+
   <script>
     "use strict";
 
     function setup() {
+        let successModal = new bootstrap.Modal(document.getElementById('successModal'), {
+            keyboard: false
+        });
+
+		let failureModal = new bootstrap.Modal(document.getElementById('failureModal'), {
+			keyboard: false
+		});
+
+        let warningModal = new bootstrap.Modal(document.getElementById('warningModal'), {
+            keyboard: false
+        });
+
         let createBtn = document.getElementById("creatematches");
         createBtn.onclick = function() {
             $.post("/admin/creatematches")
-                .done(function() { alert('New matches created!'); location.reload(); })
-                .fail(function() { alert('An error occurred.'); });
+                .done(function() { successModal.show(); })
+                .fail(function() { failureModal.show(); });
         };
 
         let deleteBtn = document.getElementById("deletematches");
         deleteBtn.onclick = function() {
-            if(confirm('Are you sure you want to delete all matches?')) {
-                $.post("/admin/deletematches")
-                    .done(function() { location.reload(); })
-                    .fail(function() { alert('An error occurred.'); });
-            }
+            warningModal.show();
+        };
+
+        let deleteConfirmBtn = document.getElementById("deleteConfirmBtn");
+        deleteConfirmBtn.onclick = function() {
+            $.post("/admin/deletematches")
+                .done(function() { location.reload(); })
+                .fail(function() { failureModal.show(); });
         };
     }
 
