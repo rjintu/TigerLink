@@ -262,6 +262,32 @@ def getmatches():
     response = make_response(html)
     return response
 
+@app.route('/studentdetails', methods=['GET'])
+def studentdetails():
+    if not loginutil.is_logged_in(session):
+        return redirect('/login')
+
+    profileid = session['profileid']
+    if not user_exists(profileid):
+        # profile has not been created
+        return redirect('/index')
+
+    try:
+        db = Database()
+        db.connect()
+        profileid = request.args.get('profileid')
+        student, careers, interests = db.get_student_by_id(profileid)
+        db.disconnect()
+
+        careers = fix_list_format(careers)
+        html = render_template('studentdetails.html', student=student, 
+                careers=careers, interests=interests)
+        return make_response(html)
+    except Exception as e:
+        return make_response(str(e))
+# return make_response("An error occurred. Please try again later.")
+        
+
 # input (from get request): studentid, alumid
 @app.route('/matchdetails', methods=['GET'])
 def matchdetails():

@@ -12,6 +12,9 @@
 
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans">
 
+  <!-- JQuery -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+
   <!-- Optional JavaScript; choose one of the two! -->
 
   <!-- Option 1: Bootstrap Bundle with Popper -->
@@ -40,7 +43,7 @@
       </thead>
         <tbody>
             {% for student in students %}
-                <tr>
+                <tr class="student-row" id="{{ student[0] }}">
                   <td>{{ student[1] }} </td>
                   <td>{{ student[2] }} </td>
                   <td>{{ student[3] }} </td>
@@ -66,7 +69,7 @@
       </thead>
         <tbody>
             {% for alum in alumni %}
-                <tr>
+                <tr class="alum-row" id="{{ alum[0] }}">
                     <td>{{ alum[1] }} </td>
                     <td>{{ alum[2] }} </td>
                     <td>{{ alum[3] }} </td>
@@ -77,5 +80,51 @@
     </table>
   </div>
   </div>
+
+  <div id="detailsModal" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">User Details</h5>
+                </div>
+                <div class="modal-body" id="detailsBody">
+                </div>
+                <div class="modal-footer">
+                    <a href="#" id="closeDetailsBtn" class="btn btn-success d-block">Done</a>
+                </div>
+            </div>
+        </div>
+  </div>
+
+  <script>
+    "use strict";
+
+    let request = null;
+
+    function handleResponse(response) {
+        $('#detailsBody').html(response);
+        $('#detailsModal').modal('show');
+    }
+
+    function setup() {
+        $('.student-row').click((e) => {
+            let profileid = $(e.target).closest('tr').attr('id');
+            let profileidU = encodeURIComponent(profileid);
+
+            let url = "/studentdetails?profileid=" + profileidU;
+            if(request != null)
+                request.abort();
+
+            request = $.ajax({
+                type: 'GET',
+                url: url,
+                success: handleResponse
+            });
+        });
+    }
+
+    $(document).ready(setup);
+  </script>
 </body>
 </html>
