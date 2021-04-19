@@ -126,11 +126,12 @@ def createuser():
         major = acct_info.get('major', '')
         classyear = acct_info.get('classYear', '')
         nummatches = acct_info.get('numMatches', '')
+        propic = session['picture']
         zipcode = acct_info.get('zipcode', '')
         industry = acct_info.getlist('industry')
         interests = acct_info.getlist('interests')
         user = [profileid, name, classyear, email, major,
-                zipcode, nummatches, industry, interests]
+                zipcode, nummatches, propic, industry, interests]
 
         db = Database()
         db.connect()
