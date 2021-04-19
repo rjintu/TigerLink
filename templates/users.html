@@ -12,6 +12,9 @@
 
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans">
 
+  <!-- JQuery -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+
   <!-- Optional JavaScript; choose one of the two! -->
 
   <!-- Option 1: Bootstrap Bundle with Popper -->
@@ -22,37 +25,12 @@
   <link rel='stylesheet' type='text/css' href='static/style.css'>
 </head>
 
-<body>
-  <center>
-    <h1>TigerLink Admin</h1>
-  </center>
-
-  <nav class="navbar navbar-light navbar-expand-lg" style="background-color: orange;">
-    <ul class="navbar-nav mx-auto">
-        <li class="nav-item active">
-            <a class="nav-link" href="/admin/matches">Matches</a>
-        </li>
-        &nbsp;
-        <li class="nav-item">
-            <a class="nav-link" href="/admin/users" style="color: black"><strong>Users</strong></a>
-        </li>
-        &nbsp;
-        <li class="nav-item">
-            <a class="nav-link" href="#">Timeline</a>
-        </li>
-        &nbsp;
-        <li class="nav-item">
-            <a class="nav-link" href="/">Homepage</a>
-        </li>
-        &nbsp;
-        <li class="nav-item">
-            <a class="nav-link" href="/logout">Sign Out</a>
-        </li>
-    </ul>
-  </nav>
+<body style="background-color: #e8f4f8;">
+  {% include "admin-navbar.html" %}
 
   <br>
-  <div class="container">
+  <div class="container card bg-light shadow">
+  <div class="card-body">
     <h2>All Students</h2>
     <table class="table table-hover table-responsive">
       <thead>
@@ -65,7 +43,7 @@
       </thead>
         <tbody>
             {% for student in students %}
-                <tr>
+                <tr class="student-row" id="{{ student[0] }}">
                   <td>{{ student[1] }} </td>
                   <td>{{ student[2] }} </td>
                   <td>{{ student[3] }} </td>
@@ -74,8 +52,11 @@
             {% endfor %}
         </tbody>
     </table>
-    <div class="my-5"></div>
-    <hr>
+  </div>
+  </div>
+  <br>
+  <div class="container card bg-light shadow">
+  <div class="card-body">
     <h2>All Alumni</h2>
     <table class="table table-hover table-responsive">
       <thead>
@@ -88,7 +69,7 @@
       </thead>
         <tbody>
             {% for alum in alumni %}
-                <tr>
+                <tr class="alum-row" id="{{ alum[0] }}">
                     <td>{{ alum[1] }} </td>
                     <td>{{ alum[2] }} </td>
                     <td>{{ alum[3] }} </td>
@@ -98,5 +79,71 @@
         </tbody>
     </table>
   </div>
+  </div>
+
+  <div id="detailsModal" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">User Details</h5>
+                </div>
+                <div class="modal-body" id="detailsBody">
+                </div>
+                <div class="modal-footer">
+                    <a href="#" id="closeDetailsBtn" class="btn btn-success d-block">Done</a>
+                </div>
+            </div>
+        </div>
+  </div>
+
+  <script>
+    "use strict";
+
+    let request = null;
+
+    function handleResponse(response) {
+        $('#detailsBody').html(response);
+        $('#detailsModal').modal('show');
+    }
+
+    function setup() {
+        $('#closeDetailsBtn').click(function() {
+            $('#detailsModal').modal('hide');
+        });
+
+        $('.student-row').click((e) => {
+            let profileid = $(e.target).closest('tr').attr('id');
+            let profileidU = encodeURIComponent(profileid);
+
+            let url = "/studentdetails?profileid=" + profileidU;
+            if(request != null)
+                request.abort();
+
+            request = $.ajax({
+                type: 'GET',
+                url: url,
+                success: handleResponse
+            });
+        });
+
+        $('.alum-row').click((e) => {
+            let profileid = $(e.target).closest('tr').attr('id');
+            let profileidU = encodeURIComponent(profileid);
+
+            let url = "/alumdetails?profileid=" + profileidU;
+            if(request != null)
+                request.abort();
+
+            request = $.ajax({
+                type: 'GET',
+                url: url,
+                success: handleResponse
+            });
+        });
+    }
+
+    $(document).ready(setup);
+  </script>
 </body>
 </html>
