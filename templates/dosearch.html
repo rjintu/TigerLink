@@ -27,10 +27,9 @@
   -->
 </head>
 <style>
-  body { 
-  padding-top: 80px; 
-}
-
+  body {
+    padding-top: 80px;
+  }
 </style>
 
 <header>
@@ -39,97 +38,92 @@
   {% endwith %}
 </header>
 
-<body style="background-color: #e8f4f8;">
-  <form action="search" method="get">
+<form action="search" method="get">
 
-    <body>
-      <br>
-      <div class="container">
-        <div class="row justify-content-center">
-          <!-- col 1 -->
-          <div class="col-4">
+  <body id="generic-body">
+    <br>
+    <div class="container">
+      <div class="row justify-content-center">
+        <!-- col 1 -->
+        <div class="col-4">
 
-            <!-- enter the name of the person you wish to search up -->
-            <div class="form-group">
-              <label for="namesearch"><strong>Name</strong></label>
-              <input type="namesearch" class="form-control" name="namesearch" id="namesearch"
-                aria-describedby="namesearch" placeholder="Ex: Christopher Eisgruber ">
-            </div>
-            <br>
-            <strong>Are you looking for students, alums, or both?</strong>
-            <div class="form-check" name="form1">
-              <input class="form-check-input" id="ugrad" value="stud" type="radio" name="student">
-              <label class="form-check-label" for="ugrad"> Undergraduate Student </label>
-            </div>
-            <div class="form-check">
-              <input class="form-check-input" id="alum" value="alum" type="radio" name="student">
-              <label class="form-check-label" for="alum"> Alum </label>
-            </div>
-            <div class="form-check">
-              <input class="form-check-input" id="both" value="both" type="radio" name="student">
-              <label class="form-check-label" for="both"> Both </label>
-            </div>
-            <br>
-            <!-- TODO: add backend functionality of class year
+          <!-- enter the name of the person you wish to search up -->
+          <div class="form-group">
+            <label for="namesearch"><strong>Name</strong></label>
+            <input type="namesearch" class="form-control" name="namesearch" id="namesearch"
+              aria-describedby="namesearch" placeholder="Ex: Christopher Eisgruber ">
+          </div>
+          <br>
+          <strong>Are you looking for students, alums, or both?</strong>
+          <div class="form-check" name="form1">
+            <input class="form-check-input" id="ugrad" value="stud" type="radio" name="student">
+            <label class="form-check-label" for="ugrad"> Undergraduate Student </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" id="alum" value="alum" type="radio" name="student">
+            <label class="form-check-label" for="alum"> Alum </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" id="both" value="both" type="radio" name="student">
+            <label class="form-check-label" for="both"> Both </label>
+          </div>
+          <br>
+          <!-- TODO: add backend functionality of class year
                 <div class="form-group">
                     <label for="classYear"><strong>Class Year</strong></label>
                     <input type="classYear" class="form-control" name="classYear" id="classYear" aria-describedby="major"
                       placeholder="Ex: 2023">
                 </div>
                 <br>-->
-            <div class="form-group">
-              <label for="major"><strong>Major</strong></label>
-              <input type="major" class="form-control" name="major" id="major" aria-describedby="major"
-                placeholder="Ex: COS (must be 3 letter acronym)">
-            </div>
-            <br>
-            <div class="form-group">
-              <label for="zipcode"><strong>Zip Code</strong></label>
-              <input type="zipcode" class="form-control" name="zipcode" id="zipcode" aria-describedby="zipcode"
-                placeholder="Ex: 08544">
-            </div>
-            <br>
-            <br>
-            <br>
+          <div class="form-group">
+            <label for="major"><strong>Major</strong></label>
+            <input type="major" class="form-control" name="major" id="major" aria-describedby="major"
+              placeholder="Ex: COS (must be 3 letter acronym)">
+          </div>
+          <br>
+          <div class="form-group">
+            <label for="zipcode"><strong>Zip Code</strong></label>
+            <input type="zipcode" class="form-control" name="zipcode" id="zipcode" aria-describedby="zipcode"
+              placeholder="Ex: 08544">
+          </div>
+          <br>
+          <br>
+          <br>
+        </div>
+
+        <!-- col 2 -->
+        <div class="offset-1 col-4">
+          <div class="form-group">
+            <label for="email-address"><strong>Email Address</strong></label>
+            <input type="email-address" class="form-control" name="email-address" id="email-address"
+              aria-describedby="email-address" placeholder="Ex: tiger-link@princeton.edu">
+          </div>
+          <br>
+          <div class="form-group">
+            <label for="exampleFormControlSelect2"><strong>Select the careers you're searching for.</strong></label>
+            <select multiple class="form-control" id="industry" name="industry">
+              {% include 'careeroptions.html' %}
+            </select>
           </div>
 
-          <!-- col 2 -->
-          <div class="offset-1 col-4">
-            <div class="form-group">
-              <label for="email-address"><strong>Email Address</strong></label>
-              <input type="email-address" class="form-control" name="email-address" id="email-address"
-                aria-describedby="email-address" placeholder="Ex: tiger-link@princeton.edu">
-            </div>
-            <br>
-            <div class="form-group">
-              <label for="exampleFormControlSelect2"><strong>Select the careers you're searching for.</strong></label>
-              <select multiple class="form-control" id="industry" name="industry">
-                {% include 'careeroptions.html' %}
-              </select>
-            </div>
-
-            <!-- hidden input -->
-            <div class="col-0">
-              <input type="hidden" id="profileid" name="profileid" value="">
-              <input type="hidden" id="email" name="email" value="">
-              <input type="hidden" id="name" name="name" value="">
-            </div>
+          <!-- hidden input -->
+          <div class="col-0">
+            <input type="hidden" id="profileid" name="profileid" value="">
+            <input type="hidden" id="email" name="email" value="">
+            <input type="hidden" id="name" name="name" value="">
           </div>
         </div>
       </div>
-    </body>
-
-    <body>
-      <br>
-      <div class="container">
-        <div class="row justify-content-center">
-          <div class="col-1">
-            <button type="submit" name="submit" class="btn btn-primary">Search</button>
-          </div>
+    </div>
+    <br>
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-1">
+          <button type="submit" name="submit" class="btn btn-primary">Search</button>
         </div>
       </div>
-    </body>
-  </form>
-</body>
+    </div>
+  </body>
+</form>
 
 </html>

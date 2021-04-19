@@ -30,10 +30,9 @@
     -->
 </body>
 <style>
-    body { 
-    padding-top: 80px; 
-}
-
+    body {
+        padding-top: 80px;
+    }
 </style>
 
 <header>
@@ -42,7 +41,7 @@
     {% endwith %}
 </header>
 
-<body style="background-color: #e8f4f8;">
+<body id="generic-body">
     <div class="container">
         <div class="row justify-content-center">
             <!-- col 1 -->
@@ -62,11 +61,11 @@
                     {% if (match|length) > 2 %}
                     <tr class="clickable-row" id='{{match[0]}}' value='{{match[1]}}'>
                         {% for i in range (2, 7): %}
-                            {% if (i == 6) %}
-                                <td>{{ match[i] }}%</td>
-                            {% else %}
-                                <td>{{ match[i] }}</td>
-                            {% endif %}
+                        {% if (i == 6) %}
+                        <td>{{ match[i] }}%</td>
+                        {% else %}
+                        <td>{{ match[i] }}</td>
+                        {% endif %}
                         {% endfor %}
                     </tr>
                     {% endif %}
