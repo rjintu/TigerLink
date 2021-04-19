@@ -23,11 +23,12 @@
   <link rel='stylesheet' type='text/css' href='static/style.css'>
 </head>
 
-<body>
+<body style="background-color: #e8f4f8;">
   {% include "admin-navbar.html" %}
 
   <br>
-  <div class="container">
+  <div class="container card bg-light border-light shadow">
+  <div class="card-body">
     <h2>Current Matches</h2>
     <table class="table table-hover table-responsive">
       <thead>
@@ -59,6 +60,7 @@
 
     <a class="btn btn-primary" id="creatematches" href="#">Create New Matches</a>
     <a class="btn btn-danger" id="deletematches" href="#">Delete Matches</a>
+  </div>
   </div>
 
   <script>
