@@ -1,32 +1,32 @@
-<img src="{{ student[6] }}" class="rounded img-thumbnail mx-auto d-block"></img>
+<img src="{{ alum[6] }}" class="rounded img-thumbnail mx-auto d-block"></img>
 <table class="table">
 <tbody>
     <tr>
         <td style="width: 30%"><strong>Name:</strong></td>
-        <td>{{ student[0] }}</td>
+        <td>{{ alum[0] }}</td>
     </tr>
     <tr>
         <td><strong>Class Year:</strong></td>
-        <td>{{ student[1] }}</td>
+        <td>{{ alum[1] }}</td>
     </tr>
     <tr>
         <td><strong>Email:</strong></td>
-        <td>{{ student[2] }}</td>
+        <td>{{ alum[2] }}</td>
     </tr>
     <tr>
         <td><strong>Major:</strong></td>
-        <td>{{ student[3] }}</td>
+        <td>{{ alum[3] }}</td>
     </tr>
     <tr>
         <td><strong>ZIP Code:</strong></td>
-        <td>{{ student[4] }}</td>
+        <td>{{ alum[4] }}</td>
     </tr>
     <tr>
         <td><strong>Number of Matches:</strong></td>
-        <td>{{ student[5] }}</td>
+        <td>{{ alum[5] }}</td>
     </tr>
     <tr>
-        <td><strong>Career Interests:</strong></td>
+        <td><strong>Career(s):</strong></td>
         <td>
             {% for career in range(careers|length -1) %}
                 {{ careers[career] }}, 

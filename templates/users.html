@@ -108,11 +108,30 @@
     }
 
     function setup() {
+        $('#closeDetailsBtn').click(function() {
+            $('#detailsModal').modal('hide');
+        });
+
         $('.student-row').click((e) => {
             let profileid = $(e.target).closest('tr').attr('id');
             let profileidU = encodeURIComponent(profileid);
 
             let url = "/studentdetails?profileid=" + profileidU;
+            if(request != null)
+                request.abort();
+
+            request = $.ajax({
+                type: 'GET',
+                url: url,
+                success: handleResponse
+            });
+        });
+
+        $('.alum-row').click((e) => {
+            let profileid = $(e.target).closest('tr').attr('id');
+            let profileidU = encodeURIComponent(profileid);
+
+            let url = "/alumdetails?profileid=" + profileidU;
             if(request != null)
                 request.abort();
 
