@@ -53,7 +53,7 @@
             <!-- enter the name of the person you wish to search up -->
             <div class="form-group">
               <label for="namesearch"><strong>Name</strong></label>
-              <input type="namesearch" class="form-control" name="namesearch" id="namesearch"
+              <input type="text" class="form-control" name="namesearch" id="namesearch"
                 aria-describedby="namesearch" placeholder="Ex: Christopher Eisgruber ">
             </div>
             <br>
@@ -80,13 +80,13 @@
                 <br>-->
             <div class="form-group">
               <label for="major"><strong>Major</strong></label>
-              <input type="major" class="form-control" name="major" id="major" aria-describedby="major"
+              <input type="text" class="form-control" name="major" id="major" aria-describedby="major"
                 placeholder="Ex: COS (must be 3 letter acronym)">
             </div>
             <br>
             <div class="form-group">
               <label for="zipcode"><strong>Zip Code</strong></label>
-              <input type="zipcode" class="form-control" name="zipcode" id="zipcode" aria-describedby="zipcode"
+              <input type="tel" minlength="5" maxlength="5" class="form-control" name="zipcode" id="zipcode" pattern="[0-9]*" aria-describedby="zipcode"
                 placeholder="Ex: 08544">
             </div>
             <br>
@@ -98,7 +98,7 @@
           <div class="offset-1 col-4">
             <div class="form-group">
               <label for="email-address"><strong>Email Address</strong></label>
-              <input type="email-address" class="form-control" name="email-address" id="email-address"
+              <input type="email" class="form-control" name="email-address" id="email-address"
                 aria-describedby="email-address" placeholder="Ex: tiger-link@princeton.edu">
             </div>
             <br>
