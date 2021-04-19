@@ -23,37 +23,12 @@
   <link rel='stylesheet' type='text/css' href='static/style.css'>
 </head>
 
-<body>
-  <center>
-    <h1>TigerLink Admin</h1>
-  </center>
-
-  <nav class="navbar navbar-light navbar-expand" style="background-color: orange;">
-    <ul class="navbar-nav mx-auto">
-        <li class="nav-item active">
-            <a class="nav-link" href="/admin/matches" style="color: black"><strong>Matches</strong></a>
-        </li>
-        &nbsp;
-        <li class="nav-item">
-            <a class="nav-link" href="/admin/users">Users</a>
-        </li>
-        &nbsp;
-        <li class="nav-item">
-            <a class="nav-link" href="#">Timeline</a>
-        </li>
-        &nbsp;
-        <li class="nav-item">
-            <a class="nav-link" href="/">Homepage</a>
-        </li>
-        &nbsp;
-        <li class="nav-item">
-            <a class="nav-link" href="/logout">Sign Out</a>
-        </li>
-    </ul>
-  </nav>
+<body style="background-color: #e8f4f8;">
+  {% include "admin-navbar.html" %}
 
   <br>
-  <div class="container">
+  <div class="container card bg-light border-light shadow">
+  <div class="card-body">
     <h2>Current Matches</h2>
     <table class="table table-hover table-responsive">
       <thead>
@@ -86,26 +61,143 @@
     <a class="btn btn-primary" id="creatematches" href="#">Create New Matches</a>
     <a class="btn btn-danger" id="deletematches" href="#">Delete Matches</a>
   </div>
+  </div>
+
+  <div id="successModal" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body text-center">
+                  New matches successfully created! Click Continue to see all current matches
+                  between students and alumni.
+                </div>
+                <div class="modal-footer">
+                    <a href="/admin/matches" class="btn btn-primary mx-auto d-block">Continue</a>
+                </div>
+            </div>
+        </div>
+  </div>
+
+  <div id="failureModal" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-danger">Error</h5>
+                </div>
+                <div class="modal-body">
+                  Something went wrong when trying to edit matches in the server. Please contact the TigerLink
+                  developers for support.
+                </div>
+                <div class="modal-footer">
+                    <a href="/admin/matches" class="btn btn-secondary mx-auto d-block">Continue</a>
+                </div>
+            </div>
+        </div>
+  </div>
+
+  <div id="warningModal" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Please Confirm</h5>
+                </div>
+                <div class="modal-body">
+                  Are you sure you want to delete all matches? This cannot be undone.
+                </div>
+                <div class="modal-footer">
+                    <a href="#" id="deleteConfirmBtn" class="btn btn-danger d-block">Yes</a>
+                    <a href="/admin/matches" class="btn btn-secondary d-block">No</a>
+                </div>
+            </div>
+        </div>
+  </div>
+
+  <div id="detailsModal" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Match Details</h5>
+                </div>
+                <div class="modal-body" id="detailsBody">
+                </div>
+                <div class="modal-footer">
+                    <a href="#" id="closeDetailsBtn" class="btn btn-success d-block">Done</a>
+                </div>
+            </div>
+        </div>
+  </div>
 
   <script>
     "use strict";
 
+    let request = null;
+
+    function handleResponse(response) {
+        $('#detailsBody').html(response);
+        $("#detailsModal").modal('show');
+    }
+
     function setup() {
+        let successModal = new bootstrap.Modal(document.getElementById('successModal'), {
+            keyboard: false
+        });
+
+		let failureModal = new bootstrap.Modal(document.getElementById('failureModal'), {
+			keyboard: false
+		});
+
+        let warningModal = new bootstrap.Modal(document.getElementById('warningModal'), {
+            keyboard: false
+        });
+
         let createBtn = document.getElementById("creatematches");
         createBtn.onclick = function() {
             $.post("/admin/creatematches")
-                .done(function() { alert('New matches created!'); location.reload(); })
-                .fail(function() { alert('An error occurred.'); });
+                .done(function() { successModal.show(); })
+                .fail(function() { failureModal.show(); });
         };
 
         let deleteBtn = document.getElementById("deletematches");
         deleteBtn.onclick = function() {
-            if(confirm('Are you sure you want to delete all matches?')) {
-                $.post("/admin/deletematches")
-                    .done(function() { location.reload(); })
-                    .fail(function() { alert('An error occurred.'); });
-            }
+            warningModal.show();
         };
+
+        let deleteConfirmBtn = document.getElementById("deleteConfirmBtn");
+        deleteConfirmBtn.onclick = function() {
+            $.post("/admin/deletematches")
+                .done(function() { location.reload(); })
+                .fail(function() { failureModal.show(); });
+        };
+
+        let modalBtn = document.getElementById("closeDetailsBtn");
+        modalBtn.onclick = function() {
+            $("#detailsModal").modal('hide');
+        }
+
+        $('.clickable-row').click(
+            (e) => {
+                let student = $(e.target).closest('tr').attr('id');
+                let alum = $(e.target).closest('tr').attr('value');
+
+                let studentU = encodeURIComponent(student);
+                let alumU = encodeURIComponent(alum);
+
+                let url = "/matchdetails?student=" + studentU + "&alum=" + alumU;
+                console.log(url);
+
+                if (request != null)
+                    request.abort();
+
+                request = $.ajax({
+                    type: 'GET',
+                    url: url,
+                    success: handleResponse
+                });
+            }
+        );
     }
 
     $(document).ready(setup);

@@ -1,0 +1,47 @@
+<img src="{{ student[6] }}" class="rounded img-thumbnail mx-auto d-block"></img>
+<table class="table">
+<tbody>
+    <tr>
+        <td style="width: 30%"><strong>Name:</strong></td>
+        <td>{{ student[0] }}</td>
+    </tr>
+    <tr>
+        <td><strong>Class Year:</strong></td>
+        <td>{{ student[1] }}</td>
+    </tr>
+    <tr>
+        <td><strong>Email:</strong></td>
+        <td>{{ student[2] }}</td>
+    </tr>
+    <tr>
+        <td><strong>Major:</strong></td>
+        <td>{{ student[3] }}</td>
+    </tr>
+    <tr>
+        <td><strong>ZIP Code:</strong></td>
+        <td>{{ student[4] }}</td>
+    </tr>
+    <tr>
+        <td><strong>Number of Matches:</strong></td>
+        <td>{{ student[5] }}</td>
+    </tr>
+    <tr>
+        <td><strong>Career Interests:</strong></td>
+        <td>
+            {% for career in range(careers|length -1) %}
+                {{ careers[career] }}, 
+            {% endfor %}
+            {{ careers[-1] }}
+        </td>
+    </tr>
+    <tr>
+        <td><strong>Student Groups:</strong></td>
+        <td>
+            {% for interest in range(interests|length -1) %}
+                {{ interests[interest] }},
+            {% endfor %}
+            {{ interests[-1] }}
+        </td>
+    </tr>
+</tbody>
+</table>
