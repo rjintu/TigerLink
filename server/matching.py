@@ -89,9 +89,17 @@ class Matching(object):
         alumni = self._alumni
         matches = []
         finalMatches = []
+        absoluteFinal = []
+        topSim = 0
         while (len(students) > 0):
             if len(alumni) == 0:
-                return finalMatches
+                if topSim == 0:
+                    return finalMatches
+                for match in finalMatches:
+                    sim = float(match[6])/topSim
+                    sim = round(sim, 2) * 100
+                    absoluteFinal.append((match[0], match[1], match[2], match[3], match[4], match[5], sim))
+                return absoluteFinal
 
             svec = students[0]
             students.remove(svec)
@@ -111,6 +119,8 @@ class Matching(object):
                             updated = True
                                 
                 if updated:
+                    if topSim < bestSim:
+                        topSim = bestSim
                     alum = alumni[bestIdx]
                     match = (svec, alum)
                     
@@ -127,9 +137,13 @@ class Matching(object):
                     svec._numMatch -= 1
                     if svec._numMatch > 0:
                         students.append(svec)
-
-        return finalMatches
-
+        if topSim == 0:
+            return finalMatches
+        for match in finalMatches:
+            sim = float(match[6])/topSim
+            sim = round(sim, 2) * 100
+            absoluteFinal.append((match[0], match[1], match[2], match[3], match[4], match[5], sim))
+        return absoluteFinal
 
     #sprefs = weightings for career, major, and organizations
     def dotProduct(self, svec, avec):
