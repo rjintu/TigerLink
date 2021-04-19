@@ -345,15 +345,17 @@ def matchdetails():
             stud_temp = ""
             alum_temp = ""
 
-            for m in range(len(student_interests)-1):
-                stud_temp += student_interests[m]
-                stud_temp += ", "
-            stud_temp += student_interests[-1]
+            if student_interests:
+                for m in range(len(student_interests)-1):
+                    stud_temp += student_interests[m]
+                    stud_temp += ", "
+                stud_temp += student_interests[-1]
 
-            for n in range(len(alum_interests)-1):
-                alum_temp += alum_interests[n]
-                alum_temp += ", "
-            alum_temp += alum_interests[-1]
+            if alum_interests:
+                for n in range(len(alum_interests)-1):
+                    alum_temp += alum_interests[n]
+                    alum_temp += ", "
+                alum_temp += alum_interests[-1]
 
             html += '<td>' + stud_temp + '</td>'
             html += '<td>' + alum_temp + '</td>'
