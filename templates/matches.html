@@ -114,8 +114,31 @@
         </div>
   </div>
 
+  <div id="detailsModal" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Match Details</h5>
+                </div>
+                <div class="modal-body" id="detailsBody">
+                </div>
+                <div class="modal-footer">
+                    <a href="#" id="closeDetailsBtn" class="btn btn-success d-block">Done</a>
+                </div>
+            </div>
+        </div>
+  </div>
+
   <script>
     "use strict";
+
+    let request = null;
+
+    function handleResponse(response) {
+        $('#detailsBody').html(response);
+        $("#detailsModal").modal('show');
+    }
 
     function setup() {
         let successModal = new bootstrap.Modal(document.getElementById('successModal'), {
@@ -148,6 +171,33 @@
                 .done(function() { location.reload(); })
                 .fail(function() { failureModal.show(); });
         };
+
+        let modalBtn = document.getElementById("closeDetailsBtn");
+        modalBtn.onclick = function() {
+            $("#detailsModal").modal('hide');
+        }
+
+        $('.clickable-row').click(
+            (e) => {
+                let student = $(e.target).closest('tr').attr('id');
+                let alum = $(e.target).closest('tr').attr('value');
+
+                let studentU = encodeURIComponent(student);
+                let alumU = encodeURIComponent(alum);
+
+                let url = "/matchdetails?student=" + studentU + "&alum=" + alumU;
+                console.log(url);
+
+                if (request != null)
+                    request.abort();
+
+                request = $.ajax({
+                    type: 'GET',
+                    url: url,
+                    success: handleResponse
+                });
+            }
+        );
     }
 
     $(document).ready(setup);
