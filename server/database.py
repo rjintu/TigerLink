@@ -370,6 +370,8 @@ class Database:
         name = '%%' + name + '%%'
         name = name.lower()
 
+        major = major.lower()
+
         output = []
         cursor = self._connection.cursor()
         cursor2 = self._connection.cursor()
@@ -377,7 +379,7 @@ class Database:
 
         if typeofSearch in 'stud':
             stmtStr = "SELECT profileid, classyear, name, major, email FROM students WHERE lower(name) LIKE %s " + \
-                "AND email LIKE %s AND major LIKE %s AND zip LIKE %s"
+                "AND email LIKE %s AND lower(major) LIKE %s AND zip LIKE %s"
             cursor.execute(stmtStr, [name, email, major, zipcode])
             row = cursor.fetchone()
 
@@ -415,7 +417,7 @@ class Database:
 
         elif typeofSearch in 'alum':
             stmtStr = "SELECT profileid, classyear, name, major, email FROM alumni WHERE lower(name) LIKE %s " + \
-                "AND email LIKE %s AND major LIKE %s AND zip LIKE %s"
+                "AND email LIKE %s AND lower(major) LIKE %s AND zip LIKE %s"
             cursor.execute(stmtStr, [name, email, major, zipcode])
             row = cursor.fetchone()
 
@@ -454,7 +456,7 @@ class Database:
         # both student and alum
         else:
             stmtStr = "SELECT profileid, classyear, name, major, email FROM students WHERE lower(name) LIKE %s " + \
-                "AND email LIKE %s AND major LIKE %s AND zip LIKE %s"
+                "AND email LIKE %s AND lower(major) LIKE %s AND zip LIKE %s"
             cursor.execute(stmtStr, [name, email, major, zipcode])
             row = cursor.fetchone()
 
