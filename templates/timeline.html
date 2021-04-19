@@ -34,7 +34,14 @@
     <style>
         body { 
         padding-top: 80px; 
+        
     }
+    .card-img-top {
+    width: 100%;
+    height: 20vw;
+    object-fit: cover;
+}
+
     </style>
 </header>
     
@@ -93,7 +100,7 @@
             </div>
             <div class="col" style="display: block;">
                 <div class="card bg-light border-light w-50">
-                    <img src={{res[6]}} class="card-img-top" alt="...">
+                    <img src={{res[6]}} class="card-img-top" onerror="this.style.display='none'">
                     <div class="card-body">
                         <div class="card-title h5"> {{res[4]}} </div>
                         <div class="mb-2 text-muted card-subtitle h6">
