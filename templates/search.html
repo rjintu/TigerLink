@@ -34,33 +34,35 @@
 
 <body id="generic-body">
   <br>
-  <div class="container">
-    <div class="row justify-content-center">
-      <!-- col 1 -->
-      <table class="table table-hover table-responsive">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Year</th>
-            <th>Major</th>
-            <th>Zip Code</th>
-            <th>Number of Matches</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for res in results: %}
-          <tr>
-            <td>{{ res[2] }}</td>
-            <td>{{ res[1] }}</td>
-            <td>{{ res[3] }}</td>
-            <td>{{ res[4] }}</td>
-            <td>{{ res[5] }}</td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
-  </div>
+      <div class="container">
+          <div class="row justify-content-center">
+              <!-- col 1 -->
+              {% if (results|length) > 0 %}
+                <table class="table table-hover table-responsive">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Year</th>
+                      <th>Major</th>
+                      <th>Email</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                      {% for res in results: %}
+                          <tr>    
+                          <td>{{ res[2] }}</td>
+                          <td>{{ res[1] }}</td>
+                          <td>{{ res[3] }}</td>
+                          <td>{{ res[4] }}</td>
+                          </tr>  
+                      {% endfor %}
+                  </tbody>
+                </table>
+              {% else %}
+              <p>No results.</p> <!-- style this more -->
+              {% endif %}
+            </div>
+      </div>
 </body>
 
 <body>

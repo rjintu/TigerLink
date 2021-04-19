@@ -126,11 +126,12 @@ def createuser():
         major = acct_info.get('major', '')
         classyear = acct_info.get('classYear', '')
         nummatches = acct_info.get('numMatches', '')
+        propic = session['picture']
         zipcode = acct_info.get('zipcode', '')
         industry = acct_info.getlist('industry')
         interests = acct_info.getlist('interests')
         user = [profileid, name, classyear, email, major,
-                zipcode, nummatches, industry, interests]
+                zipcode, nummatches, propic, industry, interests]
 
         db = Database()
         db.connect()
@@ -171,6 +172,8 @@ def loadpost():
             info, careers, interests = db.get_student_by_id(profileid)
         elif role == 'alum':
             info, careers, interests = db.get_alum_by_id(profileid)
+            for i in range(0, len(interests)):
+                interests[i] = interests[i][0]
         is_admin = db.get_admin(profileid)
         db.disconnect()
 
@@ -226,7 +229,7 @@ def createpost():
         # currDate = str(datetime.now())
 
         db.create_post(str(profileid), str(name), str(currDate), str(title),
-                       str(content), str(imgurl), str(private), json.dumps(communities))
+                       str(content), str(imgurl), str(private), json.dumps(communities), str(session['picture']))
         db.disconnect()
         return redirect('/timeline')
     except Exception as e:
@@ -485,19 +488,18 @@ def search():
         return redirect('/index')
 
     search_query = None
-    search_form = None
     try:
         name = request.args.get('namesearch', '%')
         email = request.args.get('email-address', '%')
         major = request.args.get('major', '%')
         zipcode = request.args.get('zipcode', '%')
         career = request.args.getlist('industry')
-        search_req = request.args.get('student', '%')
-        search_query = [name, email, major, zipcode, career, search_req]
+        interest = request.args.getlist('interest')
+        search_req = request.args.get('searchreq', '%')
+        search_query = [name, email, major, zipcode, career, interest, search_req]
         # database queries
         db = Database()
         db.connect()
-        # FIXME: db.search() will take search_query and two booleans (student and alumni)
         results = db.search(search_query)
         is_admin = db.get_admin(session['profileid'])
         db.disconnect()
@@ -556,6 +558,8 @@ def timeline():
         info, careers, interests = db.get_student_by_id(profileid)
     elif role == 'alum':
         info, careers, interests = db.get_alum_by_id(profileid)
+        for i in range(0, len(interests)):
+            interests[i] = interests[i][0]
 
     posts = []
     output = db.get_posts()
@@ -580,18 +584,3 @@ def timeline():
     response = make_response(html)
     return response
 
-
-@app.route('/groups', methods=['GET'])
-def groups():
-    if not loginutil.is_logged_in(session):
-        return redirect('/login')
-
-    db = Database()
-    db.connect()
-    is_admin = db.get_admin(session['profileid'])
-    db.disconnect()
-
-    html = render_template('groups.html', picture=session['picture'],
-            is_admin=is_admin)
-    response = make_response(html)
-    return response
