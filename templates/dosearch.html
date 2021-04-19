@@ -28,10 +28,9 @@
 
 </head>
 <style>
-  body { 
-  padding-top: 80px; 
-}
-
+  body {
+    padding-top: 80px;
+  }
 </style>
 
 <header>
@@ -40,15 +39,14 @@
   {% endwith %}
 </header>
 
-<body style="background-color: #e8f4f8;">
-  <form action="search" method="get">
+<form action="search" method="get">
 
-    <body>
-      <br>
-      <div class="container">
-        <div class="row justify-content-center">
-          <!-- col 1 -->
-          <div class="col-4">
+  <body id="generic-body">
+    <br>
+    <div class="container">
+      <div class="row justify-content-center">
+        <!-- col 1 -->
+        <div class="col-4">
 
             <!-- enter the name of the person you wish to search up -->
             <div class="form-group">
@@ -93,6 +91,10 @@
             <br>
             <br>
           </div>
+          <br>
+          <br>
+          <br>
+        </div>
 
           <!-- col 2 -->
           <div class="offset-1 col-4">
@@ -116,28 +118,24 @@
               </select>
             </div>
 
-            <!-- hidden input -->
-            <div class="col-0">
-              <input type="hidden" id="profileid" name="profileid" value="">
-              <input type="hidden" id="email" name="email" value="">
-              <input type="hidden" id="name" name="name" value="">
-            </div>
+          <!-- hidden input -->
+          <div class="col-0">
+            <input type="hidden" id="profileid" name="profileid" value="">
+            <input type="hidden" id="email" name="email" value="">
+            <input type="hidden" id="name" name="name" value="">
           </div>
         </div>
       </div>
-    </body>
-
-    <body>
-      <br>
-      <div class="container">
-        <div class="row justify-content-center">
-          <div class="col-1">
-            <button type="submit" name="submit" class="btn btn-primary">Search</button>
-          </div>
+    </div>
+    <br>
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-1">
+          <button type="submit" name="submit" class="btn btn-primary">Search</button>
         </div>
       </div>
-    </body>
-  </form>
-</body>
+    </div>
+  </body>
+</form>
 
 </html>
