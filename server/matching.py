@@ -99,7 +99,7 @@ class Matching(object):
                     sim = float(match[6])/topSim
                     sim = round(sim, 2) * 100
                     absoluteFinal.append((match[0], match[1], match[2], match[3], match[4], match[5], sim))
-                    return absoluteFinal
+                return absoluteFinal
 
             svec = students[0]
             students.remove(svec)
@@ -143,7 +143,7 @@ class Matching(object):
             sim = float(match[6])/topSim
             sim = round(sim, 2) * 100
             absoluteFinal.append((match[0], match[1], match[2], match[3], match[4], match[5], sim))
-            return absoluteFinal
+        return absoluteFinal
 
     #sprefs = weightings for career, major, and organizations
     def dotProduct(self, svec, avec):
