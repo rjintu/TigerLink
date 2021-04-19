@@ -29,9 +29,18 @@
         <td><strong>Career Interests:</strong></td>
         <td>
             {% for career in range(careers|length -1) %}
-                {{ career }}, 
+                {{ careers[career] }}, 
             {% endfor %}
             {{ careers[-1] }}
+        </td>
+    </tr>
+    <tr>
+        <td><strong>Student Groups:</strong></td>
+        <td>
+            {% for interest in range(interests|length -1) %}
+                {{ interests[interest] }},
+            {% endfor %}
+            {{ interests[-1] }}
         </td>
     </tr>
 </tbody>

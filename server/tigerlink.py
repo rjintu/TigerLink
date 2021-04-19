@@ -284,9 +284,31 @@ def studentdetails():
                 careers=careers, interests=interests)
         return make_response(html)
     except Exception as e:
-        return make_response(str(e))
-# return make_response("An error occurred. Please try again later.")
+        return make_response("An error occurred. Please try again later.")
         
+@app.route('/alumdetails', methods=['GET'])
+def alumdetails():
+    if not loginutil.is_logged_in(session):
+        return redirect('/login')
+
+    profileid = session['profileid']
+    if not user_exists(profileid):
+        # profile has not been created
+        return redirect('/index')
+
+    try:
+        db = Database()
+        db.connect()
+        profileid = request.args.get('profileid')
+        alum, careers, interests = db.get_alum_by_id(profileid)
+        db.disconnect()
+
+        interests = fix_list_format(interests)
+        html = render_template('alumdetails.html', alum=alum,
+                careers=careers, interests=interests)
+        return make_response(html)
+    except Exception as e:
+        return make_response("An error occurred. Please try again later.")
 
 # input (from get request): studentid, alumid
 @app.route('/matchdetails', methods=['GET'])
