@@ -34,7 +34,14 @@
     <style>
         body { 
         padding-top: 80px; 
+        
     }
+    .card-img-top {
+    width: 100%;
+    height: 20vw;
+    object-fit: cover;
+}
+
     </style>
 </header>
     
@@ -83,17 +90,17 @@
                     <tbody>
                         <tr style="text-align: center;">
                             <a target="_blank">
-                                <img src = https://i.pinimg.com/originals/0c/3b/3a/0c3b3adb1a7530892e55ef36d3be6cb8.png style="width: 100%; max-width: 125px;" class="rounded-circle">
+                                <img src = {{res[9]}} style="width: 100%; max-width: 100px;" class="rounded-circle" onerror="this.style.display='none'">
                             </a>
                             <br>
-                            <p stlye="text-align: center">{{ res[2] }}</p>
+                            <h5 stlye="text-align: center;">{{ res[2] }}</h5>
                         </tr>
                     </tbody>
                 </table>
             </div>
             <div class="col" style="display: block;">
-                <div class="card bg-light border-light w-50">
-                    <img src={{res[6]}} class="card-img-top" alt="...">
+                <div class="card bg-light shadow p-3 mb-5 bg-white rounded w-50">
+                    <img src={{res[6]}} class="card-img-top" onerror="this.style.display='none'">
                     <div class="card-body">
                         <div class="card-title h5"> {{res[4]}} </div>
                         <div class="mb-2 text-muted card-subtitle h6">
