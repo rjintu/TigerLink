@@ -379,7 +379,7 @@ def matchdetails():
             html += "<td><strong>Email:</strong></td>"
         elif i == 3:
             if majorSame:
-                html += "<td><strong><mark background-color='green'>Major:</mark></strong></td>"
+                html += "<td><strong><mark>Major:</mark></strong></td>"
             else:
                 html += "<td><strong>Major:</strong></td>"
         elif i == 4:
@@ -390,8 +390,12 @@ def matchdetails():
             html += "<td><strong>Groups:</strong></td>"
 
         if (i <= 4):
-            html += '<td>' + student_info[i] + '</td>'
-            html += '<td>' + alum_info[i] + '</td>'
+            if i == 3 and majorSame:
+                html += '<td><strong>' + student_info[i] + '</strong></td>'
+                html += '<td><strong>' + alum_info[i] + '</strong></td>'
+            else:
+                html += '<td>' + student_info[i] + '</td>'
+                html += '<td>' + alum_info[i] + '</td>'
         elif i == 5:
             stud_temp = ""
             alum_temp = ""
