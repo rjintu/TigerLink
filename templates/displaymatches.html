@@ -53,7 +53,11 @@
                         <th>Student Year</th>
                         <th>Alumni Name</th>
                         <th>Alumni Year</th>
-                        <th>Similarity <button type="button" class="btn btn-lg btn-info" data-toggle="popover" title="Similarity Score" data-content="The similarity score is a percentage that quantifies the overlap in majors, careers, and organizations between the student and the alumni. It currently assigns an equal weightage to each of these three categories, although the weighting may be adjusted by the admin. Low similarity scores can be attributed to a class imbalance between students and alumni in the database, as well as the matching algorithm's philosophy that a weak match is better than no match at all.">Info</button> </th>
+                        <th>Similarity 
+                            <button type="button" class="btn btn-sm btn-info" data-toggle="popover">
+                                <img src="../static/img/info.png" width="100" alt="">
+                            </button>
+                         </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -148,7 +152,9 @@
         function setup() {
             $('[data-toggle="popover"]').popover({
                 placement : 'top',
-                trigger : 'hover'
+                trigger : 'hover',
+                title: 'Similarity Score',
+                content: 'The similarity score is a percentage that quantifies the overlap in majors, careers, and organizations between the student and the alumni. It currently assigns an equal weightage to each of these three categories, although the weighting may be adjusted by the admin. Low similarity scores can be attributed to a class imbalance between students and alumni in the database, as well as the matching algorithm\'s philosophy that a weak match is better than no match at all.'
             });
 
             $("#closeMatch").hide();
