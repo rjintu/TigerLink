@@ -104,7 +104,7 @@ def login_auth():
 @app.route('/logout', methods=['GET'])
 def logout():
     # simply clear the user's session
-    
+
     session.pop('profileid', None)
     session.pop('email', None)
     session.pop('fullname', None)
@@ -230,7 +230,8 @@ def createpost():
         name = info[0]
 
         # store date and time in UTC (convert on client side)
-        currDate = datetime.utcnow().isoformat() # store in UTC, convert on client side
+        # store in UTC, convert on client side
+        currDate = datetime.utcnow().isoformat()
         # currDate = str(datetime.now())
 
         db.create_post(str(profileid), str(name), str(currDate), str(title),
@@ -243,6 +244,7 @@ def createpost():
         return make_response(html)
 
     return html
+
 
 @app.route('/displaymatches', methods=['GET'])
 def getmatches():
@@ -261,13 +263,15 @@ def getmatches():
         matches = db.retrieve_matches(profileid)
         is_admin = db.get_admin(profileid)
         db.disconnect()
-        html = render_template('displaymatches.html', matches=matches, picture=session['picture'], is_admin=is_admin)
+        html = render_template('displaymatches.html', matches=matches,
+                               picture=session['picture'], is_admin=is_admin)
     except Exception as e:
         html = "error occurred: " + str(e)
         print(e)
 
     response = make_response(html)
     return response
+
 
 @app.route('/studentdetails', methods=['GET'])
 def studentdetails():
@@ -287,12 +291,13 @@ def studentdetails():
         db.disconnect()
 
         careers = fix_list_format(careers)
-        html = render_template('studentdetails.html', student=student, 
-                careers=careers, interests=interests)
+        html = render_template('studentdetails.html', student=student,
+                               careers=careers, interests=interests)
         return make_response(html)
     except Exception as e:
         return make_response("An error occurred. Please try again later.")
-        
+
+
 @app.route('/alumdetails', methods=['GET'])
 def alumdetails():
     if not loginutil.is_logged_in(session):
@@ -312,7 +317,7 @@ def alumdetails():
 
         interests = fix_list_format(interests)
         html = render_template('alumdetails.html', alum=alum,
-                careers=careers, interests=interests)
+                               careers=careers, interests=interests)
         return make_response(html)
     except Exception as e:
         return make_response("An error occurred. Please try again later.")
@@ -327,6 +332,8 @@ def genericdetails():
     if not user_exists(profileid):
         # profile has not been created
         return redirect('/index')
+
+    profileid = request.args.get('profileid')
 
     db = Database()
     db.connect()
@@ -344,7 +351,7 @@ def genericdetails():
 
             interests = fix_list_format(interests)
             html = render_template('alumdetails.html', alum=alum,
-                    careers=careers, interests=interests)
+                                   careers=careers, interests=interests)
             return make_response(html)
 
         else:
@@ -352,13 +359,14 @@ def genericdetails():
             student, careers, interests = db.get_student_by_id(profileid)
             db.disconnect()
 
-            interests = fix_list_format(interests)
-            html = render_template('studentdetails.html', student=student, 
-                careers=careers, interests=interests)
+            careers = fix_list_format(careers)
+            html = render_template('studentdetails.html', student=student,
+                                   careers=careers, interests=interests)
             return make_response(html)
-            
+
     except Exception as e:
         return make_response("An error occurred. Please try again later.")
+
 
 def checkOverlap(element, list):
     if element in list:
@@ -366,6 +374,8 @@ def checkOverlap(element, list):
     return str(element)
 
 # input (from get request): studentid, alumid
+
+
 @app.route('/matchdetails', methods=['GET'])
 def matchdetails():
     if not loginutil.is_logged_in(session):
@@ -382,7 +392,8 @@ def matchdetails():
         db.connect()
         student = request.args.get('student')
         alum = request.args.get('alum')
-        student_info, student_careers, student_interests = db.get_student_by_id(student)
+        student_info, student_careers, student_interests = db.get_student_by_id(
+            student)
 
         # student_careers is being returned as a list of tuples
         # this block fixes that
@@ -393,8 +404,10 @@ def matchdetails():
         # this block fixes that
         alum_interests = fix_list_format(alum_interests)
 
-        joint_careers = [value for value in student_careers if value in alum_careers]
-        joint_interests = [value for value in student_interests if value in alum_interests]
+        joint_careers = [
+            value for value in student_careers if value in alum_careers]
+        joint_interests = [
+            value for value in student_interests if value in alum_interests]
 
         majorSame = False
         if student_info[3] == alum_info[3]:
@@ -464,13 +477,16 @@ def matchdetails():
 
             if student_interests:
                 for m in range(len(student_interests)-1):
-                    stud_temp += checkOverlap(student_interests[m], joint_interests)
+                    stud_temp += checkOverlap(
+                        student_interests[m], joint_interests)
                     stud_temp += ", "
-                stud_temp += checkOverlap(student_interests[-1], joint_interests)
+                stud_temp += checkOverlap(
+                    student_interests[-1], joint_interests)
 
             if alum_interests:
                 for n in range(len(alum_interests)-1):
-                    alum_temp += checkOverlap(alum_interests[n], joint_interests)
+                    alum_temp += checkOverlap(
+                        alum_interests[n], joint_interests)
                     alum_temp += ", "
                 alum_temp += checkOverlap(alum_interests[-1], joint_interests)
 
@@ -608,7 +624,8 @@ def search():
         career = request.args.getlist('industry')
         interest = request.args.getlist('interest')
         search_req = request.args.get('searchreq', '%')
-        search_query = [name, email, major, zipcode, career, interest, search_req]
+        search_query = [name, email, major,
+                        zipcode, career, interest, search_req]
         # database queries
         db = Database()
         db.connect()
@@ -644,7 +661,7 @@ def dosearch():
     db.disconnect()
 
     html = render_template('dosearch.html', picture=session['picture'],
-            is_admin=is_admin)
+                           is_admin=is_admin)
     response = make_response(html)
     return response
 
@@ -676,12 +693,14 @@ def timeline():
     posts = []
     output = db.get_posts()
     for i in output:
-        # TODO: get the user's time zone and put it in a session cookie. 
+        # TODO: get the user's time zone and put it in a session cookie.
         curr_time = datetime.fromisoformat(i[3])
         local_tz = get_localzone()  # TODO: replace this line with the timezone of the user
-        curr_time = curr_time.replace(tzinfo=timezone.utc).astimezone(tz=local_tz)
+        curr_time = curr_time.replace(
+            tzinfo=timezone.utc).astimezone(tz=local_tz)
         formatted_time = curr_time.strftime("%A, %B %d at %I:%M %p")
-        copy = i[:3] + (formatted_time,) + i[4:] # note: this does not modify the database entry! Only the list when being displayed
+        # note: this does not modify the database entry! Only the list when being displayed
+        copy = i[:3] + (formatted_time,) + i[4:]
         if (role == i[7]):
             posts.append(copy)
         elif (i[7] == 'private'):
@@ -695,4 +714,3 @@ def timeline():
                            picture=session['picture'], is_admin=is_admin)
     response = make_response(html)
     return response
-
