@@ -9,14 +9,14 @@ def emailUser(receiver_address, name, acct_type, class_year):
     mail_content = '''Hello TigerLink User,
 
 Your account is now registered. Here's the information you provided us:
-Name:
-Email Address: 
-Type of Account: 
-Class Year: 
+Name: %s
+Email Address: %s
+Type of Account: %s
+Class Year: %s
 
 Excited to have you,
 TigerLink Team
-'''
+''' % (receiver_address, name, acct_type, class_year)
 
 
     # Setup the MIME

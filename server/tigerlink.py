@@ -104,6 +104,7 @@ def login_auth():
 @app.route('/logout', methods=['GET'])
 def logout():
     # simply clear the user's session
+    
     session.pop('profileid', None)
     session.pop('email', None)
     session.pop('fullname', None)
@@ -137,6 +138,8 @@ def createuser():
         db = Database()
         db.connect()
 
+        emailUser(str(email), str(name), str(role), str(classyear))
+        
         if role == 'student':
             db.create_students([user])
         else:
