@@ -317,6 +317,49 @@ def alumdetails():
     except Exception as e:
         return make_response("An error occurred. Please try again later.")
 
+
+@app.route('/genericdetails', methods=['GET'])
+def genericdetails():
+    if not loginutil.is_logged_in(session):
+        return redirect('/login')
+
+    profileid = session['profileid']
+    if not user_exists(profileid):
+        # profile has not been created
+        return redirect('/index')
+
+    db = Database()
+    db.connect()
+    role = db.get_role(profileid)
+    db.disconnect()
+
+    try:
+        db = Database()
+        db.connect()
+
+        if role == 'alum':
+            profileid = request.args.get('profileid')
+            alum, careers, interests = db.get_alum_by_id(profileid)
+            db.disconnect()
+
+            interests = fix_list_format(interests)
+            html = render_template('alumdetails.html', alum=alum,
+                    careers=careers, interests=interests)
+            return make_response(html)
+
+        else:
+            profileid = request.args.get('profileid')
+            student, careers, interests = db.get_student_by_id(profileid)
+            db.disconnect()
+
+            interests = fix_list_format(interests)
+            html = render_template('studentdetails.html', student=student, 
+                careers=careers, interests=interests)
+            return make_response(html)
+            
+    except Exception as e:
+        return make_response("An error occurred. Please try again later.")
+
 def checkOverlap(element, list):
     if element in list:
         return "<strong>" + str(element) + "</strong>"
