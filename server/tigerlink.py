@@ -312,6 +312,11 @@ def alumdetails():
     except Exception as e:
         return make_response("An error occurred. Please try again later.")
 
+def checkOverlap(element, list):
+    if element in list:
+        return "<strong>" + str(element) + "</strong>"
+    return str(element)
+
 # input (from get request): studentid, alumid
 @app.route('/matchdetails', methods=['GET'])
 def matchdetails():
@@ -339,6 +344,9 @@ def matchdetails():
         # alum_interests is being returned as a list of tuples
         # this block fixes that
         alum_interests = fix_list_format(alum_interests)
+
+        joint_careers = [value for value in student_careers if value in alum_careers]
+        joint_interests = [value for value in student_interests if value in alum_interests]
 
     except Exception as e:
         html = "error occurred: " + str(e)
@@ -382,14 +390,14 @@ def matchdetails():
             alum_temp = ""
 
             for m in range(len(student_careers)-1):
-                stud_temp += student_careers[m]
+                stud_temp += checkOverlap(student_careers[m], joint_careers)
                 stud_temp += ", "
-            stud_temp += student_careers[-1]
+            stud_temp += checkOverlap(student_careers[-1], joint_careers)
 
             for n in range(len(alum_careers)-1):
-                alum_temp += alum_careers[n]
+                alum_temp += checkOverlap(alum_careers[n], joint_careers)
                 alum_temp += ", "
-            alum_temp += alum_careers[-1]
+            alum_temp += checkOverlap(alum_careers[-1], joint_careers)
 
             html += '<td>' + stud_temp + '</td>'
             html += '<td>' + alum_temp + '</td>'
@@ -400,15 +408,15 @@ def matchdetails():
 
             if student_interests:
                 for m in range(len(student_interests)-1):
-                    stud_temp += student_interests[m]
+                    stud_temp += checkOverlap(student_interests[m], joint_interests)
                     stud_temp += ", "
-                stud_temp += student_interests[-1]
+                stud_temp += checkOverlap(student_interests[-1], joint_interests)
 
             if alum_interests:
                 for n in range(len(alum_interests)-1):
-                    alum_temp += alum_interests[n]
+                    alum_temp += checkOverlap(alum_interests[n], joint_interests)
                     alum_temp += ", "
-                alum_temp += alum_interests[-1]
+                alum_temp += checkOverlap(alum_interests[-1], joint_interests)
 
             html += '<td>' + stud_temp + '</td>'
             html += '<td>' + alum_temp + '</td>'
