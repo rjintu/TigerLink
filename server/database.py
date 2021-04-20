@@ -134,6 +134,43 @@ class Database:
             cursor.execute('INSERT INTO interests(profileid, interest) ' +
                            'VALUES (%s, %s)', (alum[0], elem))
 
+    # delete students from all associated tables
+    # takes an array of profileids
+    def delete_students(self, profileids):
+        cursor = self._connection.cursor()
+        for profileid in profileids:
+            cursor.execute('DELETE from alumni where profileid=%s', [profileid])
+            cursor.execute('DELETE from roles where profileid=%s', [profileid])
+            cursor.execute('DELETE from careers where profileid=%s', [profileid])
+            cursor.execute('DELETE from interests where profileid=%s', [profileid])
+            cursor.execute('DELETE from posts where profileid=%s', [profileid])
+            cursor.execute('DELETE from likes where profileid=%s', [profileid])
+            cursor.execute('DELETE from comments where profileid=%s', [profileid])
+            cursor.execute('DELETE from matches where alumid=%s', [profileid])
+        self._connection.commit()
+        cursor.close()
+
+    # delete alumni from all associated tables
+    # takes an array of profileids
+    def delete_alumni(self, profileids):
+        cursor = self._connection.cursor()
+        for profileid in profileids:
+            cursor.execute(
+                'DELETE from students where profileid=%s', [profileid])
+            cursor.execute('DELETE from roles where profileid=%s', [profileid])
+            cursor.execute(
+                'DELETE from careers where profileid=%s', [profileid])
+            cursor.execute(
+                'DELETE from interests where profileid=%s', [profileid])
+            cursor.execute('DELETE from posts where profileid=%s', [profileid])
+            cursor.execute('DELETE from likes where profileid=%s', [profileid])
+            cursor.execute(
+                'DELETE from comments where profileid=%s', [profileid])
+            cursor.execute(
+                'DELETE from matches where studentid=%s', [profileid])
+        self._connection.commit()
+        cursor.close()
+
     def get_students(self):
         cursor = self._connection.cursor()
         cursor.execute('SELECT profileid, name, classyear, email, \
