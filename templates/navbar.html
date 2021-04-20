@@ -84,25 +84,41 @@
 
         </ul>
         <ul class="nav navbar-nav navbar-right" id="one">
+            {% if bold === 'timeline' %}
+            <li class='disabled'>
+            {% else %}
             <li>
+            {% endif %}
                 <a href="timeline" data-toggle="search">
                     <i class="pe-7s-home"></i>
                     <p>Timeline</p>
                 </a>
             </li>
+            {% if bold === 'search' %}
+            <li class='disabled'>
+            {% else %}
             <li>
+            {% endif %}
                 <a href="dosearch" data-toggle="search">
                     <i class="pe-7s-search"></i>
                     <p>Search</p>
                 </a>
             </li>
+            {% if bold === 'matches' %}
+            <li class='disabled'>
+            {% else %}
             <li>
+            {% endif %}
                 <a href="displaymatches" data-toggle="Matches">
                     <i class="pe-7s-gift"></i>
                     <p>Matches</p>
                 </a>
             </li>
+            {% if bold === 'post' %}
+            <li class='disabled'>
+            {% else %}
             <li>
+            {% endif %}
                 <a href="loadpost" data-toggle="LoadPost">
                     <i class="pe-7s-plus"></i>
                     <p>Post</p>
