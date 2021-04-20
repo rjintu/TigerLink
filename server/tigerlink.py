@@ -348,6 +348,10 @@ def matchdetails():
         joint_careers = [value for value in student_careers if value in alum_careers]
         joint_interests = [value for value in student_interests if value in alum_interests]
 
+        majorSame = False
+        if student_info[3] == alum_info[3]:
+            majorSame = True
+
     except Exception as e:
         html = "error occurred: " + str(e)
         print(e)
@@ -374,7 +378,10 @@ def matchdetails():
         elif i == 2:
             html += "<td><strong>Email:</strong></td>"
         elif i == 3:
-            html += "<td><strong>Major:</strong></td>"
+            if majorSame:
+                html += "<td><strong><mark background-color='green'>Major:</mark></strong></td>"
+            else:
+                html += "<td><strong>Major:</strong></td>"
         elif i == 4:
             html += "<td><strong>Zip Code:</strong></td>"
         elif i == 5:
