@@ -11,6 +11,7 @@ from .cookiemonster import CookieMonster
 from . import loginutil
 from .keychain import KeyChain
 from .admin import admin
+from .action import emailUser
 
 keychain = KeyChain()
 app = Flask(__name__, template_folder="../templates",
@@ -142,6 +143,9 @@ def createuser():
             db.create_alumni([user])
 
         db.disconnect()
+
+        emailUser(str(email), str(name), str(role), str(classyear))
+
     except Exception as e:
         html = "error occurred: " + str(e)
         print(e)
