@@ -557,8 +557,6 @@ class Database:
         self._connection.commit()
         cursor.close()
 
-        # postid TEXT, authorname, authorid TEXT, posttime TEXT, posttitle TEXT, postcontent TEXT, imgurl TEXT, privacy TEXT, communities TEXT
-
     def create_post(self, authorId, authorName, time, title, content, image_url, private, communities, propic):
         cursor = self._connection.cursor()
         postid = str(os.getenv('numposts', 0))
