@@ -22,13 +22,13 @@
         crossorigin="anonymous"></script>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+</head>
 
-
-  <header>
-    {% with bold='timeline' %}
-    {% include "navbar.html" %}
-    {% endwith %}
-    </header>
+<header>
+{% with bold='timeline' %}
+{% include "navbar.html" %}
+{% endwith %}
+</header>
 
     <script>
         'use strict';
@@ -53,16 +53,11 @@
         });
 
     </script>
-
-</head>
 <style>
     body {
         padding-top: 65px;
     }
 </style>
-<header>
-    {% include "navbar.html" %}
-</header>
 
 <body id="generic-body">
     <!-- postid TEXT, authorname TEXT, authorid TEXT, posttime TEXT, posttitle TEXT, postcontent TEXT, imgurl TEXT, privacy TEXT, communities TEXT -->
