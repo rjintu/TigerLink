@@ -382,10 +382,7 @@ def matchdetails():
         elif i == 2:
             html += "<td><strong>Email:</strong></td>"
         elif i == 3:
-            if majorSame:
-                html += "<td><strong><mark>Major:</mark></strong></td>"
-            else:
-                html += "<td><strong>Major:</strong></td>"
+            html += "<td><strong>Major:</strong></td>"
         elif i == 4:
             html += "<td><strong>Zip Code:</strong></td>"
         elif i == 5:

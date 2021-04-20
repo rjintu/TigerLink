@@ -24,9 +24,11 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
 
 
-    <header>
-        {% include "navbar.html" %}
-    </header>
+  <header>
+    {% with bold='timeline' %}
+    {% include "navbar.html" %}
+    {% endwith %}
+
     <style>
         .card-img-top {
             width: 100%;
