@@ -1,13 +1,19 @@
-#index-body {
+#login-body {
   padding-top: 50px;
   font-family: "IBM Plex Sans";
   background-color: #ffdc8e;
 }
 
+#index-body {
+  padding-top: 50px;
+  font-family: "IBM Plex Sans";
+  background-color: #f1f1f1;
+}
+
 #generic-body {
   padding-top: 100px;
   font-family: "IBM Plex Sans";
-  background-color: #ffdc8e;
+  background-color: #f1f1f1;
 }
 
 #sahil {
