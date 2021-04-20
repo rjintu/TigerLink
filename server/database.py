@@ -491,10 +491,11 @@ class Database:
                     output.append(row)
                 row = cursor.fetchone()
 
-            cursor = self._connection.cursor()
-            cursor2 = self._connection.cursor()
+            # cursor = self._connection.cursor()
+            # cursor2 = self._connection.cursor()
+            # cursor3 = self._connection.cursor()
 
-            stmtStr = "SELECT profileid, classyear, name, major, email FROM alumni WHERE name LIKE %s " + \
+            stmtStr = "SELECT profileid, classyear, name, major, email FROM alumni WHERE lower(name) LIKE %s " + \
                 "AND email LIKE %s AND major LIKE %s AND zip LIKE %s"
             cursor.execute(stmtStr, [name, email, major, zipcode])
             row = cursor.fetchone()

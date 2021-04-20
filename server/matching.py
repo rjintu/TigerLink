@@ -89,9 +89,17 @@ class Matching(object):
         alumni = self._alumni
         matches = []
         finalMatches = []
+        absoluteFinal = []
+        topSim = 0
         while (len(students) > 0):
             if len(alumni) == 0:
-                return finalMatches
+                if topSim == 0:
+                    return finalMatches
+                for match in finalMatches:
+                    sim = float(match[6])/topSim
+                    sim = round(sim*100, 2)
+                    absoluteFinal.append((match[0], match[1], match[2], match[3], match[4], match[5], sim))
+                return absoluteFinal
 
             svec = students[0]
             students.remove(svec)
@@ -111,6 +119,8 @@ class Matching(object):
                             updated = True
                                 
                 if updated:
+                    if topSim < bestSim:
+                        topSim = bestSim
                     alum = alumni[bestIdx]
                     match = (svec, alum)
                     
@@ -127,9 +137,13 @@ class Matching(object):
                     svec._numMatch -= 1
                     if svec._numMatch > 0:
                         students.append(svec)
-
-        return finalMatches
-
+        if topSim == 0:
+            return finalMatches
+        for match in finalMatches:
+            sim = float(match[6])/topSim
+            sim = round(sim*100, 2)
+            absoluteFinal.append((match[0], match[1], match[2], match[3], match[4], match[5], sim))
+        return absoluteFinal
 
     #sprefs = weightings for career, major, and organizations
     def dotProduct(self, svec, avec):
@@ -143,8 +157,8 @@ class Matching(object):
                 if career in avec._careers:
                     carS += 1
 
-            totalC = len(list(set().union(svec._careers, avec._careers)))
-            carS /= totalC
+            totalC = svec._careers + [x for x in avec._careers if x not in set(svec._careers)]
+            carS /= len(totalC)
 
         orgS = 0
         if svec._organizations != None:
@@ -152,8 +166,8 @@ class Matching(object):
                 if org in avec._organizations:
                     orgS += 1
 
-            totalO = len(list(set().union(svec._organizations, avec._organizations)))
-            orgS /= totalO
+            totalO = svec._organizations + [x for x in avec._organizations if x not in set(svec._organizations)]
+            orgS /= len(totalO)
 
         vals = [m, carS, orgS]
 
@@ -161,6 +175,6 @@ class Matching(object):
         for i, weight in enumerate(svec._spref):
             sim += vals[i] * weight
 
-        finalS = round(sim, 2) * 100
+        finalS = round(sim * 100, 2)
 
         return finalS
