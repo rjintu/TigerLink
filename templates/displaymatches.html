@@ -9,26 +9,17 @@
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
-    <link rel='stylesheet' type='text/css' href='static/style.css'>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans">
-</head>
+    <link rel='stylesheet' type='text/css' href='static/style.css'>
 
-<body>
-    <!-- Optional JavaScript; choose one of the two! -->
-
-    <!-- Option 1: Bootstrap Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+    <!-- Include JQuery, Popper, Bootstrap JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+        integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
         crossorigin="anonymous"></script>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+</head>
 
-    <!-- Option 2: Separate Popper and Bootstrap JS -->
-    <!--
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js" integrity="sha384-SR1sx49pcuLnqZUnnPwx6FCym0wLsk5JZuNx2bPPENzswTNFaQU1RDvt3wT4gWFG" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.min.js" integrity="sha384-j0CNLUeiqtyaRmlzUHCPZ+Gy5fQu0dQ6eZ/xAww941Ai1SxSY+0EQqNXNE6DZiVc" crossorigin="anonymous"></script>
-    -->
-</body>
 <style>
     body {
         padding-top: 80px;
@@ -53,11 +44,9 @@
                         <th>Student Year</th>
                         <th>Alumni Name</th>
                         <th>Alumni Year</th>
-                        <th>Similarity 
-                            <button type="button" class="btn btn-sm btn-info" data-toggle="popover">
-                                <img src="../static/img/info.png" width="30" height="auto" alt="">
-                            </button>
-                         </th>
+                        <th>Similarity
+                            <img data-toggle="popover" src="../static/img/info.png" width="15" height="auto" alt="">
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -151,8 +140,8 @@
 
         function setup() {
             $('[data-toggle="popover"]').popover({
-                placement : 'top',
-                trigger : 'hover',
+                placement: 'top',
+                trigger: 'hover',
                 title: 'Similarity Score',
                 content: 'The similarity score is a percentage that quantifies the overlap in majors, careers, and organizations between the student and the alumni. It currently assigns an equal weightage to each of these three categories, although the weighting may be adjusted by the admin. Low similarity scores can be attributed to a class imbalance between students and alumni in the database, as well as the matching algorithm\'s philosophy that a weak match is better than no match at all.'
             });
