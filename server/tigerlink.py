@@ -138,8 +138,6 @@ def createuser():
         db = Database()
         db.connect()
 
-        emailUser(str(email), str(name), str(role), str(classyear))
-        
         if role == 'student':
             db.create_students([user])
         else:
