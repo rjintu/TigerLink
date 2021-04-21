@@ -2,6 +2,7 @@ from os import environ
 from psycopg2 import connect
 from .post import Post
 import os
+from .action import emailUser
 from sys import stderr
 
 class Database:
@@ -658,6 +659,11 @@ class Database:
         for match in matches:
             studentid = match[0]
             alumid = match[1]
+            info_stud, careers_stud, interests_stud = db.get_student_by_id(studentid)
+            info_alum, careers_alum, interests_alum = db.get_alum_by_id(alumid)
+            for i in range(0, len(interests_alum)):
+                interests_alum[i] = interests_alum[i][0]
+
             similarity = match[6]
             cursor.execute('INSERT INTO matches(studentid, alumid, similarity) VALUES (%s, %s, %s)', [studentid, alumid, similarity])
         self._connection.commit()
