@@ -691,14 +691,18 @@ def timeline():
         for i in range(0, len(interests)):
             interests[i] = interests[i][0]
 
+    print(request.args)
+    offset = request.args.get('offset', 0)
+    print('offset ' + str(offset))
     posts = []
-    output = db.get_posts()
+    print('got to posts')
+    output = db.get_posts(5, offset)
 
-    offset = int(request.args.get('offset', 240)) # FIXME: need to pass in user time zone from JS (right now offset doesn't exist)
+    time_offset = int(request.args.get('time_offset', 240)) # FIXME: need to pass in user time zone from JS (right now offset doesn't exist)
     for i in output:
         curr_time = datetime.fromisoformat(i[3])
         # local_tz = get_localzone()
-        curr_time = curr_time - timedelta(minutes=offset)
+        curr_time = curr_time - timedelta(minutes=time_offset)
         # curr_time = curr_time.replace(tzinfo=timezone.utc).astimezone(tz=local_tz)
         formatted_time = curr_time.strftime("%A, %B %d at %I:%M %p")
 
