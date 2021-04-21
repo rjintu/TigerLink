@@ -27,6 +27,10 @@
     h5 {
         text-align: center;
     }
+
+    #allRows:hover {
+        cursor: pointer;
+    }
 </style>
 
 <header>
@@ -55,7 +59,7 @@
                 <tbody>
                     {% for match in matches: %}
                     {% if (match|length) > 2 %}
-                    <tr class="clickable-row" id='{{match[0]}}' value='{{match[1]}}'>
+                    <tr class="clickable-row" id="allRows" infoStudent='{{match[0]}}' infoAlum='{{match[1]}}'>
                         {% for i in range (2, 7): %}
                         {% if (i == 6) %}
                         <td>{{ match[i] }}%</td>
@@ -164,8 +168,8 @@
             $('.clickable-row').click(
                 (e) => {
 
-                    let student = $(e.target).closest('tr').attr('id');
-                    let alum = $(e.target).closest('tr').attr('value');
+                    let student = $(e.target).closest('tr').attr('infoStudent');
+                    let alum = $(e.target).closest('tr').attr('infoAlum');
 
                     let studentU = encodeURIComponent(student);
                     let alumU = encodeURIComponent(alum);
