@@ -29,6 +29,10 @@
 
     <link rel='stylesheet' type='text/css' href='static/style.css'>
 
+    {% with bold='edit' %}
+    {% include "navbar.html" %}
+    {% endwith %}
+
 </head>
 
 <script>
@@ -66,9 +70,6 @@
 <form action="updateprofile" method="post">
 
     <body id="generic-body">
-        {% with bold='edit' %}
-        {% include "navbar.html" %}
-        {% endwith %}
         <div class="container">
             <div class="row justify-content-center">
                 <div class="offset-1 col-4">
@@ -165,10 +166,6 @@
                     <br>
                     <br>
                     <br>
-                    <a href='logout'>
-                        <button type="button" style="background-color: red" class="btn btn-primary btn-md btn-block">Sign Out</button>
-                    </a>
-    
                 </div>
             </div>
         </div>
@@ -178,18 +175,20 @@
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-1">
-                    <button type="submit" name="submit" class="btn btn-primary">Save</button>
+                    <button type="submit" name="submit" class="btn btn-warning">Save</button>
                 </div>
             </div>
             <br>
             {% for mess in get_flashed_messages() %}
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close" class="fade close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-                {{mess}}
+            <div class="row justify-content-md-center">
+                <div class="col-4 alert alert-success alert-dismissible fade show" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close" class="fade close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    {{mess}}
+                </div>
+                {% endfor %}
             </div>
-            {% endfor %}
         </div>
     </body>
 
