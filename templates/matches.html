@@ -21,6 +21,12 @@
   crossorigin="anonymous"></script>
 
   <link rel='stylesheet' type='text/css' href='static/style.css'>
+
+  <style>
+    .selected {
+        background: #ffdc8e;
+    }
+  </style>
 </head>
 
 <body style="background-color: #e8f4f8;">
@@ -142,7 +148,7 @@
                     <h5 class="modal-title">Choose New Match</h5>
                 </div>
                 <div class="modal-body" id="manualBody">
-                    <div style="max-height: 250px; overflow: scroll;">
+                    <div style="max-height: 250px; overflow-y: scroll;">
                     <table class="table table-hover">
                     <thead>
                         <tr>
@@ -152,7 +158,7 @@
                     </thead>
                     <tbody>
                         {% for student in students %}
-                        <tr id="{{ student[0] }}">
+                        <tr class="manual-student" id="{{ student[0] }}">
                             <td>{{ student[1] }}</td>
                             <td>{{ student[8] }} / {{ student[6] }}</td>
                         </tr>
@@ -163,17 +169,17 @@
 
                     <p class="text-center"><strong>Match With:</strong></p>
 
-                    <div style="max-height: 250px; overflow: scroll;">
+                    <div style="max-height: 250px; overflow-y: scroll;">
                     <table class="table table-hover">
                     <thead>
                         <tr>
                             <th style="width: 50%">Alumnus</th>
-                            <th>Desired Matches</th>
+                            <th>Matches</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for alum in alumni %}
-                        <tr id="{{ alum[0] }}">
+                        <tr class="manual-alum" id="{{ alum[0] }}">
                             <td>{{ alum[1] }}</td>
                             <td>{{ alum[8] }} / {{ alum[6] }}</td>
                         </tr>
@@ -272,10 +278,43 @@
 
         $('#manualmatch').click(() => {
             $('#manualModal').modal('show');
+            currStudent = "";
+            currAlum = "";
+            $('#manualSaveBtn').addClass('disabled');
         });
 
         $('#manualCancelBtn').click(() => {
             $('#manualModal').modal('hide');
+        });
+
+        $('.manual-student').click((e) => {
+            $('.manual-student').removeClass('selected');
+            let row = $(e.target).closest('tr');
+            row.addClass('selected');
+            currStudent = row.attr('id');
+
+            if(currStudent.length > 0 && currAlum.length > 0) {
+                $('#manualSaveBtn').removeClass('disabled');
+                console.log('yes');
+            }
+        });
+
+        $('.manual-alum').click((e) => {
+            $('.manual-alum').removeClass('selected');
+            let row = $(e.target).closest('tr');
+            row.addClass('selected');
+            currAlum = row.attr('id');
+
+            if(currStudent.length > 0 && currAlum.length > 0) {
+                $('#manualSaveBtn').removeClass('disabled');
+                console.log('yes');
+            }
+        });
+
+        $('#manualSaveBtn').click((e) => {
+            $.post("/admin/manualmatch", {studentid: currStudent, alumid: currAlum})
+                .done(function() { location.reload(); })
+                .fail(function() { failureModal.show(); });
         });
     }
 
