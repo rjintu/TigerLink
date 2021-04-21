@@ -101,6 +101,21 @@ def deletematches():
     response = make_response('success!')
     return response
 
+@admin.route('/manualmatch', methods=['POST'])
+def manualmatch():
+    action = verify_access(session)
+    if action is not None:
+        return action
+
+    db = Database()
+    db.connect()
+    db.add_matches([[request.form['studentid'], request.form['alumid'],
+                'i', 'want', 'to', 'die', 55.0]])
+    db.disconnect()
+
+    response = make_response('success!')
+    return response
+
 @admin.route('/deletematch', methods=['POST'])
 def deletematch():
     action = verify_access(session)
