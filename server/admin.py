@@ -173,6 +173,33 @@ def deletealum():
     response = make_response('success!')
     return response
 
+@admin.route('/timeline', methods=['GET'])
+def timeline():
+    action = verify_access(session)
+    if action is not None:
+        return action
+
+    db = Database()
+    db.connect()
+    posts = db.get_posts()
+    html = render_template('admin-timeline.html', posts=posts)
+    response = make_response(html)
+    return response
+
+@admin.route('/deletepost', methods=['POST'])
+def deletepost():
+    action = verify_access(session)
+    if action is not None:
+        return action
+
+    db = Database()
+    db.connect()
+    db.delete_post(request.form['postid'])
+    db.disconnect()
+
+    response = make_response('success!')
+    return response
+
 @admin.errorhandler(403)
 def permissions(err):
     html = render_template('permissions.html')
