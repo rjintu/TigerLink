@@ -1,4 +1,4 @@
-from flask import Blueprint, make_response, redirect, render_template, session, abort
+from flask import Blueprint, request, make_response, redirect, render_template, session, abort
 
 from . import loginutil
 from .database import Database
@@ -41,8 +41,30 @@ def matches():
     db = Database()
     db.connect()
     matches = db.retrieve_matches(session['profileid'], display_all=True)
+    # count num matches currently in db for each user
+    studCnt = {}
+    alumCnt = {}
+    for match in matches:
+        if studCnt.get(match[0]):
+            studCnt[match[0]] += 1
+        else:
+            studCnt[match[0]] = 1
+        if alumCnt.get(match[1]):
+            alumCnt[match[1]] += 1
+        else:
+            alumCnt[match[1]] = 1
+
+    students, _, _ = db.get_students()
+    for i in range(len(students)):
+        students[i] = list(students[i])
+        students[i].append(studCnt.get(students[i][0], 0))
+
+    alumni, _, _ = db.get_alumni()
+    for i in range(len(alumni)):
+        alumni[i] = list(alumni[i])
+        alumni[i].append(alumCnt.get(alumni[i][0], 0))
     db.disconnect()
-    html = render_template('matches.html', matches=matches)
+    html = render_template('matches.html', matches=matches, students=students, alumni=alumni)
     return make_response(html)
 
 @admin.route('/creatematches', methods=['POST'])
@@ -76,6 +98,20 @@ def deletematches():
     db.disconnect()
 
     # todo: add error handling
+    response = make_response('success!')
+    return response
+
+@admin.route('/deletematch', methods=['POST'])
+def deletematch():
+    action = verify_access(session)
+    if action is not None:
+        return action
+
+    db = Database()
+    db.connect()
+    db.delete_match(request.form['studentid'], request.form['alumid']) 
+    db.disconnect()
+
     response = make_response('success!')
     return response
 

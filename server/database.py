@@ -671,6 +671,13 @@ class Database:
             cursor.execute('INSERT INTO matches(studentid, alumid, similarity) VALUES (%s, %s, %s)', [studentid, alumid, similarity])
         self._connection.commit()
         cursor.close()
+
+    def delete_match(self, studentid, alumid):
+        cursor = self._connection.cursor()
+        cursor.execute('DELETE FROM matches WHERE studentid=%s AND alumid=%s',
+                [studentid, alumid])
+        self._connection.commit()
+        cursor.close()
     
     # retrieve matches for a specific profileid
     # if display_all is set to True, then output all matches for all individuals
