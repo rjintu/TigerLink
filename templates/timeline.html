@@ -22,37 +22,35 @@
         crossorigin="anonymous"></script> -->
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+    {% with bold='timeline' %}
+    {% include "navbar.html" %}
+    {% endwith %}
+
 </head>
 
-<header>
-{% with bold='timeline' %}
-{% include "navbar.html" %}
-{% endwith %}
-</header>
+<script>
+    'use strict';
 
-    <script>
-        'use strict';
+    $(document).ready(function () {
 
-        $(document).ready(function () {
+        // pull firstLogin from URL
+        const queryString = window.location.search;
+        // console.log(queryString);
+        const urlParams = new URLSearchParams(queryString);
+        const firstLogin = urlParams.get('firstLogin')
+        //console.log(firstLogin)
 
-            // pull firstLogin from URL
-            const queryString = window.location.search;
-            // console.log(queryString);
-            const urlParams = new URLSearchParams(queryString);
-            const firstLogin = urlParams.get('firstLogin')
-            //console.log(firstLogin)
+        var myModal = new bootstrap.Modal(document.getElementById('firstTimeUser'), {
+            keyboard: false
+        })
 
-            var myModal = new bootstrap.Modal(document.getElementById('firstTimeUser'), {
-                keyboard: false
-            })
+        // show if URL includes firstLogin as 'True'
+        if (firstLogin == 'True') {
+            myModal.show()
+        }
+    });
 
-            // show if URL includes firstLogin as 'True'
-            if (firstLogin == 'True') {
-                myModal.show()
-            }
-        });
-
-    </script>
+</script>
 <style>
     body {
         padding-top: 65px;

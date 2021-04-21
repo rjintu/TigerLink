@@ -21,6 +21,10 @@
         integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
         crossorigin="anonymous"></script>
 
+    {% with bold='matches' %}
+    {% include "navbar.html" %}
+    {% endwith %}
+
 </head>
 
 <style>
@@ -32,12 +36,6 @@
         cursor: pointer;
     }
 </style>
-
-<header>
-    {% with bold='matches' %}
-    {% include "navbar.html" %}
-    {% endwith %}
-</header>
 
 <body id="generic-body">
     <div class="container">
