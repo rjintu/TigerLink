@@ -21,12 +21,19 @@
   crossorigin="anonymous"></script>
 
   <link rel='stylesheet' type='text/css' href='static/style.css'>
+
+  <style>
+    .selected {
+        background: #ffdc8e;
+    }
+  </style>
 </head>
 
-<body style="background-color: #e8f4f8;">
+<body id="generic-body">
+  {% with bold = "matches" %}
   {% include "admin-navbar.html" %}
+  {% endwith %}
 
-  <br>
   <div class="container card bg-light border-light shadow mb-5">
   <div class="card-body">
     <h2>Current Matches</h2>
@@ -58,8 +65,11 @@
         </tbody>
     </table>
 
-    <a class="btn btn-primary" id="creatematches" href="#">Create New Matches</a>
-    <a class="btn btn-danger" id="deletematches" href="#">Delete Matches</a>
+    <div class="d-flex">
+        <a class="btn btn-primary me-1" id="creatematches" href="#">Automatic Match</a>
+        <button class="btn btn-warning" id="manualmatch">Manual Match</button>
+        <a class="btn btn-danger ms-auto" id="deletematches" href="#">Delete All</a>
+    </div>
   </div>
   </div>
 
@@ -124,7 +134,64 @@
                 <div class="modal-body" id="detailsBody">
                 </div>
                 <div class="modal-footer">
-                    <a href="#" id="closeDetailsBtn" class="btn btn-success d-block">Done</a>
+                    <button id="deleteMatchBtn" class="btn btn-danger mr-auto">Delete</button>
+                    <button id="closeDetailsBtn" class="btn btn-success">Done</button>
+                </div>
+            </div>
+        </div>
+  </div>
+
+  <div id="manualModal" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Choose New Match</h5>
+                </div>
+                <div class="modal-body" id="manualBody">
+                    <div style="max-height: 250px; overflow-y: scroll;">
+                    <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th style="width: 50%">Student</th>
+                            <th>Matches</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for student in students %}
+                        <tr class="manual-student" id="{{ student[0] }}">
+                            <td>{{ student[1] }}</td>
+                            <td>{{ student[8] }} / {{ student[6] }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    </table>
+                    </div>
+
+                    <p class="text-center"><strong>Match With:</strong></p>
+
+                    <div style="max-height: 250px; overflow-y: scroll;">
+                    <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th style="width: 50%">Alumnus</th>
+                            <th>Matches</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for alum in alumni %}
+                        <tr class="manual-alum" id="{{ alum[0] }}">
+                            <td>{{ alum[1] }}</td>
+                            <td>{{ alum[8] }} / {{ alum[6] }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="manualCancelBtn" class="btn btn-secondary mr-auto">Cancel</button>
+                    <button id="manualSaveBtn" class="btn btn-primary disabled">Save</button>
                 </div>
             </div>
         </div>
@@ -139,6 +206,9 @@
         $('#detailsBody').html(response);
         $("#detailsModal").modal('show');
     }
+
+    let currStudent = "";
+    let currAlum = "";
 
     function setup() {
         let successModal = new bootstrap.Modal(document.getElementById('successModal'), {
@@ -184,6 +254,8 @@
 
                 let studentU = encodeURIComponent(student);
                 let alumU = encodeURIComponent(alum);
+                currStudent = studentU;
+                currAlum = alumU;
 
                 let url = "/matchdetails?student=" + studentU + "&alum=" + alumU;
                 console.log(url);
@@ -198,6 +270,53 @@
                 });
             }
         );
+
+        $('#deleteMatchBtn').click((e) => {
+            $.post("/admin/deletematch", {studentid: currStudent, alumid: currAlum})
+                .done(function() { location.reload(); })
+                .fail(function() { failureModal.show(); });
+        });
+
+        $('#manualmatch').click(() => {
+            $('#manualModal').modal('show');
+            currStudent = "";
+            currAlum = "";
+            $('#manualSaveBtn').addClass('disabled');
+        });
+
+        $('#manualCancelBtn').click(() => {
+            $('#manualModal').modal('hide');
+        });
+
+        $('.manual-student').click((e) => {
+            $('.manual-student').removeClass('selected');
+            let row = $(e.target).closest('tr');
+            row.addClass('selected');
+            currStudent = row.attr('id');
+
+            if(currStudent.length > 0 && currAlum.length > 0) {
+                $('#manualSaveBtn').removeClass('disabled');
+                console.log('yes');
+            }
+        });
+
+        $('.manual-alum').click((e) => {
+            $('.manual-alum').removeClass('selected');
+            let row = $(e.target).closest('tr');
+            row.addClass('selected');
+            currAlum = row.attr('id');
+
+            if(currStudent.length > 0 && currAlum.length > 0) {
+                $('#manualSaveBtn').removeClass('disabled');
+                console.log('yes');
+            }
+        });
+
+        $('#manualSaveBtn').click((e) => {
+            $.post("/admin/manualmatch", {studentid: currStudent, alumid: currAlum})
+                .done(function() { location.reload(); })
+                .fail(function() { failureModal.show(); });
+        });
     }
 
     $(document).ready(setup);

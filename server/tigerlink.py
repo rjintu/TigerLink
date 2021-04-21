@@ -1,8 +1,9 @@
 from flask import Flask, request, make_response, redirect, url_for, session, flash
 from flask import render_template
 from flask_talisman import Talisman
-from datetime import datetime, timezone
-from tzlocal import get_localzone
+from datetime import datetime, timezone, timedelta
+# from tzlocal import get_localzone
+# import pytz
 import json
 
 from .database import Database
@@ -690,14 +691,15 @@ def timeline():
 
     posts = []
     output = db.get_posts()
+
+    offset = int(request.args.get('offset', 240)) # FIXME: need to pass in user time zone from JS (right now offset doesn't exist)
     for i in output:
-        # TODO: get the user's time zone and put it in a session cookie.
         curr_time = datetime.fromisoformat(i[3])
-        local_tz = get_localzone()  # TODO: replace this line with the timezone of the user
-        curr_time = curr_time.replace(
-            tzinfo=timezone.utc).astimezone(tz=local_tz)
+        # local_tz = get_localzone()
+        curr_time = curr_time - timedelta(minutes=offset)
+        # curr_time = curr_time.replace(tzinfo=timezone.utc).astimezone(tz=local_tz)
         formatted_time = curr_time.strftime("%A, %B %d at %I:%M %p")
-        # note: this does not modify the database entry! Only the list when being displayed
+
         copy = i[:3] + (formatted_time,) + i[4:]
         if (role == i[7]):
             posts.append(copy)

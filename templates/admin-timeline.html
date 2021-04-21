@@ -23,40 +23,14 @@
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
     {% with bold='timeline' %}
-    {% include "navbar.html" %}
+    {% include "admin-navbar.html" %}
     {% endwith %}
 
 </head>
 
-<script>
-    'use strict';
-
-    $(document).ready(function () {
-
-        // pull firstLogin from URL
-        const queryString = window.location.search;
-        // console.log(queryString);
-        const urlParams = new URLSearchParams(queryString);
-        const firstLogin = urlParams.get('firstLogin')
-        //console.log(firstLogin)
-
-        var myModal = new bootstrap.Modal(document.getElementById('firstTimeUser'), {
-            keyboard: false
-        })
-
-        // show if URL includes firstLogin as 'True'
-        if (firstLogin == 'True') {
-            myModal.show()
-        }
-    });
-
-</script>
 <style>
     body {
         padding-top: 65px;
-    }
-    .card {
-        border-radius: 80%;
     }
 </style>
 
@@ -90,6 +64,9 @@
                         <div class="mb-2 h6">
                             {{res[5]}}
                         </div>
+                        <div class="d-flex mt-3">
+                            <button class="btn btn-danger ms-auto deleteBtn" id="{{res[0]}}">X</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -98,27 +75,18 @@
 
     {% endfor %}
 
-    <!-- for testing: https://localhost:8888/timeline?firstLogin=True -->
-    <!-- Modal -->
-    <div id="firstTimeUser" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-        aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="staticBackdropLabel"><strong>Success!</strong></h5>
-                    <!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
-                </div>
-                <div class="modal-body" id="test123">
-                    Welcome to TigerLink! Your account has been successfully created. Please take a moment to
-                    familiarize yourself with the navigation bar at the top. Enjoy!
-                </div>
-                <div class="modal-footer">
-                    <a href="/timeline" class="btn btn-secondary mx-auto d-block">Got it!</a>
-                </div>
-            </div>
-        </div>
-    </div>
+    <script>
+        function setup() {
+            $('.deleteBtn').click((e) => {
+                let postid = $(e.target).attr('id');
+                $.post("/admin/deletepost", {postid: postid})
+                    .done(function() { location.reload(); })
+                    .fail(function() { alert('An error occurred.'); });
+            });
+        }
 
+        $(document).ready(setup);
+    </script>
 </body>
 
 </html>
