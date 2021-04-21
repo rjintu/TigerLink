@@ -1,4 +1,4 @@
-from flask import Blueprint, make_response, redirect, render_template, session, abort
+from flask import Blueprint, request, make_response, redirect, render_template, session, abort
 
 from . import loginutil
 from .database import Database
@@ -76,6 +76,20 @@ def deletematches():
     db.disconnect()
 
     # todo: add error handling
+    response = make_response('success!')
+    return response
+
+@admin.route('/deletematch', methods=['POST'])
+def deletematch():
+    action = verify_access(session)
+    if action is not None:
+        return action
+
+    db = Database()
+    db.connect()
+    db.delete_match(request.form['studentid'], request.form['alumid']) 
+    db.disconnect()
+
     response = make_response('success!')
     return response
 
