@@ -18,7 +18,8 @@
     integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
     crossorigin="anonymous"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
-    integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+    crossorigin="anonymous"></script>
 
 </head>
 <header>
@@ -27,13 +28,20 @@
   {% endwith %}
 </header>
 
+
+<style>
+  #allRows:hover {
+    cursor: pointer;
+  }
+</style>
+
 <body id="generic-body">
   <br>
   <div class="container">
     <div class="row justify-content-center">
       <!-- col 1 -->
       {% if (results|length) > 0 %}
-      <table class="table table-hover table-responsive row-clickable">
+      <table class="table table-hover table-responsive">
         <thead>
           <tr>
             <th>Name</th>
@@ -44,7 +52,7 @@
         </thead>
         <tbody>
           {% for res in results: %}
-          <tr class="clickable-row" id="{{ res[0] }}">
+          <tr class="clickable-row" id="allRows" info="{{ res[0] }}">
             <td>{{ res[2] }}</td>
             <td>{{ res[1] }}</td>
             <td>{{ res[3] }}</td>
@@ -60,20 +68,20 @@
   </div>
 
   <div id="detailsModal" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-  aria-labelledby="staticBackdropLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
       <div class="modal-content">
-          <div class="modal-header">
-              <h5 class="modal-title">User Details</h5>
-          </div>
-          <div class="modal-body" id="detailsBody">
-          </div>
-          <div class="modal-footer">
-              <a href="#" id="closeDetailsBtn" class="btn btn-success d-block">Done</a>
-          </div>
+        <div class="modal-header">
+          <h5 class="modal-title">User Details</h5>
+        </div>
+        <div class="modal-body" id="detailsBody">
+        </div>
+        <div class="modal-footer">
+          <a href="#" id="closeDetailsBtn" class="btn btn-success d-block">Done</a>
+        </div>
       </div>
+    </div>
   </div>
-</div>
 
 </body>
 
@@ -94,29 +102,29 @@
   let request = null;
 
   function handleResponse(response) {
-      $('#detailsBody').html(response);
-      $('#detailsModal').modal('show');
+    $('#detailsBody').html(response);
+    $('#detailsModal').modal('show');
   }
 
   function setup() {
-      $('#closeDetailsBtn').click(function() {
-          $('#detailsModal').modal('hide');
+    $('#closeDetailsBtn').click(function () {
+      $('#detailsModal').modal('hide');
+    });
+
+    $('.clickable-row').click((e) => {
+      let profileid = $(e.target).closest('tr').attr('info');
+      let profileidU = encodeURIComponent(profileid);
+
+      let url = "/genericdetails?profileid=" + profileidU;
+      if (request != null)
+        request.abort();
+
+      request = $.ajax({
+        type: 'GET',
+        url: url,
+        success: handleResponse
       });
-
-      $('.clickable-row').click((e) => {
-          let profileid = $(e.target).closest('tr').attr('id');
-          let profileidU = encodeURIComponent(profileid);
-
-          let url = "/genericdetails?profileid=" + profileidU;
-          if(request != null)
-              request.abort();
-
-          request = $.ajax({
-              type: 'GET',
-              url: url,
-              success: handleResponse
-          });
-      });
+    });
   }
 
   $(document).ready(setup);
