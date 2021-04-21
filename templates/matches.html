@@ -29,10 +29,11 @@
   </style>
 </head>
 
-<body style="background-color: #e8f4f8;">
+<body id="generic-body">
+  {% with bold = "matches" %}
   {% include "admin-navbar.html" %}
+  {% endwith %}
 
-  <br>
   <div class="container card bg-light border-light shadow mb-5">
   <div class="card-body">
     <h2>Current Matches</h2>

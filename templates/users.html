@@ -25,10 +25,11 @@
   <link rel='stylesheet' type='text/css' href='static/style.css'>
 </head>
 
-<body style="background-color: #e8f4f8;">
+<body id="generic-body">
+  {% with bold = "users" %}
   {% include "admin-navbar.html" %}
+  {% endwith %}
 
-  <br>
   <div class="container card bg-light shadow">
   <div class="card-body">
     <h2>All Students</h2>
