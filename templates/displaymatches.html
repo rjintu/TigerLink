@@ -24,8 +24,8 @@
 </head>
 
 <style>
-    body {
-        padding-top: 80px;
+    h5 {
+        text-align: center;
     }
 </style>
 
@@ -40,39 +40,43 @@
         <div class="row justify-content-center">
             <!-- col 1 -->
             {% if (match|length) > 0 %}
-                <table class="table table-hover table-responsive">
-                    <thead>
-                        <tr>
-                            <th>Student Name</th>
-                            <th>Student Year</th>
-                            <th>Alumni Name</th>
-                            <th>Alumni Year</th>
-                            <th>Similarity
-                                <img data-toggle="popover" src="../static/img/info.png" width="15" height="auto" alt="">
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for match in matches: %}
-                        {% if (match|length) > 2 %}
-                        <tr class="clickable-row" id='{{match[0]}}' value='{{match[1]}}'>
-                            {% for i in range (2, 7): %}
-                            {% if (i == 6) %}
-                            <td>{{ match[i] }}%</td>
-                            {% else %}
-                            <td>{{ match[i] }}</td>
-                            {% endif %}
-                            {% endfor %}
-                        </tr>
+            <table class="table table-hover table-responsive">
+                <thead>
+                    <tr>
+                        <th>Student Name</th>
+                        <th>Student Year</th>
+                        <th>Alumni Name</th>
+                        <th>Alumni Year</th>
+                        <th>Similarity
+                            <img data-toggle="popover" src="../static/img/info.png" width="15" height="auto" alt="">
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for match in matches: %}
+                    {% if (match|length) > 2 %}
+                    <tr class="clickable-row" id='{{match[0]}}' value='{{match[1]}}'>
+                        {% for i in range (2, 7): %}
+                        {% if (i == 6) %}
+                        <td>{{ match[i] }}%</td>
+                        {% else %}
+                        <td>{{ match[i] }}</td>
                         {% endif %}
                         {% endfor %}
-                    </tbody>
-                </table>
+                    </tr>
+                    {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
             {% else %}
             <div class="d-flex justify-content-center">
-                <h2> 
-                    Welcome to TigerLink! Your matches are currently pending administrative approval, and should be sent to you soon. Look out for an email from us!
-                </h2>
+                <h5>
+                    <br>
+                    Your matches will appear here once they are set.
+                    <br> <br>
+                    We'll email you when they're ready!
+                </h5>
+
             </div>
             {% endif %}
 
