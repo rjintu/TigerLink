@@ -11,7 +11,7 @@ b { color: #FF7700; }
     font-size: 14px;
 }
 .navbar-default {
-    background-color: #D3D3D3;
+    background-color: white;
     
 }
 #one > li > a {
@@ -49,7 +49,7 @@ b { color: #FF7700; }
 /* .navbar {margin-bottom: 200px;} */
 </style>
 
-<nav class="navbar navbar-expand fixed-top shadow" style="background-color: #E8E8E8;">
+<nav class="navbar navbar-expand fixed-top" style="background-color: white;">
   <div class="container-fluid">
     <ul class="nav navbar-nav navbar-left" id="two">  
         <li>
@@ -59,17 +59,29 @@ b { color: #FF7700; }
         </li>
     </ul>
     <ul class="nav navbar-nav navbar-right" id="one">             
+        {% if bold == 'matches' %}
+        <li id="nav-disable">
+        {% else %}
         <li>
+        {% endif %}
             <a href="/admin/matches" data-toggle="search">
                 <p>Matches</p>
             </a>
         </li>
+        {% if bold == 'users' %}
+        <li id="nav-disable">
+        {% else %}
         <li>
+        {% endif %}
             <a href="/admin/users" data-toggle="search">
                 <p>Users</p>
             </a>
         </li>
+        {% if bold == 'timeline' %}
+        <li id="nav-disable">
+        {% else %}
         <li>
+        {% endif %}
             <a href="/admin/timeline" data-toggle="search">
                 <p>Timeline</p>
             </a>
@@ -80,9 +92,5 @@ b { color: #FF7700; }
            <a href="/">Exit Admin Mode</a> 
         </li>    
     </ul>
-    
 </div>
-  </nav>
-
-<!-- for extra spacing -->
-<div class="navbar"> </div>
+</nav>
