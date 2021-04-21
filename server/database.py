@@ -2,6 +2,7 @@ from os import environ
 from psycopg2 import connect
 from .post import Post
 import os
+from sys import stderr
 
 class Database:
 
@@ -24,12 +25,12 @@ class Database:
         cursor.execute('DROP TABLE IF EXISTS students')
         cursor.execute('CREATE TABLE students ' +
                        '(profileid TEXT, name TEXT, classyear TEXT, \
-                    email TEXT, major TEXT, zip TEXT, numMatch TEXT, propic TEXT)')
+                    email TEXT, major TEXT, zip TEXT, nummatch TEXT, propic TEXT)')
         # Alumni table
         cursor.execute('DROP TABLE IF EXISTS alumni')
         cursor.execute('CREATE TABLE alumni ' +
                        '(profileid TEXT, name TEXT, classyear TEXT, \
-                    email TEXT, major TEXT, zip TEXT, numMatch TEXT, propic TEXT)')
+                    email TEXT, major TEXT, zip TEXT, nummatch TEXT, propic TEXT)')
 
         # Roles table
         cursor.execute('DROP TABLE IF EXISTS roles')
@@ -105,7 +106,7 @@ class Database:
         cursor.execute('INSERT INTO roles(profileid, role, isadmin) ' +
                        'VALUES (%s, %s, %s)', [profileid, 'student', 'false'])
         cursor.execute('INSERT INTO students(profileid, name, classyear, email, ' +
-                       'major, zip, numMatch, propic) ' +
+                       'major, zip, nummatch, propic) ' +
                        'VALUES (%s, %s, %s, %s, %s, %s, %s, %s)', student_elems)
         for elem in industry:
             cursor.execute('INSERT INTO careers(profileid, career) ' +
@@ -125,7 +126,7 @@ class Database:
         cursor.execute('INSERT INTO roles(profileid, role, isadmin) ' +
                        'VALUES (%s, %s, %s)', [profileid, 'alum', 'false'])
         cursor.execute('INSERT INTO alumni(profileid, name, classyear, email, ' +
-                       'major, zip, numMatch, propic) ' +
+                       'major, zip, nummatch, propic) ' +
                        'VALUES (%s, %s, %s, %s, %s, %s, %s, %s)', alum_elems)
         for elem in industry:
             cursor.execute('INSERT INTO careers(profileid, career) ' +
@@ -134,10 +135,47 @@ class Database:
             cursor.execute('INSERT INTO interests(profileid, interest) ' +
                            'VALUES (%s, %s)', (alum[0], elem))
 
+    # delete students from all associated tables
+    # takes an array of profileids
+    def delete_students(self, profileids):
+        cursor = self._connection.cursor()
+        for profileid in profileids:
+            cursor.execute('DELETE from alumni where profileid=%s', [profileid])
+            cursor.execute('DELETE from roles where profileid=%s', [profileid])
+            cursor.execute('DELETE from careers where profileid=%s', [profileid])
+            cursor.execute('DELETE from interests where profileid=%s', [profileid])
+            cursor.execute('DELETE from posts where profileid=%s', [profileid])
+            cursor.execute('DELETE from likes where profileid=%s', [profileid])
+            cursor.execute('DELETE from comments where profileid=%s', [profileid])
+            cursor.execute('DELETE from matches where alumid=%s', [profileid])
+        self._connection.commit()
+        cursor.close()
+
+    # delete alumni from all associated tables
+    # takes an array of profileids
+    def delete_alumni(self, profileids):
+        cursor = self._connection.cursor()
+        for profileid in profileids:
+            cursor.execute(
+                'DELETE from students where profileid=%s', [profileid])
+            cursor.execute('DELETE from roles where profileid=%s', [profileid])
+            cursor.execute(
+                'DELETE from careers where profileid=%s', [profileid])
+            cursor.execute(
+                'DELETE from interests where profileid=%s', [profileid])
+            cursor.execute('DELETE from posts where profileid=%s', [profileid])
+            cursor.execute('DELETE from likes where profileid=%s', [profileid])
+            cursor.execute(
+                'DELETE from comments where profileid=%s', [profileid])
+            cursor.execute(
+                'DELETE from matches where studentid=%s', [profileid])
+        self._connection.commit()
+        cursor.close()
+
     def get_students(self):
         cursor = self._connection.cursor()
         cursor.execute('SELECT profileid, name, classyear, email, \
-        major, zip, numMatch, propic FROM students')
+        major, zip, nummatch, propic FROM students')
         row = cursor.fetchone()
         output = []
         while row is not None:
@@ -164,7 +202,7 @@ class Database:
     def get_alumni(self):
         cursor = self._connection.cursor()
         cursor.execute('SELECT profileid, name, classyear, email, \
-        major, zip, numMatch, propic FROM alumni')
+        major, zip, nummatch, propic FROM alumni')
         row = cursor.fetchone()
         output = []
         while row is not None:
@@ -270,12 +308,56 @@ class Database:
         return None if role is None else role[0]
 
     # used for changing a user between student/alum
-    # NOTE: this function is not safe yet! if you plan on using it, also
-    # make sure to change the students/alum tables
+    # warning: using this function will also eliminate all matches associated with the user
+    # TODO: verify this is fully operational!
     def set_role(self, profileid, newrole):
         profileid = str(profileid)
 
+        oldrole = self.get_role(profileid)
+
+        # catch issues where client passes an invalid role
+        if newrole != 'student' and newrole != 'alum':
+            print('Invalid role', file=stderr)
+            return 
+        
         cursor = self._connection.cursor()
+        # if student, delete from students and matches
+        if oldrole == 'student' and newrole == 'alum':
+            # fetch information
+            cursor.execute('SELECT profileid, name, classyear, email, major, zip, ' +
+                            'nummatch, propic FROM students WHERE profileid=%s', [profileid])
+            info = cursor.fetchone()
+
+            # delete from students
+            cursor.execute('DELETE from students WHERE profileid=%s', [profileid])
+
+            # delete from matches
+            cursor.execute('DELETE from matches WHERE studentid=%s', [profileid])
+
+            # add to alumni
+            cursor.execute('INSERT INTO alumni(profileid, name, classyear, email, ' +
+                           'major, zip, nummatch, propic) ' +
+                           'VALUES (%s, %s, %s, %s, %s, %s, %s, %s)', info)
+
+        # if alum, delete from students and alum
+        elif oldrole == 'alum' and newrole == 'student':
+            # fetch information
+            cursor.execute('SELECT profileid, name, classyear, email, major, zip, ' +
+                           'nummatch, propic FROM students WHERE profileid=%s', [profileid])
+            info = cursor.fetchone()
+
+            # delete from alumni
+            cursor.execute('DELETE from alumni WHERE profileid=%s', [profileid])
+
+            # delete from matches
+            cursor.execute('DELETE from matches WHERE alumid=%s', [profileid])
+
+            # add to students
+            cursor.execute('INSERT INTO students(profileid, name, classyear, email, ' +
+                           'major, zip, nummatch, propic) ' +
+                           'VALUES (%s, %s, %s, %s, %s, %s, %s, %s)', info)
+
+        # update the role
         cursor.execute('UPDATE roles SET role=%s WHERE profileid=%s', [newrole, profileid])
         cursor.close()
         self._connection.commit()
@@ -556,8 +638,6 @@ class Database:
         cursor.execute('DELETE FROM posts WHERE postid=%s', [str(postId)])
         self._connection.commit()
         cursor.close()
-
-        # postid TEXT, authorname, authorid TEXT, posttime TEXT, posttitle TEXT, postcontent TEXT, imgurl TEXT, privacy TEXT, communities TEXT
 
     def create_post(self, authorId, authorName, time, title, content, image_url, private, communities, propic):
         cursor = self._connection.cursor()
