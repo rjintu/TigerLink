@@ -162,8 +162,8 @@
                     </p>
                     <ul class="dropdown-menu dropdown-menu-light">
                         <li><a class="dropdown-item" href="editprofile">My Profile</a></li>
+                        {% if is_admin %}
                         <div class="dropdown-divider"></div>
-                        {% if admin %}
                         <li><a class="dropdown-item" href="/admin">Admin</a></li>
                         {% endif %}
                         <div class="dropdown-divider"></div>
