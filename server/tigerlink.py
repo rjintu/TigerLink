@@ -137,7 +137,7 @@ def createuser():
 
         db = Database()
         db.connect()
-
+        emailUser(str(email), str(name), str(role), str(classyear))
         if role == 'student':
             db.create_students([user])
         else:
@@ -145,7 +145,6 @@ def createuser():
 
         db.disconnect()
 
-        emailUser(str(email), str(name), str(role), str(classyear))
 
     except Exception as e:
         html = "error occurred: " + str(e)
@@ -664,7 +663,6 @@ def dosearch():
                            is_admin=is_admin)
     response = make_response(html)
     return response
-
 
 @app.route('/timeline', methods=['GET'])
 def timeline():
