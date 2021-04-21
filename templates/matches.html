@@ -142,7 +142,8 @@
                     <h5 class="modal-title">Choose New Match</h5>
                 </div>
                 <div class="modal-body" id="manualBody">
-                    <table class="table table-hover" style="max-height: 250px; overflow: scroll;">
+                    <div style="max-height: 250px; overflow: scroll;">
+                    <table class="table table-hover">
                     <thead>
                         <tr>
                             <th style="width: 50%">Student</th>
@@ -158,10 +159,12 @@
                         {% endfor %}
                     </tbody>
                     </table>
+                    </div>
 
                     <p class="text-center"><strong>Match With:</strong></p>
 
-                    <table class="table table-hover" style="max-height: 250px; overflow: scroll;">
+                    <div style="max-height: 250px; overflow: scroll;">
+                    <table class="table table-hover">
                     <thead>
                         <tr>
                             <th style="width: 50%">Alumnus</th>
@@ -177,6 +180,7 @@
                         {% endfor %}
                     </tbody>
                     </table>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button id="manualCancelBtn" class="btn btn-secondary mr-auto">Cancel</button>
