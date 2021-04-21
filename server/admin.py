@@ -145,6 +145,34 @@ def users():
     html = render_template('users.html', students=students, alumni=alumni)
     return make_response(html)
 
+@admin.route('/deletestudent', methods=['POST'])
+def deletestudent():
+    action = verify_access(session)
+    if action is not None:
+        return action
+
+    db = Database()
+    db.connect()
+    db.delete_students(request.form['profileid'])
+    db.disconnect()
+
+    response = make_response('success!')
+    return response
+
+@admin.route('/deletealum', methods=['POST'])
+def deletealum():
+    action = verify_access(session)
+    if action is not None:
+        return action
+
+    db = Database()
+    db.connect()
+    db.delete_alumni(request.form['profileid'])
+    db.disconnect()
+
+    response = make_response('success!')
+    return response
+
 @admin.errorhandler(403)
 def permissions(err):
     html = render_template('permissions.html')
