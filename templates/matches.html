@@ -124,7 +124,8 @@
                 <div class="modal-body" id="detailsBody">
                 </div>
                 <div class="modal-footer">
-                    <a href="#" id="closeDetailsBtn" class="btn btn-success d-block">Done</a>
+                    <button id="deleteMatchBtn" class="btn btn-danger mr-auto">Delete</button>
+                    <button id="closeDetailsBtn" class="btn btn-success">Done</button>
                 </div>
             </div>
         </div>
@@ -139,6 +140,9 @@
         $('#detailsBody').html(response);
         $("#detailsModal").modal('show');
     }
+
+    let currStudent = "";
+    let currAlum = "";
 
     function setup() {
         let successModal = new bootstrap.Modal(document.getElementById('successModal'), {
@@ -184,6 +188,8 @@
 
                 let studentU = encodeURIComponent(student);
                 let alumU = encodeURIComponent(alum);
+                currStudent = studentU;
+                currAlum = alumU;
 
                 let url = "/matchdetails?student=" + studentU + "&alum=" + alumU;
                 console.log(url);
@@ -198,6 +204,12 @@
                 });
             }
         );
+
+        $('#deleteMatchBtn').click((e) => {
+            $.post("/admin/deletematch", {studentid: currStudent, alumid: currAlum})
+                .done(function() { location.reload(); })
+                .fail(function() { failureModal.show(); });
+        });
     }
 
     $(document).ready(setup);
