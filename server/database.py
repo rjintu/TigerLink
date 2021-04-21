@@ -569,7 +569,7 @@ class Database:
             # cursor3 = self._connection.cursor()
 
             stmtStr = "SELECT profileid, classyear, name, major, email FROM alumni WHERE lower(name) LIKE %s " + \
-                "AND email LIKE %s AND major LIKE %s AND zip LIKE %s"
+                "AND email LIKE %s AND lower(major) LIKE %s AND zip LIKE %s"
             cursor.execute(stmtStr, [name, email, major, zipcode])
             row = cursor.fetchone()
 
