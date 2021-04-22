@@ -38,7 +38,7 @@
   <div class="container card bg-light shadow">
   <div class="card-body">
     <h2>All Students</h2>
-    <table id="verticalScroll" class="table table-hover table-sm table-responsive">
+    <table class="table table-hover verticalScroll table-sm table-responsive">
       <thead>
         <tr>
           <th scope="col">Name</th>
@@ -65,7 +65,7 @@
   <div class="container card bg-light shadow mb-5">
   <div class="card-body">
     <h2>All Alumni</h2>
-    <table id="verticalScroll" class="table table-hover table-responsive">
+    <table class="table table-hover verticalScroll table-sm table-responsive">
       <thead>
         <tr>
           <th scope="col">Name</th>
@@ -123,7 +123,7 @@
             $('#detailsModal').modal('hide');
         });
 
-        $('#verticalScroll').DataTable({
+        $('.verticalScroll').DataTable({
             "scrollY": "200px",
             "scrollCollapse": true,
             "paging": false
