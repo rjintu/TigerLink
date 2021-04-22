@@ -23,6 +23,11 @@
   crossorigin="anonymous"></script>
 
   <link rel='stylesheet' type='text/css' href='static/style.css'>
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.css">
+  
+  <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.js"></script>
+  
+
 </head>
 
 <body id="generic-body">
@@ -33,7 +38,7 @@
   <div class="container card bg-light shadow">
   <div class="card-body">
     <h2>All Students</h2>
-    <table class="table table-hover table-responsive">
+    <table id="verticalScroll" class="table table-hover table-sm table-responsive">
       <thead>
         <tr>
           <th scope="col">Name</th>
@@ -60,7 +65,7 @@
   <div class="container card bg-light shadow mb-5">
   <div class="card-body">
     <h2>All Alumni</h2>
-    <table class="table table-hover table-responsive">
+    <table id="verticalScroll" class="table table-hover table-responsive">
       <thead>
         <tr>
           <th scope="col">Name</th>
@@ -117,6 +122,13 @@
         $('#closeDetailsBtn').click(function() {
             $('#detailsModal').modal('hide');
         });
+
+        $('#verticalScroll').DataTable({
+            "scrollY": "200px",
+            "scrollCollapse": true,
+            "paging": false
+            });
+        $('.dataTables_length').addClass('bs-select');
 
         $('.student-row').click((e) => {
             let profileid = $(e.target).closest('tr').attr('id');
