@@ -33,6 +33,17 @@ bottom: .5em;
   border-bottom: 8px solid #ffdc8e;
 }
 
+.clickable-row{
+  transition: transform .2s;
+}
+
+.clickable-row:hover {
+cursor:pointer; 
+transform: scale(1.03);
+background:#ccc;
+color:#fff;
+}
+
 #sahil {
   /* background-color: #d3d3d3; */
 }
