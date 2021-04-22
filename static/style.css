@@ -39,7 +39,29 @@ bottom: .5em;
 
 .clickable-row:hover {
 cursor:pointer; 
-transform: scale(1.03);
+transform: scale(1.02);
+background:#ccc;
+color:#fff;
+}
+
+.student-row{
+  transition: transform .2s;
+}
+
+.student-row:hover {
+cursor:pointer; 
+transform: scale(1.02);
+background:#ccc;
+color:#fff;
+}
+
+.alum-row{
+  transition: transform .2s;
+}
+
+.alum-row:hover {
+cursor:pointer; 
+transform: scale(1.02);
 background:#ccc;
 color:#fff;
 }
