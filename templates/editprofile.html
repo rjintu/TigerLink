@@ -63,11 +63,20 @@
             $("#classYear").attr("max", "2020");
         }
 
+        var myModal = new bootstrap.Modal(document.getElementById('savedProfile'), {
+            keyboard: false
+        })
+
+        // show when profile is saved
+        $("#saveButton").click(function () {
+            myModal.show()
+        });
+
     });
 </script>
 
 
-<form action="updateprofile" method="post">
+<form action="updateprofile" method="post" id="profileForm">
 
     <body id="generic-body">
         <div class="container">
@@ -166,6 +175,20 @@
                     <br>
                     <br>
                     <br>
+                    <br>
+                    {% for mess in get_flashed_messages() %}
+                    <div class="row justify-content-md-center">
+                        <div class="alert alert-success alert-dismissible" role="alert" style="text-align:center;">
+                            <!-- <button type="button" class="close" data-dismiss="alert" aria-label="Close" class="fade close">
+                            <span aria-hidden="true">&times;</span>
+                        </button> -->
+                            {{mess}}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <br>
+                    <br>
+                    <br>
                 </div>
             </div>
         </div>
@@ -173,21 +196,27 @@
 
     <body>
         <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-1">
-                    <button type="submit" name="submit" class="btn btn-warning">Save</button>
-                </div>
+            <div class="d-flex justify-content-center">
+                <button type="button" id="saveButton" name="submit" class="btn btn-warning">Save</button>
             </div>
-            <br>
-            {% for mess in get_flashed_messages() %}
-            <div class="row justify-content-md-center">
-                <div class="col-4 alert alert-success alert-dismissible fade show" role="alert">
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close" class="fade close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                    {{mess}}
+        </div>
+
+        <!-- Modal -->
+        <div class="modal fade" id="savedProfile" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Confirm Save</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        This will modify your profile, and these changes will be visible to all other TigerLink users.
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+                        <button id="confirmSubmit" type="submit" class="btn btn-success">Save changes</button>
+                    </div>
                 </div>
-                {% endfor %}
             </div>
         </div>
     </body>
