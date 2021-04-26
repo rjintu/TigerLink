@@ -63,13 +63,26 @@
             $("#classYear").attr("max", "2020");
         }
 
-        var myModal = new bootstrap.Modal(document.getElementById('savedProfile'), {
+        var saveModal = new bootstrap.Modal(document.getElementById('savedProfile'), {
             keyboard: false
         })
 
         // show when profile is saved
         $("#saveButton").click(function () {
-            myModal.show()
+            saveModal.show()
+        });
+
+        var deleteModal = new bootstrap.Modal(document.getElementById('confirmDelete'), {
+            keyboard: false
+        })
+
+        $("#deleteButton").click(function () {
+            deleteModal.show()
+        });
+
+        $("#deleteMyAccount").click(function () {
+            console.log("deleting account")
+
         });
 
     });
@@ -176,8 +189,7 @@
                     </div>
                     <br>
                     <br>
-                    <br>
-                    <br>
+
                     {% for mess in get_flashed_messages() %}
                     <div class="row justify-content-md-center">
                         <div class="alert alert-success alert-dismissible" role="alert" style="text-align:center;">
@@ -199,11 +211,15 @@
     <body>
         <div class="container">
             <div class="d-flex justify-content-center">
-                <button type="button" id="saveButton" name="submit" class="btn btn-warning">Save</button>
+                <button type="button" id="saveButton" name="submit" class="btn btn-warning">Save Changes</button>
+            </div>
+            <br>
+            <div class="d-flex justify-content-center">
+                <button type="button" id="deleteButton" name="delete" class="btn btn-danger">Delete My Account</button>
             </div>
         </div>
 
-        <!-- Modal -->
+        <!-- Confirm Save Modal -->
         <div class="modal fade" id="savedProfile" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -217,6 +233,27 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
                         <button id="confirmSubmit" type="submit" class="btn btn-success">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Confirm Delete Modal -->
+        <div class="modal fade" id="confirmDelete" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Confirm Account Deletion</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        This will delete your account permanently, including any content associated with it. This action
+                        cannot be undone.
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Take Me Back!</button>
+                        <a href='/delete'><button type="button" name="submit" class="btn btn-danger">Delete My
+                                Account</button></a>
                     </div>
                 </div>
             </div>
