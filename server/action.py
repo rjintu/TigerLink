@@ -41,7 +41,7 @@ def emailUser(receiver_address, name, acct_type, class_year):
 def confirmDeletion(receiver_address):
     mail_content = '''Hello TigerLink User,
 
-    Your account has been deleted.
+    Your account has been deleted, including your posts and matches.
     We're sad to see you go, but you're welcome back anytime!
 
     Best,
