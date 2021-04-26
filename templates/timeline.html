@@ -85,8 +85,7 @@
         });
 
         $('.profile').click((e) => {
-            let profileid = $(this).attr('profileID')
-            console.log(profileid)
+            let profileid = $(e.target).closest('a').attr('profileID');
             let profileidU = encodeURIComponent(profileid);
 
             let url = "/genericdetails?profileid=" + profileidU;
