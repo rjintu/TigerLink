@@ -16,7 +16,7 @@ def emailUser(receiver_address, name, acct_type, class_year):
     Class Year: %s
 
     Excited to have you,
-    TigerLink Team
+    The TigerLink Team
     ''' % (receiver_address, name, acct_type, class_year)
 
     # Setup the MIME
@@ -25,6 +25,35 @@ def emailUser(receiver_address, name, acct_type, class_year):
     message['To'] = receiver_address
     # The subject line
     message['Subject'] = 'Congrats! You made a TigerLink Account.'
+    # The body and the attachments for the mail
+    message.attach(MIMEText(mail_content, 'plain'))
+    # Create SMTP session for sending the mail
+    session = smtplib.SMTP('smtp.gmail.com', 587)  # use gmail with port
+    session.starttls()  # enable security
+    # login with mail_id and password
+    session.login(sender_address, sender_pass)
+    text = message.as_string()
+    session.sendmail(sender_address, receiver_address, text)
+    session.quit()
+    print('Mail Sent')
+
+
+def confirmDeletion(receiver_address):
+    mail_content = '''Hello TigerLink User,
+
+    Your account has been deleted.
+    We're sad to see you go, but you're welcome back anytime!
+
+    Best,
+    The TigerLink Team
+    '''
+
+    # Setup the MIME
+    message = MIMEMultipart()
+    message['From'] = sender_address
+    message['To'] = receiver_address
+    # The subject line
+    message['Subject'] = 'Account Deletion Confirmation'
     # The body and the attachments for the mail
     message.attach(MIMEText(mail_content, 'plain'))
     # Create SMTP session for sending the mail
