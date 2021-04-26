@@ -693,7 +693,8 @@ def timeline():
     posts = []
     output = db.get_posts()
 
-    offset = int(request.args.get('offset', 240)) # FIXME: need to pass in user time zone from JS (right now offset doesn't exist)
+    # FIXME: need to pass in user time zone from JS (right now offset doesn't exist)
+    offset = int(request.args.get('offset', 240))
     for i in output:
         curr_time = datetime.fromisoformat(i[3])
         # local_tz = get_localzone()
@@ -713,5 +714,32 @@ def timeline():
     db.disconnect()
     html = render_template('timeline.html', posts=posts,
                            picture=session['picture'], is_admin=is_admin)
+    response = make_response(html)
+    return response
+
+
+@app.route('/delete', methods=['GET'])
+def deleteProfile():
+    if not loginutil.is_logged_in(session):
+        # user not logged in
+        return redirect('/login')
+
+    profileid = session['profileid']
+    if not user_exists(profileid):
+        # profile has not been created
+        return redirect('/index')
+
+    db = Database()
+    db.connect()
+    role = db.get_role(profileid)
+
+    if role == 'student':
+        db.delete_student(profileid)
+    else:
+        db.delete_alum(profileid)
+
+    db.disconnect()
+
+    html = render_template('delete.html')
     response = make_response(html)
     return response
