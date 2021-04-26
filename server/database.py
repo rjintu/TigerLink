@@ -48,7 +48,7 @@ class Database:
         # Timeline posts tables
         cursor.execute('DROP TABLE IF EXISTS posts')
         cursor.execute('CREATE TABLE posts ' + 
-                '(postid TEXT, authorname TEXT, authorid TEXT, posttime TEXT, posttitle TEXT, postcontent TEXT, imgurl TEXT, privacy TEXT, communities TEXT, propic TEXT)')
+                '(postid SERIAL, authorname TEXT, authorid TEXT, posttime TEXT, posttitle TEXT, postcontent TEXT, imgurl TEXT, privacy TEXT, communities TEXT, propic TEXT)')
         cursor.execute('DROP TABLE IF EXISTS comments')
         cursor.execute('CREATE TABLE comments ' +
                 '(postid TEXT, author TEXT, comment TEXT)')
@@ -69,7 +69,7 @@ class Database:
         cursor = self._connection.cursor()
         cursor.execute('DROP TABLE IF EXISTS posts')
         cursor.execute('CREATE TABLE posts ' + 
-                '(postid TEXT, authorname TEXT, authorid TEXT, posttime TEXT, posttitle TEXT, postcontent TEXT, imgurl TEXT, privacy TEXT, communities TEXT, propic TEXT)')
+                '(postid SERIAL, authorname TEXT, authorid TEXT, posttime TEXT, posttitle TEXT, postcontent TEXT, imgurl TEXT, privacy TEXT, communities TEXT, propic TEXT)')
         cursor.execute('DROP TABLE IF EXISTS comments')
         cursor.execute('CREATE TABLE comments ' +
                 '(postid TEXT, author TEXT, comment TEXT)')
@@ -614,13 +614,10 @@ class Database:
     # :param propic: user's profile picture
     def create_post(self, profileid, authorName, time, title, content, image_url, privacy, communities, propic):
         cursor = self._connection.cursor()
-        postid = str(os.getenv('numposts', 0))
-        cursor.execute('INSERT INTO posts(postid, authorid, authorname, posttime, posttitle, postcontent, imgurl, privacy, communities, propic) ' +
-                        'VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)', 
-                        [postid, profileid, authorName, time, title, content, image_url, privacy, communities, propic])
+        cursor.execute('INSERT INTO posts(authorid, authorname, posttime, posttitle, postcontent, imgurl, privacy, communities, propic) ' +
+                        'VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)', 
+                        [profileid, authorName, time, title, content, image_url, privacy, communities, propic])
         self._connection.commit()
-        postid = int(postid) + 1
-        environ['postid'] = str(postid +1)
         cursor.close()
 
     # reset all matches in the matches table
