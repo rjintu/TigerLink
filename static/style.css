@@ -39,7 +39,7 @@ table.dataTable thead .sorting_desc_disabled:before {
 
 .clickable-row:hover {
   cursor: pointer;
-  transform: scale(1.01);
+  transform: scaleY(1.15);
   background: #ccc;
   color: #fff;
 }
