@@ -151,6 +151,7 @@ class Database:
         cursor.execute('DELETE FROM careers WHERE profileid=%s', [profileid])
         cursor.execute('DELETE FROM interests WHERE profileid=%s', [profileid])
         cursor.execute('DELETE FROM matches WHERE studentid=%s', [profileid])
+        # cursor.execute('DELETE FROM posts WHERE authorid=%s', [profileid])
         self._connection.commit()
         cursor.close()
 
@@ -164,6 +165,7 @@ class Database:
         cursor.execute('DELETE FROM careers WHERE profileid=%s', [profileid])
         cursor.execute('DELETE FROM interests WHERE profileid=%s', [profileid])
         cursor.execute('DELETE FROM matches WHERE alumid=%s', [profileid])
+        # cursor.execute('DELETE FROM posts WHERE authorid=%s', [profileid])
         self._connection.commit()
         cursor.close()
 
