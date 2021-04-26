@@ -749,5 +749,14 @@ def deleteProfile():
     
 @app.errorhandler(404)
 def page_not_found(err):
+    if not loginutil.is_logged_in(session):
+        # user is not logged in
+        return redirect('/login')
+    
+    profileid = session['profileid']
+    if not user_exists(profileid):
+        # profile has not been created
+        return redirect('/index')
+        
     html = render_template('404.html', picture=session['picture'])
     return make_response(html)
