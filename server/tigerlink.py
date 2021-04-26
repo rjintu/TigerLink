@@ -11,7 +11,7 @@ from .matching import Matching
 from . import loginutil
 from .keychain import KeyChain
 from .admin import admin
-from .action import emailUser
+from .action import emailUser, confirmDeletion
 
 keychain = KeyChain()
 app = Flask(__name__, template_folder="../templates",
@@ -728,6 +728,8 @@ def deleteProfile():
         # profile has not been created
         return redirect('/index')
 
+    email = session['email']
+
     db = Database()
     db.connect()
     role = db.get_role(profileid)
@@ -738,6 +740,8 @@ def deleteProfile():
         db.delete_alum(profileid)
 
     db.disconnect()
+
+    confirmDeletion(str(email))
 
     html = render_template('delete.html')
     response = make_response(html)
