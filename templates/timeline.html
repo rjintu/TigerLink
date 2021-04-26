@@ -105,8 +105,7 @@
                                     onerror="this.style.display='none'">
                             </a>
                             <br>
-                            <br>
-                            <h5 stlye="text-align: center;">{{ res[2] }}</h5>
+                            <h5 style="text-align: center;">{{ res[2] }}</h5>
                         </tr>
                     </tbody>
                 </table>
@@ -122,6 +121,12 @@
                         <div class="mb-2 h6">
                             {{res[5]}}
                         </div>
+                        <!--Show the delete button if the user authored the post-->
+                        {% if (profileid == res[1]) %}
+                        <div class="d-flex mt-3">
+                            <button class="btn btn-danger ms-auto deleteBtn" id="{{res[0]}}">X</button>
+                        </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -129,6 +134,19 @@
     </div>
 
     {% endfor %}
+
+    <script>
+        function setup() {
+            $('.deleteBtn').click((e) => {
+                let postid = $(e.target).attr('id');
+                $.post("deletepost", { postid: postid })
+                    .done(function () { location.reload(); })
+                    .fail(function () { alert('An error occurred.'); });
+            });
+        }
+
+        $(document).ready(setup);
+    </script>
 
     <!-- for testing: https://localhost:8888/timeline?firstLogin=True -->
     <!-- Modal -->
