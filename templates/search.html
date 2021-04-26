@@ -44,7 +44,7 @@
     <div class="row justify-content-center">
       <!-- col 1 -->
       {% if (results|length) > 0 %}
-      <table class="table table-hover verticalScroll table-sm table-responsive">
+      <table class="table table-hover verticalScroll table-sm table-responsive" style="display: none">
         <thead>
           <tr>
             <th>Name</th>
@@ -93,7 +93,7 @@
   <div class="container">
     <div class="row justify-content-center">
       <div class="col-1">
-        <a href='/dosearch'><button type="submit" name="submit" class="btn btn-warning">Back</button></a>
+        <a href='/dosearch'><button type="submit" name="submit" id="submit" class="btn btn-warning" style="display:none">Back</button></a>
       </div>
     </div>
   </div>
@@ -117,8 +117,12 @@
     $('.verticalScroll').DataTable({
             "scrollY": "200px",
             "scrollCollapse": true,
-            "paging": false
-            });
+            "paging": false,
+            "initComplete": function () {
+            $(".verticalScroll").show();
+            $("#submit").show();
+            }
+    });
     $('.dataTables_length').addClass('bs-select');
 
     $('.clickable-row').click((e) => {
