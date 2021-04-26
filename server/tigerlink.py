@@ -27,7 +27,6 @@ Talisman(app, content_security_policy=None)
 # add other blueprints
 app.register_blueprint(admin)
 
-
 @app.route('/', methods=['GET'])
 @app.route('/index', methods=['GET'])
 def index():
@@ -743,3 +742,8 @@ def deleteProfile():
     html = render_template('delete.html')
     response = make_response(html)
     return response
+    
+@app.errorhandler(404)
+def page_not_found(err):
+    html = render_template('404.html', picture=session['picture'])
+    return make_response(html)
