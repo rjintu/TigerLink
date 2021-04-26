@@ -3,6 +3,7 @@ from flask import Blueprint, request, make_response, redirect, render_template, 
 from . import loginutil
 from .database import Database
 from .matching import Matching
+from datetime import datetime, timedelta
 
 admin = Blueprint('admin', __name__, 
         template_folder="../templates",
@@ -181,7 +182,18 @@ def timeline():
 
     db = Database()
     db.connect()
-    posts = db.get_posts()
+    output = db.get_posts()
+    posts = []
+        
+    offset = 240 # FIXME: change to user's time zone? 
+    for post in output:
+        curr_time = datetime.fromisoformat(post[3])
+        curr_time = curr_time - timedelta(minutes=offset)
+        formatted_time = curr_time.strftime("%A, %B %d at %I:%M %p")
+        copy = post[:3] + (formatted_time,) + post[4:]
+        posts.append(copy)
+
+    db.disconnect()
     html = render_template('admin-timeline.html', posts=posts)
     response = make_response(html)
     return response

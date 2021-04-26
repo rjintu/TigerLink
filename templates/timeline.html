@@ -28,11 +28,18 @@
 
 </head>
 
+
 <script>
-    'use strict';
+    "use strict";
 
-    $(document).ready(function () {
+    let request = null;
 
+    function handleResponse(response) {
+        $('#detailsBody').html(response);
+        $('#detailsModal').modal('show');
+    }
+
+    function setup() {
         // pull firstLogin from URL
         const queryString = window.location.search;
         // console.log(queryString);
@@ -48,12 +55,39 @@
         if (firstLogin == 'True') {
             myModal.show()
         }
-    });
 
+        $('#closeDetailsBtn').click(function () {
+            $('#detailsModal').modal('hide');
+        });
+
+        $('.profile').click((e) => {
+            let profileid = $(e.target).closest('a').attr('profileID');
+            let profileidU = encodeURIComponent(profileid);
+
+            let url = "/genericdetails?profileid=" + profileidU;
+            if (request != null)
+                request.abort();
+
+            request = $.ajax({
+                type: 'GET',
+                url: url,
+                success: handleResponse
+            });
+        });
+    }
+
+    $(document).ready(setup);
 </script>
+
+
 <style>
     body {
         padding-top: 65px;
+    }
+
+    .profile:hover {
+        cursor: pointer;
+        opacity: 0.6;
     }
 </style>
 
@@ -66,13 +100,12 @@
                 <table>
                     <tbody>
                         <tr style="text-align: center;">
-                            <a target="_blank">
-                                <img src={{res[9]}} style="width: 100%; max-width: 70px;" class="rounded-circle"
+                            <a class="profile" profileID="{{ res[1] }}">
+                                <img src={{res[9]}} style="width: 100%; max-width: 100px;" class="rounded-circle"
                                     onerror="this.style.display='none'">
                             </a>
                             <br>
-                            <br>
-                            <h5 stlye="text-align: center;">{{ res[2] }}</h5>
+                            <h5 style="text-align: center;">{{ res[2] }}</h5>
                         </tr>
                     </tbody>
                 </table>
@@ -88,6 +121,12 @@
                         <div class="mb-2 h6">
                             {{res[5]}}
                         </div>
+                        <!--Show the delete button if the user authored the post-->
+                        {% if (profileid == res[1]) %}
+                        <div class="d-flex mt-3">
+                            <button class="btn btn-danger ms-auto deleteBtn" id="{{res[0]}}">X</button>
+                        </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -95,6 +134,19 @@
     </div>
 
     {% endfor %}
+
+    <script>
+        function setup() {
+            $('.deleteBtn').click((e) => {
+                let postid = $(e.target).attr('id');
+                $.post("deletepost", { postid: postid })
+                    .done(function () { location.reload(); })
+                    .fail(function () { alert('An error occurred.'); });
+            });
+        }
+
+        $(document).ready(setup);
+    </script>
 
     <!-- for testing: https://localhost:8888/timeline?firstLogin=True -->
     <!-- Modal -->
@@ -112,6 +164,22 @@
                 </div>
                 <div class="modal-footer">
                     <a href="/timeline" class="btn btn-secondary mx-auto d-block">Got it!</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="detailsModal" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">User Details</h5>
+                </div>
+                <div class="modal-body" id="detailsBody">
+                </div>
+                <div class="modal-footer">
+                    <a href="#" id="closeDetailsBtn" class="btn btn-success d-block">Done</a>
                 </div>
             </div>
         </div>
