@@ -11,7 +11,7 @@ from .matching import Matching
 from . import loginutil
 from .keychain import KeyChain
 from .admin import admin
-from .action import emailUser
+from .action import emailUser, confirmDeletion
 
 keychain = KeyChain()
 app = Flask(__name__, template_folder="../templates",
@@ -26,7 +26,6 @@ Talisman(app, content_security_policy=None)
 
 # add other blueprints
 app.register_blueprint(admin)
-
 
 @app.route('/', methods=['GET'])
 @app.route('/index', methods=['GET'])
@@ -729,6 +728,8 @@ def deleteProfile():
         # profile has not been created
         return redirect('/index')
 
+    email = session['email']
+
     db = Database()
     db.connect()
     role = db.get_role(profileid)
@@ -740,6 +741,22 @@ def deleteProfile():
 
     db.disconnect()
 
+    confirmDeletion(str(email))
+
     html = render_template('delete.html')
     response = make_response(html)
     return response
+    
+@app.errorhandler(404)
+def page_not_found(err):
+    if not loginutil.is_logged_in(session):
+        # user is not logged in
+        return redirect('/login')
+    
+    profileid = session['profileid']
+    if not user_exists(profileid):
+        # profile has not been created
+        return redirect('/index')
+        
+    html = render_template('404.html', picture=session['picture'])
+    return make_response(html)
