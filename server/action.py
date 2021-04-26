@@ -64,4 +64,3 @@ def confirmDeletion(receiver_address):
     text = message.as_string()
     session.sendmail(sender_address, receiver_address, text)
     session.quit()
-    print('Mail Sent')
