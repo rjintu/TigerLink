@@ -75,11 +75,18 @@
       $("#classYear").attr("min", "1920");
       $("#classYear").attr("max", "2020");
     });
+
+    $('#newuserform').submit(function () {
+      $("#submit", this)
+        .html("Submitted...")
+        .attr('disabled', 'disabled');
+      return true;
+    });
   });
 </script>
 
 
-<form action="createuser" method="post">
+<form id="newuserform" action="createuser" method="post">
 
   <!-- index body here -->
 
@@ -174,7 +181,7 @@
     <div class="container">
       <div class="row justify-content-center">
         <div class="col-1">
-          <button type="submit" name="submit" class="btn btn-primary">Submit</button>
+          <button id="submit" type="submit" name="submit" class="btn btn-primary">Submit</button>
         </div>
       </div>
     </div>
