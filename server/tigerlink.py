@@ -8,7 +8,6 @@ import json
 
 from .database import Database
 from .matching import Matching
-from .cookiemonster import CookieMonster
 from . import loginutil
 from .keychain import KeyChain
 from .admin import admin
