@@ -153,7 +153,7 @@ def deletestudent():
 
     db = Database()
     db.connect()
-    db.delete_students(request.form['profileid'])
+    db.delete_student(request.form['profileid'])
     db.disconnect()
 
     response = make_response('success!')
@@ -167,7 +167,7 @@ def deletealum():
 
     db = Database()
     db.connect()
-    db.delete_alumni(request.form['profileid'])
+    db.delete_alum(request.form['profileid'])
     db.disconnect()
 
     response = make_response('success!')
