@@ -143,7 +143,6 @@ class Database:
 
     # delete student from database
     # :param profileid: unique id of user
-    # TODO: delete posts
     def delete_student(self, profileid):
         cursor = self._connection.cursor()
         cursor.execute('DELETE FROM students WHERE profileid=%s', [profileid])
@@ -151,13 +150,12 @@ class Database:
         cursor.execute('DELETE FROM careers WHERE profileid=%s', [profileid])
         cursor.execute('DELETE FROM interests WHERE profileid=%s', [profileid])
         cursor.execute('DELETE FROM matches WHERE studentid=%s', [profileid])
-        # cursor.execute('DELETE FROM posts WHERE authorid=%s', [profileid])
+        cursor.execute('DELETE FROM posts WHERE authorid=%s', [profileid])
         self._connection.commit()
         cursor.close()
 
-    # delete alumn from database
+    # delete alum from database
     # :param profileid: unique id of user
-    # TODO: delete posts
     def delete_alum(self, profileid):
         cursor = self._connection.cursor()
         cursor.execute('DELETE FROM alumni WHERE profileid=%s', [profileid])
@@ -165,7 +163,7 @@ class Database:
         cursor.execute('DELETE FROM careers WHERE profileid=%s', [profileid])
         cursor.execute('DELETE FROM interests WHERE profileid=%s', [profileid])
         cursor.execute('DELETE FROM matches WHERE alumid=%s', [profileid])
-        # cursor.execute('DELETE FROM posts WHERE authorid=%s', [profileid])
+        cursor.execute('DELETE FROM posts WHERE authorid=%s', [profileid])
         self._connection.commit()
         cursor.close()
 
