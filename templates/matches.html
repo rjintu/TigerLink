@@ -72,9 +72,9 @@
     </table>
 
     <div class="d-flex">
-        <a class="btn btn-primary me-1" id="creatematches" href="#">Automatic Match</a>
+        <button class="btn btn-primary me-1" id="creatematches">Automatic Match</button>
         <button class="btn btn-warning" id="manualmatch">Manual Match</button>
-        <a class="btn btn-danger ms-auto" id="deletematches" href="#">Delete All</a>
+        <button class="btn btn-danger ms-auto" id="deletematches">Delete All</button>
     </div>
   </div>
   </div>
@@ -249,41 +249,25 @@
             });
         $('.dataTables_length').addClass('bs-select');
 
-        let successModal = new bootstrap.Modal(document.getElementById('successModal'), {
-            keyboard: false
-        });
-
-		let failureModal = new bootstrap.Modal(document.getElementById('failureModal'), {
-			keyboard: false
-		});
-
-        let warningModal = new bootstrap.Modal(document.getElementById('warningModal'), {
-            keyboard: false
-        });
-
-        let createBtn = document.getElementById("creatematches");
-        createBtn.onclick = function() {
+        $('#creatematches').click(function() {
             $.post("/admin/creatematches")
-                .done(function() { successModal.show(); })
-                .fail(function() { failureModal.show(); });
-        };
+                .done(function() { $('#successModal').modal('show'); })
+                .fail(function() { $('#failureModal').modal('show'); });
+        });
 
-        let deleteBtn = document.getElementById("deletematches");
-        deleteBtn.onclick = function() {
-            warningModal.show();
-        };
+        $('#deletematches').click(function() {
+            $('#warningModal').modal('show');
+        });
 
-        let deleteConfirmBtn = document.getElementById("deleteConfirmBtn");
-        deleteConfirmBtn.onclick = function() {
+        $('#deleteConfirmBtn').click(function() {
             $.post("/admin/deletematches")
                 .done(function() { location.reload(); })
-                .fail(function() { failureModal.show(); });
-        };
+                .fail(function() { $('#failureModal').modal('show'); });
+        });
 
-        let modalBtn = document.getElementById("closeDetailsBtn");
-        modalBtn.onclick = function() {
+        $('#closeDetailsBtn').click(function() {
             $("#detailsModal").modal('hide');
-        }
+        });
 
         $('.clickable-row').click(
             (e) => {
@@ -317,7 +301,7 @@
         $('#deleteOneConfirmBtn').click((e) => {
             $.post("/admin/deletematch", {studentid: currStudent, alumid: currAlum})
                 .done(function() { location.reload(); })
-                .fail(function() { failureModal.show(); })
+                .fail(function() { $('#failureModal').modal('show'); })
         });
 
         // manual matching ---------------------------------------------------------
