@@ -1,9 +1,12 @@
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from .keychain import KeyChain
+
+keychain = KeyChain()
 # The mail addresses and password
 sender_address = 'princetontigerlink@gmail.com'
-sender_pass = 'tigerlink-cos333-2021'
+sender_pass = keychain.EMAIL_SECRET
 
 
 def emailUser(receiver_address, name, acct_type, class_year):
