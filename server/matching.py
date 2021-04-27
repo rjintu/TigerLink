@@ -158,7 +158,7 @@ class Matching(object):
         m = max(1 - abs(aScore-sScore)*2, 0)
 
         carS = 0
-        if svec._careers != None:
+        if svec._careers != None and (len(svec._careers) + len(avec._careers)) > 0:
             for career in svec._careers:
                 if career in avec._careers:
                     carS += 1
@@ -167,7 +167,7 @@ class Matching(object):
             carS /= len(totalC)
 
         orgS = 0
-        if svec._organizations != None:
+        if svec._organizations != None and (len(svec._organizations) + len(avec._organizations)) > 0:
             for org in svec._organizations:
                 if org in avec._organizations:
                     orgS += 1
