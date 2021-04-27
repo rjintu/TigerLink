@@ -575,8 +575,32 @@ class Database:
         cursor.close()
         return output
 
+    # returns approximate number of posts in database (based on postid max)
+    def get_num_posts(self):
+        cursor = self._connection.cursor()
+
+        stmtStr = "SELECT MAX(postid) FROM posts "
+        cursor.execute(stmtStr)
+        num_posts = cursor.fetchone()[0]
+
+        return num_posts
+
+    # verify that the post author matches the given profileid. Return True if this is the case, False otherwise.
+    # :param postid: unique id of post
+    # :param profileid: unique id of user
+    def verify_post_author(self, postid, profileid):
+        cursor = self._connection.cursor()
+
+        stmtStr = "SELECT authorid from posts WHERE postid = %s"
+        cursor.execute(stmtStr, [str(postid)])
+
+        row = cursor.fetchone()
+        return row[0] == profileid
+
     # get all posts from the database
-    def get_posts(self):
+    # :param limit: maximum number of posts to query, defaults to None
+    # :param offset: offset for posts, defaults to 0
+    def get_posts(self, limit=None, offset=0):
         cursor = self._connection.cursor()
 
         stmtStr = "SELECT postid, authorid, authorname, posttime, posttitle, postcontent, " + \
