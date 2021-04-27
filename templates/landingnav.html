@@ -111,7 +111,8 @@
         
 
         <ul class="nav navbar-nav navbar-right" id="one">
-            <li>
+                {% if bold=='login' %}
+                <li>
                 <a href="about" data-toggle="search">
                     <div class="align-right">
                         <button class="btn btn-warning nav-button" type="submit">
@@ -119,7 +120,27 @@
                         </button>
                     </div>
                 </a>
-            </li>
+                </li>
+                {% else %}
+                <li>
+                <a href="login" data-toggle="search">
+                    <div class="align-right">
+                        <button class="btn button1 nav-button" type="submit">
+                            Home
+                        </button>
+                    </div>
+                </a>
+                </li>
+                <li>
+                <a href="login/redirect" data-toggle="search">
+                    <div class="align-right">
+                        <button class="btn btn-warning nav-button" type="submit">
+                            Login
+                        </button>
+                    </div>
+                </a>
+                </li>
+                {% endif %}
             <!--
             {% if bold == 'tutorial' %}
             <li id='nav-disable'>
