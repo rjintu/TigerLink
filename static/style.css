@@ -1,3 +1,16 @@
+table.dataTable thead .sorting:after,
+table.dataTable thead .sorting:before,
+table.dataTable thead .sorting_asc:after,
+table.dataTable thead .sorting_asc:before,
+table.dataTable thead .sorting_asc_disabled:after,
+table.dataTable thead .sorting_asc_disabled:before,
+table.dataTable thead .sorting_desc:after,
+table.dataTable thead .sorting_desc:before,
+table.dataTable thead .sorting_desc_disabled:after,
+table.dataTable thead .sorting_desc_disabled:before {
+  bottom: 0.5em;
+}
+
 #login-body {
   padding-top: 50px;
   font-family: "IBM Plex Sans";
@@ -18,6 +31,39 @@
 
 #nav-disable {
   border-bottom: 8px solid #ffdc8e;
+}
+
+.clickable-row {
+  transition: transform 0.2s;
+}
+
+.clickable-row:hover {
+  cursor: pointer;
+  transform: scale(1.01);
+  background: #ccc;
+  color: #fff;
+}
+
+.student-row {
+  transition: transform 0.2s;
+}
+
+.student-row:hover {
+  cursor: pointer;
+  transform: scale(1.01);
+  background: #ccc;
+  color: #fff;
+}
+
+.alum-row {
+  transition: transform 0.2s;
+}
+
+.alum-row:hover {
+  cursor: pointer;
+  transform: scale(1.01);
+  background: #ccc;
+  color: #fff;
 }
 
 #sahil {

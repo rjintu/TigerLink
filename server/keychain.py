@@ -7,6 +7,7 @@ class KeyChain:
         self.CLIENT_ID = environ.get('GOOGLE_CLIENT_ID')
         self.CLIENT_SECRET = environ.get('GOOGLE_CLIENT_SECRET')
         self.FLASK_SECRET = environ.get('FLASK_SECRET')
+        self.EMAIL_SECRET = environ.get('EMAIL_SECRET')
         if self.CLIENT_ID is None:
             print('Could not load keys from environment variables')
             print('Loading keys through keys.py...')
@@ -15,6 +16,7 @@ class KeyChain:
                 self.CLIENT_ID = keys.GOOGLE_CLIENT_ID
                 self.CLIENT_SECRET = keys.GOOGLE_CLIENT_SECRET
                 self.FLASK_SECRET = keys.FLASK_SECRET
+                self.EMAIL_SECRET = keys.EMAIL_SECRET
             except Exception as e:
                 print("Error: could not load secret keys!", file=stderr)
                 print("Do you have keys.py in the 'server' folder?", file=stderr)

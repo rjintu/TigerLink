@@ -23,16 +23,22 @@
   crossorigin="anonymous"></script>
 
   <link rel='stylesheet' type='text/css' href='static/style.css'>
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.css">
+  
+  <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.js"></script>
+  
+
 </head>
 
-<body style="background-color: #e8f4f8;">
+<body id="generic-body">
+  {% with bold = "users" %}
   {% include "admin-navbar.html" %}
+  {% endwith %}
 
-  <br>
   <div class="container card bg-light shadow">
   <div class="card-body">
     <h2>All Students</h2>
-    <table class="table table-hover table-responsive">
+    <table class="table table-hover verticalScroll table-sm table-responsive">
       <thead>
         <tr>
           <th scope="col">Name</th>
@@ -59,7 +65,7 @@
   <div class="container card bg-light shadow mb-5">
   <div class="card-body">
     <h2>All Alumni</h2>
-    <table class="table table-hover table-responsive">
+    <table class="table table-hover verticalScroll table-sm table-responsive">
       <thead>
         <tr>
           <th scope="col">Name</th>
@@ -92,6 +98,7 @@
                 <div class="modal-body" id="detailsBody">
                 </div>
                 <div class="modal-footer">
+                    <button id="deleteBtn" class="btn btn-danger">Delete</button>
                     <a href="#" id="closeDetailsBtn" class="btn btn-success d-block">Done</a>
                 </div>
             </div>
@@ -108,14 +115,27 @@
         $('#detailsModal').modal('show');
     }
 
+    let currStudent = "";
+    let currAlum = "";
+
     function setup() {
         $('#closeDetailsBtn').click(function() {
             $('#detailsModal').modal('hide');
         });
 
+        $('.verticalScroll').DataTable({
+            "scrollY": "200px",
+            "scrollCollapse": true,
+            "paging": false
+            });
+        $('.dataTables_length').addClass('bs-select');
+
         $('.student-row').click((e) => {
             let profileid = $(e.target).closest('tr').attr('id');
             let profileidU = encodeURIComponent(profileid);
+
+            currStudent = profileidU;
+            currAlum = "";
 
             let url = "/studentdetails?profileid=" + profileidU;
             if(request != null)
@@ -132,6 +152,9 @@
             let profileid = $(e.target).closest('tr').attr('id');
             let profileidU = encodeURIComponent(profileid);
 
+            currStudent = "";
+            currAlum = profileidU;
+
             let url = "/alumdetails?profileid=" + profileidU;
             if(request != null)
                 request.abort();
@@ -141,6 +164,18 @@
                 url: url,
                 success: handleResponse
             });
+        });
+
+        $('#deleteBtn').click(() => {
+            if(currStudent.length > 0) {
+                $.post("/admin/deletestudent", {profileid: currStudent})
+                    .done(function() { location.reload(); })
+                    .fail(function() { alert('An error occurred.'); });
+            } else {
+                $.post("/admin/deletealum", {profileid: currAlum})
+                    .done(function() { location.reload(); })
+                    .fail(function() { alert('An error occurred.'); });
+            }
         });
     }
 

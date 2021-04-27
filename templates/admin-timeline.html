@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="static/css/pe-icon-7-stroke.css" rel="stylesheet" />
+    <link href="static/css/ct-navbar.css" rel="stylesheet" />
+
+    <!-- Bootstrap CSS and stylesheet -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans">
+    <link rel='stylesheet' type='text/css' href='static/style.css'>
+
+    <!-- Optional JavaScript; choose one of the two! -->
+    <!-- Option 1: Bootstrap Bundle with Popper -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+        crossorigin="anonymous"></script> -->
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+    {% with bold='timeline' %}
+    {% include "admin-navbar.html" %}
+    {% endwith %}
+
+</head>
+
+<style>
+    body {
+        padding-top: 65px;
+    }
+</style>
+
+<body id="generic-body">
+    <!-- postid TEXT, authorname TEXT, authorid TEXT, posttime TEXT, posttitle TEXT, postcontent TEXT, imgurl TEXT, privacy TEXT, communities TEXT -->
+    {% for res in posts: %}
+    <div class="container mt-5 mb-5">
+        <div class="row">
+            <div class="col-md-2 col-12 offset-2" style="display: block; text-align: center;">
+                <table>
+                    <tbody>
+                        <tr style="text-align: center;">
+                            <a target="_blank">
+                                <img src={{res[9]}} style="width: 100%; max-width: 100px;" class="rounded-circle"
+                                    onerror="this.style.display='none'">
+                            </a>
+                            <br>
+                            <h5 style="text-align: center;">{{ res[2] }}</h5>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col" style="display: block;">
+                <div class="card bg-light shadow p-3 mb-5 bg-white rounded w-50">
+                    <img src={{res[6]}} class="card-img-top" onerror="this.style.display='none'">
+                    <div class="card-body">
+                        <div class="card-title h5"> {{res[4]}} </div>
+                        <div class="mb-2 text-muted card-subtitle h6">
+                            {{res[3]}}
+                        </div>
+                        <div class="mb-2 h6">
+                            {{res[5]}}
+                        </div>
+                        <div class="d-flex mt-3">
+                            <button class="btn btn-danger ms-auto deleteBtn" id="{{res[0]}}">X</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% endfor %}
+
+    <script>
+        function setup() {
+            $('.deleteBtn').click((e) => {
+                let postid = $(e.target).attr('id');
+                $.post("/admin/deletepost", {postid: postid})
+                    .done(function() { location.reload(); })
+                    .fail(function() { alert('An error occurred.'); });
+            });
+        }
+
+        $(document).ready(setup);
+    </script>
+</body>
+
+</html>
