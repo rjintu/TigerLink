@@ -130,6 +130,24 @@
         </div>
   </div>
 
+  <div id="warningOneModal" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Please Confirm</h5>
+                </div>
+                <div class="modal-body">
+                  Are you sure you want to delete all matches? This cannot be undone.
+                </div>
+                <div class="modal-footer">
+                    <button id="deleteOneConfirmBtn" class="btn btn-danger d-block">Yes</button>
+                    <a href="/admin/matches" class="btn btn-secondary d-block">No</a>
+                </div>
+            </div>
+        </div>
+  </div>
+
   <div id="detailsModal" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
@@ -292,11 +310,17 @@
         );
 
         $('#deleteMatchBtn').click((e) => {
-            $.post("/admin/deletematch", {studentid: currStudent, alumid: currAlum})
-                .done(function() { location.reload(); })
-                .fail(function() { failureModal.show(); });
+            $('#detailsModal').modal('hide');
+            $('#warningOneModal').modal('show');
         });
 
+        $('#deleteOneConfirmBtn').click((e) => {
+            $.post("/admin/deletematch", {studentid: currStudent, alumid: currAlum})
+                .done(function() { location.reload(); })
+                .fail(function() { failureModal.show(); })
+        });
+
+        // manual matching ---------------------------------------------------------
         $('#manualmatch').click(() => {
             $('#manualModal').modal('show');
             currStudent = "";
