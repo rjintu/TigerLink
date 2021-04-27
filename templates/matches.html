@@ -124,7 +124,7 @@
                 </div>
                 <div class="modal-footer">
                     <button id="deleteConfirmBtn" class="btn btn-danger d-block">Yes</button>
-                    <a href="/admin/matches" class="btn btn-secondary d-block">No</a>
+                    <button id="deleteCancelBtn" class="btn btn-secondary d-block">No</button>
                 </div>
             </div>
         </div>
@@ -142,7 +142,7 @@
                 </div>
                 <div class="modal-footer">
                     <button id="deleteOneConfirmBtn" class="btn btn-danger d-block">Yes</button>
-                    <a href="/admin/matches" class="btn btn-secondary d-block">No</a>
+                    <button id="deleteOneCancelBtn" class="btn btn-secondary d-block">No</button>
                 </div>
             </div>
         </div>
@@ -265,6 +265,10 @@
                 .fail(function() { $('#failureModal').modal('show'); });
         });
 
+        $('#deleteCancelBtn').click(() => {
+            $('#warningModal').modal('hide');
+        });
+
         $('#closeDetailsBtn').click(() => {
             $("#detailsModal").modal('hide');
         });
@@ -302,6 +306,10 @@
             $.post("/admin/deletematch", {studentid: currStudent, alumid: currAlum})
                 .done(function() { location.reload(); })
                 .fail(function() { $('#failureModal').modal('show'); })
+        });
+
+        $('#deleteOneCancelBtn').click((e) => {
+            $('#warningOneModal').modal('hide');
         });
 
         // manual matching ---------------------------------------------------------
