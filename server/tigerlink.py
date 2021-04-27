@@ -247,9 +247,14 @@ def createpost():
 
 @app.route('/deletepost', methods=['POST'])
 def deletepost():
+    postid = request.form['postid']
+    profileid = session['profileid']
+
     db = Database()
     db.connect()
-    db.delete_post(request.form['postid'])
+
+    if db.verify_post_author(postid, profileid):
+        db.delete_post(postid)
     db.disconnect()
 
     response = make_response('success!')
