@@ -1,60 +1,61 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <!-- Required meta tags -->
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <!-- Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans">
+    <link rel="shortcut icon" type="image/png" href="../static/img/favicon.png" />
 
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans">
 
-  <!-- JQuery -->
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans">
 
-  <!-- Option 1: Bootstrap Bundle with Popper -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
-  integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
-  crossorigin="anonymous"></script>
+    <!-- JQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
 
-  <link rel='stylesheet' type='text/css' href='static/style.css'>
-  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.css">
-  
-  <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.js"></script>
-  
+    <!-- Option 1: Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+    crossorigin="anonymous"></script>
 
-  <style>
-    .selected {
-        background: #ffdc8e;
-    }
-  </style>
+    <link rel='stylesheet' type='text/css' href='static/style.css'>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.css">
+    
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.js"></script>
+
+    <style>
+        .selected {
+            background: #ffdc8e;
+        }
+    </style>
 </head>
 
 <body id="generic-body">
-  {% with bold = "matches" %}
-  {% include "admin-navbar.html" %}
-  {% endwith %}
+    {% with bold = "matches" %}
+    {% include "admin-navbar.html" %}
+    {% endwith %}
 
-  <div class="container card bg-light border-light shadow mb-5">
-  <div class="card-body">
-    <h2>Current Matches</h2>
-    <table id="verticalScroll" class="table table-hover table-sm table-responsive">
-      <thead>
-        <tr>
-          <th scope="col">Student Name</th>
-          <th scope="col">Student Year</th>
-          <th scope="col">Alumnus Name</th>
-          <th scope="col">Alumnus Year</th>
-          <th scope="col">Similarity
-              <img data-toggle="popover" src="../static/img/info.png" width="15" height="auto" alt="">
-          </th>
-        </tr>
-      </thead>
-        <tbody>
-            {% for match in matches: %}
+    <div class="container card bg-light border-light shadow mb-5">
+    <div class="card-body">
+        <h2>Current Matches</h2>
+        <table id="verticalScroll" class="table table-hover table-sm table-responsive">
+            <thead>
+                <tr>
+                <th scope="col">Student Name</th>
+                <th scope="col">Student Year</th>
+                <th scope="col">Alumnus Name</th>
+                <th scope="col">Alumnus Year</th>
+                <th scope="col">Similarity
+                    <img data-toggle="popover" src="../static/img/info.png" width="15" height="auto" alt="">
+                </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for match in matches: %}
                     {% if (match|length) > 2 %}
                         <tr class="clickable-row" id='{{match[0]}}' value='{{match[1]}}'>
                         {% for i in range (2, match|length): %}
@@ -68,33 +69,33 @@
                     {% endif %}
                     <per id="details"></per>
                 {% endfor %}
-        </tbody>
-    </table>
+            </tbody>
+        </table>
 
-    <div class="d-flex">
-        <a class="btn btn-primary me-1" id="creatematches" href="#">Automatic Match</a>
-        <button class="btn btn-warning" id="manualmatch">Manual Match</button>
-        <a class="btn btn-danger ms-auto" id="deletematches" href="#">Delete All</a>
+        <div class="d-flex">
+            <a class="btn btn-primary me-1" id="creatematches" href="#">Automatic Match</a>
+            <button class="btn btn-warning" id="manualmatch">Manual Match</button>
+            <a class="btn btn-danger ms-auto" id="deletematches" href="#">Delete All</a>
+        </div>
     </div>
-  </div>
-  </div>
+    </div>
 
-  <div id="successModal" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    <div id="successModal" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-body text-center">
-                  New matches successfully created! Click Continue to see all current matches
-                  between students and alumni.
+                    New matches successfully created! Click Continue to see all current matches
+                    between students and alumni.
                 </div>
                 <div class="modal-footer">
                     <a href="/admin/matches" class="btn btn-primary mx-auto d-block">Continue</a>
                 </div>
             </div>
         </div>
-  </div>
+    </div>
 
-  <div id="failureModal" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    <div id="failureModal" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -102,17 +103,17 @@
                     <h5 class="modal-title text-danger">Error</h5>
                 </div>
                 <div class="modal-body">
-                  Something went wrong when trying to edit matches in the server. Please contact the TigerLink
-                  developers for support.
-                </div>
+                    Something went wrong when trying to edit matches in the server. Please contact the TigerLink
+                    developers for support.
+                    </div>
                 <div class="modal-footer">
                     <a href="/admin/matches" class="btn btn-secondary mx-auto d-block">Continue</a>
                 </div>
             </div>
         </div>
-  </div>
+    </div>
 
-  <div id="warningModal" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    <div id="warningModal" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -120,7 +121,7 @@
                     <h5 class="modal-title">Please Confirm</h5>
                 </div>
                 <div class="modal-body">
-                  Are you sure you want to delete all matches? This cannot be undone.
+                    Are you sure you want to delete all matches? This cannot be undone.
                 </div>
                 <div class="modal-footer">
                     <a href="#" id="deleteConfirmBtn" class="btn btn-danger d-block">Yes</a>
@@ -128,9 +129,9 @@
                 </div>
             </div>
         </div>
-  </div>
+    </div>
 
-  <div id="detailsModal" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    <div id="detailsModal" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -145,9 +146,9 @@
                 </div>
             </div>
         </div>
-  </div>
+    </div>
 
-  <div id="manualModal" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    <div id="manualModal" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -201,9 +202,9 @@
                 </div>
             </div>
         </div>
-  </div>
+    </div>
 
-  <script>
+    <script>
     "use strict";
 
     let request = null;
@@ -221,7 +222,7 @@
                 placement: 'top',
                 trigger: 'hover',
                 title: 'Similarity Score',
-                content: 'The similarity score is a percentage that quantifies the overlap in majors, careers, and organizations between the student and the alumni. It currently assigns an equal weightage to each of these three categories, although the weighting may be adjusted by the admin. Low similarity scores can be attributed to a class imbalance between students and alumni in the database, as well as the matching algorithm\'s philosophy that a weak match is better than no match at all.'
+                content: 'The similarity score is a percentage that quantifies the overlap in majors, careers, and organizations between the student and the alum. It assigns an equal weightage to each of these three categories, although the weighting may be adjusted by the admin. Low similarity scores can be attributed to a class imbalance between students and alumni in the database, as well as the matching algorithm\'s philosophy that a weak match is better than no match at all.'
             });
         
         $('#verticalScroll').DataTable({
@@ -340,6 +341,6 @@
     }
 
     $(document).ready(setup);
-  </script>
+    </script>
 </body>
 </html>
