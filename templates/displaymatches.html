@@ -21,6 +21,12 @@
         integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
         crossorigin="anonymous"></script>
 
+    <link rel='stylesheet' type='text/css' href='static/style.css'>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.css">
+
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.js"></script>
+
+
     {% with bold='matches' %}
     {% include "navbar.html" %}
     {% endwith %}
@@ -41,7 +47,7 @@
     <div class="container">
         <div class="row justify-content-center">
             <!-- col 1 -->
-            {% if (match|length) > 0 %}
+            {% if (matches|length) > 0 %}
             <table class="table table-hover table-responsive">
                 <thead>
                     <tr>
@@ -74,7 +80,7 @@
             <div class="d-flex justify-content-center">
                 <h5>
                     <br>
-                    Your matches will appear here once they are set.
+                    Your matches will appear here on the next matching date (June 1st).
                     <br> <br>
                     We'll email you when they're ready!
                 </h5>
@@ -87,7 +93,7 @@
                 <p id="details"></p>
             </div>
             <div class="d-flex justify-content-center">
-                <button type="submit" id="closeMatch" class="btn btn-success">Done</button>
+                <button type="submit" id="closeMatch" style="display: none" class="btn btn-success">Done</button>
             </div>
 
 
