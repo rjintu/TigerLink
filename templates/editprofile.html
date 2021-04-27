@@ -105,6 +105,7 @@
                         <label for="email"><strong>Email</strong></label>
                         <input type="email" class="form-control" name="email" id="email" aria-describedby="emailHelp"
                             value="{{ info[2] }}" readonly>
+                        <small id="emailHelp" class="form-text text-muted">Your email cannot be changed.</small>
                     </div>
                     <br>
                     <div class="form-group">
@@ -123,12 +124,12 @@
                         {% endwith %}
                     </select>
                     <br>
-                    <div class="form-group">
+                    <!-- <div class="form-group">
                         <label for="zipcode"><strong>Zip Code</strong></label>
                         <input type="tel" minlength="5" maxlength="5" class="form-control" name="zipcode" id="zipcode"
                             aria-describedby="emailHelp" pattern="[0-9]*" value="{{ info[4] }}" required>
                     </div>
-                    <br>
+                    <br> -->
 
                     <strong id="studGroup1">How many alumni would you like to be matched with?</strong>
                     <strong id="alumGroup1">How many students would you like to be matched with?</strong>
