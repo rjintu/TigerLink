@@ -14,7 +14,7 @@ table.dataTable thead .sorting_desc_disabled:before {
 #login-body {
   padding-top: 50px;
   font-family: "IBM Plex Sans";
-  background-color: #ffdc8e;
+  background-color: white;
 }
 
 #index-body {
@@ -64,8 +64,4 @@ table.dataTable thead .sorting_desc_disabled:before {
   transform: scale(1.01);
   background: #ccc;
   color: #fff;
-}
-
-#sahil {
-  /* background-color: #d3d3d3; */
 }
