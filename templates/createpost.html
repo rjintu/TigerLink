@@ -58,8 +58,113 @@
   });
 </script>
 
+<style>
+.wrapper{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 300px;
+  text-align:center;
+  transform: translateX(-50%);
+}
 
-<form action="createpost" method="post">
+.spanner{
+  position:absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  display:block;
+  text-align:center;
+  height: 300px;
+  color: black;
+  transform: translateY(-50%);
+  z-index: 1000;
+  visibility: hidden;
+}
+
+.overlay{
+  position: fixed;
+	width: 100%;
+	height: 100%;
+  visibility: hidden;
+}
+
+.loader,
+.loader:before,
+.loader:after {
+  border-radius: 50%;
+  width: 2.5em;
+  height: 2.5em;
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
+  -webkit-animation: load7 1.8s infinite ease-in-out;
+  animation: load7 1.8s infinite ease-in-out;
+}
+.loader {
+  color: #black;
+  font-size: 10px;
+  margin: 80px auto;
+  position: relative;
+  text-indent: -9999em;
+  -webkit-transform: translateZ(0);
+  -ms-transform: translateZ(0);
+  transform: translateZ(0);
+  -webkit-animation-delay: -0.16s;
+  animation-delay: -0.16s;
+}
+.loader:before,
+.loader:after {
+  content: '';
+  position: absolute;
+  top: 0;
+}
+.loader:before {
+  left: -3.5em;
+  -webkit-animation-delay: -0.32s;
+  animation-delay: -0.32s;
+}
+.loader:after {
+  left: 3.5em;
+}
+@-webkit-keyframes load7 {
+  0%,
+  80%,
+  100% {
+    box-shadow: 0 2.5em 0 -1.3em;
+  }
+  40% {
+    box-shadow: 0 2.5em 0 0;
+  }
+}
+@keyframes load7 {
+  0%,
+  80%,
+  100% {
+    box-shadow: 0 2.5em 0 -1.3em;
+  }
+  40% {
+    box-shadow: 0 2.5em 0 0;
+  }
+}
+
+.show{
+  visibility: visible;
+}
+
+.spanner, .overlay{
+	opacity: 0;
+	-webkit-transition: all 0.3s;
+	-moz-transition: all 0.3s;
+	transition: all 0.3s;
+}
+
+.spanner.show, .overlay.show {
+	opacity: 1
+}
+</style>
+
+
+<form id="post-form">
 
   <body id="generic-body">
     <br>
@@ -121,14 +226,9 @@
             <br>
             Upload an Image:
             <label class="file-upload-container" for="file-upload">
-              <input id="file-upload" type="file" style="background-color: gray;">
+              <input id="file-upload" type="file" accept='image/*' style="background-color: gray;">
             </label>
           </div>
-
-          <div id="loading">
-            <img id="loading-image" style="display: none" src="../giphy.gif" alt="Loading..." />
-          </div>
-
 
           <input id="imgurl" name="imgurl" type="hidden" value="google.com">
         </div>
@@ -136,10 +236,6 @@
     </div>
     </div>
   </body>
-
-  <!-- Scripts -->
-  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-
   <body>
     <br>
     <div class="container">
@@ -150,50 +246,58 @@
       </div>
     </div>
   </body>
+
+
+
+  <!-- Scripts -->
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 </form>
-
-
-<!-- <script src="https://widget.cloudinary.com/v2.0/global/all.js" type="text/javascript"></script>  
-
-<script type="text/javascript">  
-var myWidget = cloudinary.createUploadWidget({
-  cloudName: 'tigerlink', 
-  uploadPreset: 'my_preset'}, (error, result) => { 
-    if (!error && result && result.event === "success") { 
-      console.log('Done! Here is the image info: ', result.info); 
-    }
-  }
-) -->
+<div class="overlay"></div>
+<div class="spanner">
+  <div class="loader"></div>
+  <p>Uploading your post!</p>
+</div>
 
 <script>
 
   const CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/tigerlink/upload';
   const CLOUDINARY_UPLOAD_PRESET = 'uxt9emhu';
 
-  var fileUpload = document.getElementById('file-upload');
-  fileUpload.addEventListener('change', function (event) {
-    var file = event.target.files[0];
-    var formData = new FormData();
-    formData.append('file', file);
-    formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
-    console.log("hello world");
-    document.getElementById('loading').style.display = 'block';
-    axios({
-      url: CLOUDINARY_URL,
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-      },
-      data: formData
-    }).then(function (res) {
-      document.getElementById('loading').style.display = 'none';
-      // $('#loading').hide();
+  let form  = document.getElementById('post-form');
 
-      document.getElementById('imgurl').value = res.data.secure_url;
-    }).catch(function (err) {
-      document.getElementById('loading').style.display = 'none';
-      console.error(err);
-    });
+  // action="createpost" method="post"
+  form.action = 'createpost';
+  form.method = 'post';
+
+  form.addEventListener('submit', (event) => {
+    // handle the form data
+    event.preventDefault();
+    $("div.spanner").addClass("show");
+    $("div.overlay").addClass("show");
+
+    var fileUpload = document.getElementById('file-upload');
+    if (fileUpload.files.length == 0) {
+      HTMLFormElement.prototype.submit.call(form);
+    }
+    else {
+      var file = fileUpload.files[0];
+      var formData = new FormData();
+      formData.append('file', file);
+      formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+      axios({
+        url: CLOUDINARY_URL,
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        data: formData
+      }).then(function (res) {
+        document.getElementById('imgurl').value = res.data.secure_url;
+        HTMLFormElement.prototype.submit.call(form);
+      }).catch(function (err) { 
+        console.error(err);
+      });
+    }
   });
 
 
