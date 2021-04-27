@@ -34,38 +34,14 @@ table.dataTable thead .sorting_desc_disabled:before {
 }
 
 .clickable-row {
-  transition: transform 0.2s;
+  transition: transform 0s;
 }
 
 .clickable-row:hover {
   cursor: pointer;
-  transform: scale(1.01);
-  background: #ccc;
-  color: #fff;
+  transform: scaleY(1.01);
+  background: #eff;
+  color: #fff; 
+  box-shadow: 0px 10px 10px 0px rgba(0,0,0,0.15)!important;
 }
 
-.student-row {
-  transition: transform 0.2s;
-}
-
-.student-row:hover {
-  cursor: pointer;
-  transform: scale(1.01);
-  background: #ccc;
-  color: #fff;
-}
-
-.alum-row {
-  transition: transform 0.2s;
-}
-
-.alum-row:hover {
-  cursor: pointer;
-  transform: scale(1.01);
-  background: #ccc;
-  color: #fff;
-}
-
-#sahil {
-  /* background-color: #d3d3d3; */
-}

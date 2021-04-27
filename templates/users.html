@@ -49,7 +49,7 @@
       </thead>
         <tbody>
             {% for student in students %}
-                <tr class="student-row" id="{{ student[0] }}">
+                <tr class="clickable-row student-row" id="{{ student[0] }}">
                   <td>{{ student[1] }} </td>
                   <td>{{ student[2] }} </td>
                   <td>{{ student[3] }} </td>
@@ -76,7 +76,7 @@
       </thead>
         <tbody>
             {% for alum in alumni %}
-                <tr class="alum-row" id="{{ alum[0] }}">
+                <tr class="clickable-row alum-row" id="{{ alum[0] }}">
                     <td>{{ alum[1] }} </td>
                     <td>{{ alum[2] }} </td>
                     <td>{{ alum[3] }} </td>
