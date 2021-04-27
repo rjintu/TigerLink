@@ -58,6 +58,15 @@ def login():
     response = make_response(html)
     return response
 
+@app.route('/about', methods=['GET'])
+def about():
+    if loginutil.is_logged_in(session):
+        # no need to be here
+        return redirect('/index')
+    html = render_template('about.html')
+    response = make_response(html)
+    return response
+
 # Note: when testing locally, must use port 8888 for Google SSO
 
 
