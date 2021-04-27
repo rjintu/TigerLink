@@ -123,7 +123,7 @@
                   Are you sure you want to delete all matches? This cannot be undone.
                 </div>
                 <div class="modal-footer">
-                    <a href="#" id="deleteConfirmBtn" class="btn btn-danger d-block">Yes</a>
+                    <button id="deleteConfirmBtn" class="btn btn-danger d-block">Yes</button>
                     <a href="/admin/matches" class="btn btn-secondary d-block">No</a>
                 </div>
             </div>
@@ -249,23 +249,23 @@
             });
         $('.dataTables_length').addClass('bs-select');
 
-        $('#creatematches').click(function() {
+        $('#creatematches').click(() => {
             $.post("/admin/creatematches")
                 .done(function() { $('#successModal').modal('show'); })
                 .fail(function() { $('#failureModal').modal('show'); });
         });
 
-        $('#deletematches').click(function() {
+        $('#deletematches').click(() => {
             $('#warningModal').modal('show');
         });
 
-        $('#deleteConfirmBtn').click(function() {
+        $('#deleteConfirmBtn').click(() => {
             $.post("/admin/deletematches")
                 .done(function() { location.reload(); })
                 .fail(function() { $('#failureModal').modal('show'); });
         });
 
-        $('#closeDetailsBtn').click(function() {
+        $('#closeDetailsBtn').click(() => {
             $("#detailsModal").modal('hide');
         });
 
