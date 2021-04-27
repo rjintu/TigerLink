@@ -575,6 +575,16 @@ class Database:
         cursor.close()
         return output
 
+    # returns approximate number of posts in database (based on postid max)
+    def get_num_posts(self):
+        cursor = self._connection.cursor()
+
+        countStr = "SELECT MAX(postid) FROM posts "
+        cursor.execute(countStr)
+        res = cursor.fetchone()[0]
+
+        return res
+
     # get all posts from the database
     # TODO: params
     def get_posts(self, limit=None, offset=0):
@@ -584,7 +594,7 @@ class Database:
                   "imgurl, privacy, communities, propic FROM posts "
 
         if limit:
-            stmtStr += "ORDER BY postid ASC OFFSET %s LIMIT %s"
+            stmtStr += "ORDER BY postid DESC OFFSET %s LIMIT %s"
             cursor.execute(stmtStr, [str(offset), str(limit)])
         else:
             cursor.execute(stmtStr)
