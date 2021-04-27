@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <!-- Required meta tags -->
   <meta charset="utf-8">
@@ -21,14 +22,15 @@
 
   <!-- Option 1: Bootstrap Bundle with Popper -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
-  integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
-  crossorigin="anonymous"></script>
+    integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+    crossorigin="anonymous"></script>
 
   <link rel='stylesheet' type='text/css' href='static/style.css'>
   <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.css">
-  
-  <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.js"></script>
-  
+
+  <script type="text/javascript" charset="utf8"
+    src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.js"></script>
+
 
 </head>
 
@@ -38,73 +40,73 @@
   {% endwith %}
 
   <div class="container card bg-light shadow">
-  <div class="card-body">
-    <h2>All Students</h2>
-    <table class="table table-hover verticalScroll table-sm table-responsive">
-      <thead>
-        <tr>
-          <th scope="col">Name</th>
-          <th scope="col">Class Year</th>
-          <th scope="col">Email</th>
-          <th scope="col">Major</th>
-        </tr>
-      </thead>
+    <div class="card-body">
+      <h2>All Students</h2>
+      <table class="table table-hover verticalScroll table-sm table-responsive">
+        <thead>
+          <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Class Year</th>
+            <th scope="col">Email</th>
+            <th scope="col">Major</th>
+          </tr>
+        </thead>
         <tbody>
-            {% for student in students %}
-                <tr class="clickable-row student-row" id="{{ student[0] }}">
-                  <td>{{ student[1] }} </td>
-                  <td>{{ student[2] }} </td>
-                  <td>{{ student[3] }} </td>
-                  <td>{{ student[4] }} </td>
-                </tr>
-            {% endfor %}
+          {% for student in students %}
+          <tr class="clickable-row student-row" id="{{ student[0] }}">
+            <td>{{ student[1] }} </td>
+            <td>{{ student[2] }} </td>
+            <td>{{ student[3] }} </td>
+            <td>{{ student[4] }} </td>
+          </tr>
+          {% endfor %}
         </tbody>
-    </table>
-  </div>
+      </table>
+    </div>
   </div>
   <br>
 
   <div class="container card bg-light shadow mb-5">
-  <div class="card-body">
-    <h2>All Alumni</h2>
-    <table class="table table-hover verticalScroll table-sm table-responsive">
-      <thead>
-        <tr>
-          <th scope="col">Name</th>
-          <th scope="col">Class Year</th>
-          <th scope="col">Email</th>
-          <th scope="col">Major</th>
-        </tr>
-      </thead>
+    <div class="card-body">
+      <h2>All Alumni</h2>
+      <table class="table table-hover verticalScroll table-sm table-responsive">
+        <thead>
+          <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Class Year</th>
+            <th scope="col">Email</th>
+            <th scope="col">Major</th>
+          </tr>
+        </thead>
         <tbody>
-            {% for alum in alumni %}
-                <tr class="clickable-row alum-row" id="{{ alum[0] }}">
-                    <td>{{ alum[1] }} </td>
-                    <td>{{ alum[2] }} </td>
-                    <td>{{ alum[3] }} </td>
-                    <td>{{ alum[4] }} </td>
-                </tr>
-            {% endfor %}
+          {% for alum in alumni %}
+          <tr class="clickable-row alum-row" id="{{ alum[0] }}">
+            <td>{{ alum[1] }} </td>
+            <td>{{ alum[2] }} </td>
+            <td>{{ alum[3] }} </td>
+            <td>{{ alum[4] }} </td>
+          </tr>
+          {% endfor %}
         </tbody>
-    </table>
-  </div>
+      </table>
+    </div>
   </div>
 
   <div id="detailsModal" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-        aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">User Details</h5>
-                </div>
-                <div class="modal-body" id="detailsBody">
-                </div>
-                <div class="modal-footer">
-                    <button id="deleteBtn" class="btn btn-danger">Delete</button>
-                    <a href="#" id="closeDetailsBtn" class="btn btn-success d-block">Done</a>
-                </div>
-            </div>
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">User Details</h5>
         </div>
+        <div class="modal-body" id="detailsBody">
+        </div>
+        <div class="modal-footer">
+          <button id="deleteBtn" class="btn btn-danger">Delete</button>
+          <a href="#" id="closeDetailsBtn" class="btn btn-success d-block">Done</a>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script>
@@ -113,75 +115,77 @@
     let request = null;
 
     function handleResponse(response) {
-        $('#detailsBody').html(response);
-        $('#detailsModal').modal('show');
+      $('#detailsBody').html(response);
+      $('#detailsModal').modal('show');
     }
 
     let currStudent = "";
     let currAlum = "";
 
     function setup() {
-        $('#closeDetailsBtn').click(function() {
-            $('#detailsModal').modal('hide');
+      $('#closeDetailsBtn').click(function () {
+        $('#detailsModal').modal('hide');
+      });
+
+      $('.verticalScroll').DataTable({
+        "scrollY": "200px",
+        "scrollCollapse": true,
+        "paging": false,
+        "pageLength": 10
+      });
+      $('.dataTables_length').addClass('bs-select');
+
+      $('.student-row').click((e) => {
+        let profileid = $(e.target).closest('tr').attr('id');
+        let profileidU = encodeURIComponent(profileid);
+
+        currStudent = profileidU;
+        currAlum = "";
+
+        let url = "/studentdetails?profileid=" + profileidU;
+        if (request != null)
+          request.abort();
+
+        request = $.ajax({
+          type: 'GET',
+          url: url,
+          success: handleResponse
         });
+      });
 
-        $('.verticalScroll').DataTable({
-            "scrollY": "200px",
-            "scrollCollapse": true,
-            "paging": false
-            });
-        $('.dataTables_length').addClass('bs-select');
+      $('.alum-row').click((e) => {
+        let profileid = $(e.target).closest('tr').attr('id');
+        let profileidU = encodeURIComponent(profileid);
 
-        $('.student-row').click((e) => {
-            let profileid = $(e.target).closest('tr').attr('id');
-            let profileidU = encodeURIComponent(profileid);
+        currStudent = "";
+        currAlum = profileidU;
 
-            currStudent = profileidU;
-            currAlum = "";
+        let url = "/alumdetails?profileid=" + profileidU;
+        if (request != null)
+          request.abort();
 
-            let url = "/studentdetails?profileid=" + profileidU;
-            if(request != null)
-                request.abort();
-
-            request = $.ajax({
-                type: 'GET',
-                url: url,
-                success: handleResponse
-            });
+        request = $.ajax({
+          type: 'GET',
+          url: url,
+          success: handleResponse
         });
+      });
 
-        $('.alum-row').click((e) => {
-            let profileid = $(e.target).closest('tr').attr('id');
-            let profileidU = encodeURIComponent(profileid);
-
-            currStudent = "";
-            currAlum = profileidU;
-
-            let url = "/alumdetails?profileid=" + profileidU;
-            if(request != null)
-                request.abort();
-
-            request = $.ajax({
-                type: 'GET',
-                url: url,
-                success: handleResponse
-            });
-        });
-
-        $('#deleteBtn').click(() => {
-            if(currStudent.length > 0) {
-                $.post("/admin/deletestudent", {profileid: currStudent})
-                    .done(function() { location.reload(); })
-                    .fail(function() { alert('An error occurred.'); });
-            } else {
-                $.post("/admin/deletealum", {profileid: currAlum})
-                    .done(function() { location.reload(); })
-                    .fail(function() { alert('An error occurred.'); });
-            }
-        });
+      $('#deleteBtn').click(() => {
+        if (currStudent.length > 0) {
+          $.post("/admin/deletestudent", { profileid: currStudent })
+            .done(function () { location.reload(); })
+            .fail(function () { alert('An error occurred.'); });
+        } else {
+          $.post("/admin/deletealum", { profileid: currAlum })
+            .done(function () { location.reload(); })
+            .fail(function () { alert('An error occurred.'); });
+        }
+      });
     }
 
     $(document).ready(setup);
   </script>
 </body>
+
 </html>
