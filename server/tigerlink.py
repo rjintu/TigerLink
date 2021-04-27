@@ -699,11 +699,15 @@ def timeline():
         for i in range(0, len(interests)):
             interests[i] = interests[i][0]
 
-    print(request.args)
     offset = request.args.get('offset', 0)
-    print('offset ' + str(offset))
+    if int(offset) < 0:
+        return redirect('/timeline')
+    
+    max_posts = db.get_num_posts()
+    if int(offset) > max_posts:
+        return redirect(f'/timeline?offset={max_posts}')
+
     posts = []
-    print('got to posts')
     output = db.get_posts(5, offset)
 
     time_offset = int(request.args.get('time_offset', 240)) # FIXME: need to pass in user time zone from JS (right now offset doesn't exist)
