@@ -247,9 +247,14 @@ def createpost():
 
 @app.route('/deletepost', methods=['POST'])
 def deletepost():
+    postid = request.form['postid']
+    profileid = session['profileid']
+
     db = Database()
     db.connect()
-    db.delete_post(request.form['postid'])
+
+    if db.verify_post_author(postid, profileid):
+        db.delete_post(postid)
     db.disconnect()
 
     response = make_response('success!')
@@ -304,6 +309,7 @@ def studentdetails():
                                careers=careers, interests=interests)
         return make_response(html)
     except Exception as e:
+        print(e)
         return make_response("An error occurred. Please try again later.")
 
 
@@ -329,6 +335,7 @@ def alumdetails():
                                careers=careers, interests=interests)
         return make_response(html)
     except Exception as e:
+        print(e)
         return make_response("An error occurred. Please try again later.")
 
 
@@ -374,6 +381,7 @@ def genericdetails():
             return make_response(html)
 
     except Exception as e:
+        print(e)
         return make_response("An error occurred. Please try again later.")
 
 
@@ -431,9 +439,9 @@ def matchdetails():
 
     html += "<thead>"
     html += "<tr>\
-                    <td style='width: 20%'><strong>MATCH INFO</strong></td>\
-                    <td style='width: 40%'><strong>Student Info</strong></td>\
-                    <td style='width: 40%'><strong>Alum Info</strong></td>\
+                    <td style='width: 20%'><strong></strong></td>\
+                    <td style='width: 40%'><strong>Student</strong></td>\
+                    <td style='width: 40%'><strong>Alum</strong></td>\
                 </tr>"
     html += "</thead>"
     html += "<tbody>"
@@ -449,14 +457,14 @@ def matchdetails():
             html += "<td><strong>Email:</strong></td>"
         elif i == 3:
             html += "<td><strong>Major:</strong></td>"
-        elif i == 4:
-            html += "<td><strong>Zip Code:</strong></td>"
+        # elif i == 4:
+        #     html += "<td><strong>Zip Code:</strong></td>"
         elif i == 5:
             html += "<td><strong>Careers:</strong></td>"
         elif i == 6:
-            html += "<td><strong>Groups:</strong></td>"
+            html += "<td><strong>Communities:</strong></td>"
 
-        if (i <= 4):
+        if (i <= 3):
             if i == 3 and majorSame:
                 html += '<td><strong>' + student_info[i] + '</strong></td>'
                 html += '<td><strong>' + alum_info[i] + '</strong></td>'
@@ -507,10 +515,6 @@ def matchdetails():
     html += "</tbody>"
     html += "</table>"
 
-    # html = render_template('displaymatches.html', student_info=student_info,
-    #                      student_careers=student_careers, student_interests=student_interests,
-    #                     alum_info=alum_info, alum_careers=alum_careers, alum_interests=alum_interests)
-    # TODO: incorporate careers/interests
     response = make_response(html)
     return response
 
@@ -545,7 +549,7 @@ def getprofile():
         print(careers)
         print(interests)
         html = render_template('editprofile.html', info=info,
-                               careers=careers, interests=interests, picture=session['picture'], role=role, is_admin=is_admin)
+                            careers=careers, interests=interests, picture=session['picture'], role=role, is_admin=is_admin)
 
     except Exception as e:
         html = "error occurred: " + str(e)
@@ -555,8 +559,6 @@ def getprofile():
     return response
 
 # method to fix formatting of returned lists
-
-
 def fix_list_format(thisList):
     for i in range(len(thisList)):
         thisList[i] = thisList[i][0]
@@ -610,9 +612,6 @@ def changeprofile():
     return redirect('editprofile')
 
 # Note: search will automatically query both students and alumni
-# TODO: implement this page in the frontend
-
-
 @app.route('/search', methods=['GET'])
 def search():
     if not loginutil.is_logged_in(session):
