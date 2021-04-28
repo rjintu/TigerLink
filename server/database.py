@@ -1,6 +1,7 @@
 from os import environ
 from psycopg2 import connect
 from .post import Post
+from .action import emailUser, confirmDeletion, emailAlumMatch, emailStudentMatch
 import os
 from sys import stderr
 
@@ -231,7 +232,7 @@ class Database:
         cursor = self._connection.cursor()
         cursor.execute('SELECT name, classyear, email, major, zip, ' +
                     'nummatch, propic FROM students WHERE profileid=%s', [profileid])
-        info = cursor.fetchone()
+        info = cursor.fetchone() # info = [name, classyear, email, major zip, nummatch, propic]
 
         # getting this user's career interests
         cursor.execute(
@@ -459,6 +460,12 @@ class Database:
         self._connection.commit()
         cursor.close()
 
+    def fix_list_format(self, thisList):
+        for i in range(len(thisList)):
+            thisList[i] = thisList[i][0]
+        return thisList
+
+
     # helper method to determine if a user's list of careers has any overlap with search query careers
     # if no careers specified (i.e. empty list) or there is overlap, returns True. Otherwise returns False
     # :param cursor: database cursor
@@ -579,14 +586,27 @@ class Database:
     def get_num_posts(self):
         cursor = self._connection.cursor()
 
-        countStr = "SELECT MAX(postid) FROM posts "
-        cursor.execute(countStr)
-        res = cursor.fetchone()[0]
+        stmtStr = "SELECT MAX(postid) FROM posts "
+        cursor.execute(stmtStr)
+        num_posts = cursor.fetchone()[0]
 
-        return res
+        return num_posts
+
+    # verify that the post author matches the given profileid. Return True if this is the case, False otherwise.
+    # :param postid: unique id of post
+    # :param profileid: unique id of user
+    def verify_post_author(self, postid, profileid):
+        cursor = self._connection.cursor()
+
+        stmtStr = "SELECT authorid from posts WHERE postid = %s"
+        cursor.execute(stmtStr, [str(postid)])
+
+        row = cursor.fetchone()
+        return row[0] == profileid
 
     # get all posts from the database
-    # TODO: params
+    # :param limit: maximum number of posts to query, defaults to None
+    # :param offset: offset for posts, defaults to 0
     def get_posts(self, limit=None, offset=0):
         cursor = self._connection.cursor()
 
@@ -654,6 +674,20 @@ class Database:
             alumid = match[1]
             similarity = match[6]
             cursor.execute('INSERT INTO matches(studentid, alumid, similarity) VALUES (%s, %s, %s)', [studentid, alumid, similarity])
+            # student_address, student_name, alum_address, alum_name, student_class_year, student_interests, student_career_interests
+            # student_address, student_name, alum_address, alum_name, alum_classyear, alum_interests, alum_career_interests
+            alum, alum_careers, alum_interests = self.get_alum_by_id(alumid)
+            stud, stud_careers, stud_interests = self.get_student_by_id(studentid)
+
+            # alum_careers = self.fix_list_format(alum_careers)
+            stud_careers = self.fix_list_format(stud_careers)
+
+            # print(alum_interests)
+            # print(stud_interests)
+
+            # info = [name, classyear, email, major zip, nummatch, propic]
+            emailAlumMatch(stud[2], stud[0], alum[2], alum[0], stud[1], stud_interests, stud_careers)
+            emailStudentMatch(stud[2], stud[0], alum[2], alum[0], alum[1], alum_interests, alum_careers)
         self._connection.commit()
         cursor.close()
 

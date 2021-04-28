@@ -17,10 +17,10 @@
         <td><strong>Major:</strong></td>
         <td>{{ student[3] }}</td>
     </tr>
-    <tr>
-        <td><strong>ZIP Code:</strong></td>
+    <!-- <tr>
+        <td><strong>Zip Code:</strong></td>
         <td>{{ student[4] }}</td>
-    </tr>
+    </tr> -->
     <tr>
         <td><strong>Number of Matches:</strong></td>
         <td>{{ student[5] }}</td>
@@ -35,7 +35,7 @@
         </td>
     </tr>
     <tr>
-        <td><strong>Student Groups:</strong></td>
+        <td><strong>Communities:</strong></td>
         <td>
             {% for interest in range(interests|length -1) %}
                 {{ interests[interest] }},
