@@ -1,100 +1,103 @@
 <!doctype html>
 <html lang="en">
+
 <head>
-  <!-- Required meta tags -->
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <!-- Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans">
+    <link rel="shortcut icon" type="image/png" href="../static/img/favicon.png" />
 
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans">
 
-  <!-- JQuery -->
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans">
 
-  <!-- Option 1: Bootstrap Bundle with Popper -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
-  integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
-  crossorigin="anonymous"></script>
+    <!-- JQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
 
-  <link rel='stylesheet' type='text/css' href='static/style.css'>
-  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.css">
-  
-  <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.js"></script>
-  
+    <!-- Option 1: Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+        crossorigin="anonymous"></script>
 
-  <style>
-    .selected {
-        background: #ffdc8e;
-    }
-  </style>
+    <link rel='stylesheet' type='text/css' href='static/style.css'>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.css">
+
+    <script type="text/javascript" charset="utf8"
+        src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.js"></script>
+
+    <style>
+        .selected {
+            background: #ffdc8e;
+        }
+    </style>
 </head>
 
 <body id="generic-body">
-  {% with bold = "matches" %}
-  {% include "admin-navbar.html" %}
-  {% endwith %}
+    {% with bold = "matches" %}
+    {% include "admin-navbar.html" %}
+    {% endwith %}
 
-  <div class="container card bg-light border-light shadow mb-5">
-  <div class="card-body">
-    <h2>Current Matches</h2>
-    <table id="verticalScroll" class="table table-hover table-sm table-responsive">
-      <thead>
-        <tr>
-          <th scope="col">Student Name</th>
-          <th scope="col">Student Year</th>
-          <th scope="col">Alumnus Name</th>
-          <th scope="col">Alumnus Year</th>
-          <th scope="col">Similarity
-              <img data-toggle="popover" src="../static/img/info.png" width="15" height="auto" alt="">
-          </th>
-        </tr>
-      </thead>
-        <tbody>
-            {% for match in matches: %}
+    <div class="container card bg-light border-light shadow mb-5">
+        <div class="card-body">
+            <h2>Current Matches</h2>
+            <table id="verticalScroll" class="table table-hover table-sm table-responsive">
+                <thead>
+                    <tr>
+                        <th scope="col">Student Name</th>
+                        <th scope="col">Student Year</th>
+                        <th scope="col">Alumnus Name</th>
+                        <th scope="col">Alumnus Year</th>
+                        <th scope="col">Similarity
+                            <img data-toggle="popover" src="../static/img/info.png" width="15" height="auto" alt="">
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for match in matches: %}
                     {% if (match|length) > 2 %}
-                        <tr class="clickable-row" id='{{match[0]}}' value='{{match[1]}}'>
+                    <tr class="clickable-row" id='{{match[0]}}' value='{{match[1]}}'>
                         {% for i in range (2, match|length): %}
-                            {% if (i == 6) %}
-                            <td>{{ match[i] }}%</td>
-                            {% else %}
-                            <td>{{ match[i] }}</td>
-                            {% endif %}
+                        {% if (i == 6) %}
+                        <td>{{ match[i] }}%</td>
+                        {% else %}
+                        <td>{{ match[i] }}</td>
+                        {% endif %}
                         {% endfor %}
-                        </tr>
+                    </tr>
                     {% endif %}
                     <per id="details"></per>
-                {% endfor %}
-        </tbody>
-    </table>
+                    {% endfor %}
+                </tbody>
+            </table>
 
-    <div class="d-flex">
-        <a class="btn btn-primary me-1" id="creatematches" href="#">Automatic Match</a>
-        <button class="btn btn-warning" id="manualmatch">Manual Match</button>
-        <a class="btn btn-danger ms-auto" id="deletematches" href="#">Delete All</a>
+            <div class="d-flex">
+                <button class="btn btn-primary me-1" id="creatematches">Automatic Match</button>
+                <button class="btn btn-warning" id="manualmatch">Manual Match</button>
+                <button class="btn btn-danger ms-auto" id="deletematches">Delete All</button>
+            </div>
+        </div>
     </div>
-  </div>
-  </div>
 
-  <div id="successModal" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    <div id="successModal" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-body text-center">
-                  New matches successfully created! Click Continue to see all current matches
-                  between students and alumni.
+                    New matches successfully created! Click Continue to see all current matches
+                    between students and alumni.
                 </div>
                 <div class="modal-footer">
                     <a href="/admin/matches" class="btn btn-primary mx-auto d-block">Continue</a>
                 </div>
             </div>
         </div>
-  </div>
+    </div>
 
-  <div id="failureModal" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    <div id="failureModal" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -102,17 +105,17 @@
                     <h5 class="modal-title text-danger">Error</h5>
                 </div>
                 <div class="modal-body">
-                  Something went wrong when trying to edit matches in the server. Please contact the TigerLink
-                  developers for support.
+                    Something went wrong when trying to edit matches in the server. Please contact the TigerLink
+                    developers for support.
                 </div>
                 <div class="modal-footer">
                     <a href="/admin/matches" class="btn btn-secondary mx-auto d-block">Continue</a>
                 </div>
             </div>
         </div>
-  </div>
+    </div>
 
-  <div id="warningModal" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    <div id="warningModal" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -120,17 +123,35 @@
                     <h5 class="modal-title">Please Confirm</h5>
                 </div>
                 <div class="modal-body">
-                  Are you sure you want to delete all matches? This cannot be undone.
+                    Are you sure you want to delete all matches? This cannot be undone.
                 </div>
                 <div class="modal-footer">
-                    <a href="#" id="deleteConfirmBtn" class="btn btn-danger d-block">Yes</a>
-                    <a href="/admin/matches" class="btn btn-secondary d-block">No</a>
+                    <button id="deleteConfirmBtn" class="btn btn-danger d-block">Yes</button>
+                    <button id="deleteCancelBtn" class="btn btn-secondary d-block">No</button>
                 </div>
             </div>
         </div>
-  </div>
+    </div>
 
-  <div id="detailsModal" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    <div id="warningOneModal" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Please Confirm</h5>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to delete this match? This cannot be undone.
+                </div>
+                <div class="modal-footer">
+                    <button id="deleteOneConfirmBtn" class="btn btn-danger d-block">Yes</button>
+                    <button id="deleteOneCancelBtn" class="btn btn-secondary d-block">No</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="detailsModal" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -145,9 +166,9 @@
                 </div>
             </div>
         </div>
-  </div>
+    </div>
 
-  <div id="manualModal" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    <div id="manualModal" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -156,43 +177,43 @@
                 </div>
                 <div class="modal-body" id="manualBody">
                     <div style="max-height: 250px; overflow-y: scroll;">
-                    <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th style="width: 50%">Student</th>
-                            <th>Matches</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for student in students %}
-                        <tr class="manual-student" id="{{ student[0] }}">
-                            <td>{{ student[1] }}</td>
-                            <td>{{ student[8] }} / {{ student[6] }}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                    </table>
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th style="width: 50%">Student</th>
+                                    <th>Matches</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for student in students %}
+                                <tr class="manual-student" id="{{ student[0] }}">
+                                    <td>{{ student[1] }}</td>
+                                    <td>{{ student[8] }} / {{ student[6] }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
                     </div>
 
                     <p class="text-center"><strong>Match With:</strong></p>
 
                     <div style="max-height: 250px; overflow-y: scroll;">
-                    <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th style="width: 50%">Alumnus</th>
-                            <th>Matches</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for alum in alumni %}
-                        <tr class="manual-alum" id="{{ alum[0] }}">
-                            <td>{{ alum[1] }}</td>
-                            <td>{{ alum[8] }} / {{ alum[6] }}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                    </table>
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th style="width: 50%">Alumnus</th>
+                                    <th>Matches</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for alum in alumni %}
+                                <tr class="manual-alum" id="{{ alum[0] }}">
+                                    <td>{{ alum[1] }}</td>
+                                    <td>{{ alum[8] }} / {{ alum[6] }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -201,145 +222,145 @@
                 </div>
             </div>
         </div>
-  </div>
+    </div>
 
-  <script>
-    "use strict";
+    <script>
+        "use strict";
 
-    let request = null;
+        let request = null;
 
-    function handleResponse(response) {
-        $('#detailsBody').html(response);
-        $("#detailsModal").modal('show');
-    }
+        function handleResponse(response) {
+            $('#detailsBody').html(response);
+            $("#detailsModal").modal('show');
+        }
 
-    let currStudent = "";
-    let currAlum = "";
+        let currStudent = "";
+        let currAlum = "";
 
-    function setup() {
-        $('[data-toggle="popover"]').popover({
+        function setup() {
+            $('[data-toggle="popover"]').popover({
                 placement: 'top',
                 trigger: 'hover',
                 title: 'Similarity Score',
-                content: 'The similarity score is a percentage that quantifies the overlap in majors, careers, and organizations between the student and the alumni. It currently assigns an equal weightage to each of these three categories, although the weighting may be adjusted by the admin. Low similarity scores can be attributed to a class imbalance between students and alumni in the database, as well as the matching algorithm\'s philosophy that a weak match is better than no match at all.'
+                content: 'The similarity score is a percentage that quantifies the overlap in majors, careers, and organizations between the student and the alum. It assigns an equal weightage to each of these three categories, although the weighting may be adjusted by the admin. Low similarity scores can be attributed to a class imbalance between students and alumni in the database, as well as the matching algorithm\'s philosophy that a weak match is better than no match at all.'
             });
-        
-        $('#verticalScroll').DataTable({
-            "scrollY": "200px",
-            "scrollCollapse": true,
-            "paging": false
+
+            $('#verticalScroll').DataTable({
+                "scrollY": "400px",
+                "scrollCollapse": true,
+                "paging": false,
+                "pageLength": 10
             });
-        $('.dataTables_length').addClass('bs-select');
+            $('.dataTables_length').addClass('bs-select');
 
-        let successModal = new bootstrap.Modal(document.getElementById('successModal'), {
-            keyboard: false
-        });
+            $('#creatematches').click(() => {
+                $.post("/admin/creatematches")
+                    .done(function () { $('#successModal').modal('show'); })
+                    .fail(function () { $('#failureModal').modal('show'); });
+            });
 
-		let failureModal = new bootstrap.Modal(document.getElementById('failureModal'), {
-			keyboard: false
-		});
+            $('#deletematches').click(() => {
+                $('#warningModal').modal('show');
+            });
 
-        let warningModal = new bootstrap.Modal(document.getElementById('warningModal'), {
-            keyboard: false
-        });
+            $('#deleteConfirmBtn').click(() => {
+                $.post("/admin/deletematches")
+                    .done(function () { location.reload(); })
+                    .fail(function () { $('#failureModal').modal('show'); });
+            });
 
-        let createBtn = document.getElementById("creatematches");
-        createBtn.onclick = function() {
-            $.post("/admin/creatematches")
-                .done(function() { successModal.show(); })
-                .fail(function() { failureModal.show(); });
-        };
+            $('#deleteCancelBtn').click(() => {
+                $('#warningModal').modal('hide');
+            });
 
-        let deleteBtn = document.getElementById("deletematches");
-        deleteBtn.onclick = function() {
-            warningModal.show();
-        };
+            $('#closeDetailsBtn').click(() => {
+                $("#detailsModal").modal('hide');
+            });
 
-        let deleteConfirmBtn = document.getElementById("deleteConfirmBtn");
-        deleteConfirmBtn.onclick = function() {
-            $.post("/admin/deletematches")
-                .done(function() { location.reload(); })
-                .fail(function() { failureModal.show(); });
-        };
+            $('.clickable-row').click(
+                (e) => {
+                    let student = $(e.target).closest('tr').attr('id');
+                    let alum = $(e.target).closest('tr').attr('value');
 
-        let modalBtn = document.getElementById("closeDetailsBtn");
-        modalBtn.onclick = function() {
-            $("#detailsModal").modal('hide');
+                    let studentU = encodeURIComponent(student);
+                    let alumU = encodeURIComponent(alum);
+                    currStudent = studentU;
+                    currAlum = alumU;
+
+                    let url = "/matchdetails?student=" + studentU + "&alum=" + alumU;
+                    console.log(url);
+
+                    if (request != null)
+                        request.abort();
+
+                    request = $.ajax({
+                        type: 'GET',
+                        url: url,
+                        success: handleResponse
+                    });
+                }
+            );
+
+            $('#deleteMatchBtn').click((e) => {
+                $('#detailsModal').modal('hide');
+                $('#warningOneModal').modal('show');
+            });
+
+            $('#deleteOneConfirmBtn').click((e) => {
+                $.post("/admin/deletematch", { studentid: currStudent, alumid: currAlum })
+                    .done(function () { location.reload(); })
+                    .fail(function () { $('#failureModal').modal('show'); })
+            });
+
+            $('#deleteOneCancelBtn').click((e) => {
+                $('#warningOneModal').modal('hide');
+            });
+
+            // manual matching ---------------------------------------------------------
+            $('#manualmatch').click(() => {
+                $('#manualModal').modal('show');
+                currStudent = "";
+                currAlum = "";
+                $('#manualSaveBtn').addClass('disabled');
+            });
+
+            $('#manualCancelBtn').click(() => {
+                $('#manualModal').modal('hide');
+            });
+
+            $('.manual-student').click((e) => {
+                $('.manual-student').removeClass('selected');
+                let row = $(e.target).closest('tr');
+                row.addClass('selected');
+                currStudent = row.attr('id');
+
+                if (currStudent.length > 0 && currAlum.length > 0) {
+                    $('#manualSaveBtn').removeClass('disabled');
+                    console.log('yes');
+                }
+            });
+
+            $('.manual-alum').click((e) => {
+                $('.manual-alum').removeClass('selected');
+                let row = $(e.target).closest('tr');
+                row.addClass('selected');
+                currAlum = row.attr('id');
+
+                if (currStudent.length > 0 && currAlum.length > 0) {
+                    $('#manualSaveBtn').removeClass('disabled');
+                    console.log('yes');
+                }
+            });
+
+            $('#manualSaveBtn').click((e) => {
+                $.post("/admin/manualmatch", { studentid: currStudent, alumid: currAlum })
+                    .done(function () { location.reload(); })
+                    .fail(function () { failureModal.show(); });
+            });
         }
 
-        $('.clickable-row').click(
-            (e) => {
-                let student = $(e.target).closest('tr').attr('id');
-                let alum = $(e.target).closest('tr').attr('value');
-
-                let studentU = encodeURIComponent(student);
-                let alumU = encodeURIComponent(alum);
-                currStudent = studentU;
-                currAlum = alumU;
-
-                let url = "/matchdetails?student=" + studentU + "&alum=" + alumU;
-                console.log(url);
-
-                if (request != null)
-                    request.abort();
-
-                request = $.ajax({
-                    type: 'GET',
-                    url: url,
-                    success: handleResponse
-                });
-            }
-        );
-
-        $('#deleteMatchBtn').click((e) => {
-            $.post("/admin/deletematch", {studentid: currStudent, alumid: currAlum})
-                .done(function() { location.reload(); })
-                .fail(function() { failureModal.show(); });
-        });
-
-        $('#manualmatch').click(() => {
-            $('#manualModal').modal('show');
-            currStudent = "";
-            currAlum = "";
-            $('#manualSaveBtn').addClass('disabled');
-        });
-
-        $('#manualCancelBtn').click(() => {
-            $('#manualModal').modal('hide');
-        });
-
-        $('.manual-student').click((e) => {
-            $('.manual-student').removeClass('selected');
-            let row = $(e.target).closest('tr');
-            row.addClass('selected');
-            currStudent = row.attr('id');
-
-            if(currStudent.length > 0 && currAlum.length > 0) {
-                $('#manualSaveBtn').removeClass('disabled');
-                console.log('yes');
-            }
-        });
-
-        $('.manual-alum').click((e) => {
-            $('.manual-alum').removeClass('selected');
-            let row = $(e.target).closest('tr');
-            row.addClass('selected');
-            currAlum = row.attr('id');
-
-            if(currStudent.length > 0 && currAlum.length > 0) {
-                $('#manualSaveBtn').removeClass('disabled');
-                console.log('yes');
-            }
-        });
-
-        $('#manualSaveBtn').click((e) => {
-            $.post("/admin/manualmatch", {studentid: currStudent, alumid: currAlum})
-                .done(function() { location.reload(); })
-                .fail(function() { failureModal.show(); });
-        });
-    }
-
-    $(document).ready(setup);
-  </script>
+        $(document).ready(setup);
+    </script>
 </body>
+
 </html>

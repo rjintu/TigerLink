@@ -53,7 +53,7 @@
               placeholder="Ex: Christopher Eisgruber ">
           </div>
           <br>
-          <strong>Are you looking for students, alums, or both?</strong>
+          <strong>Are you looking for students, alumni, or both?</strong>
           <div class="form-check" name="form1">
             <input class="form-check-input" id="ugrad" value="stud" type="radio" name="searchreq">
             <label class="form-check-label" for="ugrad"> Undergraduate Student </label>
@@ -73,12 +73,12 @@
             {% include "allmajors.html" %}
           </select>
           <br>
-          <div class="form-group">
+          <!-- <div class="form-group">
             <label for="zipcode"><strong>Zip Code</strong></label>
             <input type="tel" minlength="5" maxlength="5" class="form-control" name="zipcode" id="zipcode"
               pattern="[0-9]*" aria-describedby="zipcode" placeholder="Ex: 08544">
           </div>
-          <br>
+          <br> -->
           <br>
           <br>
         </div>
@@ -99,7 +99,7 @@
           </div>
           <br>
           <div class="form-group">
-            <label for="exampleFormControlSelect2"><strong>Interests</strong></label><br>
+            <label for="exampleFormControlSelect2"><strong>Communities</strong></label><br>
             <select multiple class="selectpicker" id="interest" name="interest" data-selected-text-format="count">
               {% include 'interestoptions.html' %}
             </select>
