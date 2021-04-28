@@ -57,6 +57,10 @@
       $("#studGroup1").show();
       $("#studGroup2").show();
       $("#studGroup3").show();
+
+      $("#alumMatches1").hide();
+      $("#alumMatches2").hide();
+
       $("#classYear").attr("min", "2021");
       $("#classYear").attr("max", "2025");
 
@@ -72,6 +76,10 @@
       $("#alumGroup1").show();
       $("#alumGroup2").show();
       $("#alumGroup3").show();
+
+      $("#alumMatches1").show();
+      $("#alumMatches2").show();
+
       $("#classYear").attr("min", "1920");
       $("#classYear").attr("max", "2020");
     });
@@ -135,7 +143,11 @@
           <strong id="studGroup1">How many alumni would you like to be matched with?</strong>
           <strong id="alumGroup1">How many students would you like to be matched with?</strong>
           <select class="form-select" aria-label="Default select example" id="numMatches" name="numMatches">
-            {% include 'numofmatches.html' %}
+            <option value="0">0</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option id="alumMatches1" value="3">3</option>
+            <option id="alumMatches2" value="4">4</option>
           </select>
 
         </div>
