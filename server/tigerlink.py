@@ -720,7 +720,7 @@ def timeline():
         formatted_time = curr_time.strftime("%A, %B %d at %I:%M %p")
 
         copy = i[:3] + (formatted_time,) + i[4:]
-        if (role == i[7]):
+        if copy[1] == profileid or role == i[7]:
             posts.append(copy)
         elif (i[7] == 'private'):
             if not set(interests).isdisjoint(set(json.loads(i[8]))):
