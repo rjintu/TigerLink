@@ -611,15 +611,22 @@ class Database:
         cursor = self._connection.cursor()
 
         stmtStr = "SELECT postid, authorid, authorname, posttime, posttitle, postcontent, " + \
-                "imgurl, privacy, communities, propic FROM posts"
-        cursor.execute(stmtStr)
+                  "imgurl, privacy, communities, propic FROM posts "
+
+        if limit:
+            stmtStr += "ORDER BY postid DESC OFFSET %s LIMIT %s"
+            cursor.execute(stmtStr, [str(offset), str(limit)])
+        else:
+            cursor.execute(stmtStr)
+
         row = cursor.fetchone()
         output = []
         while row is not None:
+            print(row)
             output.append(row)
             row = cursor.fetchone()
 
-        output.reverse()
+        # output.reverse()
         cursor.close()
         return output
 
