@@ -134,7 +134,7 @@
                     <strong id="studGroup1">How many alumni would you like to be matched with?</strong>
                     <strong id="alumGroup1">How many students would you like to be matched with?</strong>
                     <select class="form-select" aria-label="Default select example" id="numMatches" name="numMatches">
-                        {% with selectedNumber=info[5] %}
+                        {% with selectedNumber=info[5], thisRole=role%}
                         {% include "numofmatches.html" %}
                         {% endwith %}
                     </select>
