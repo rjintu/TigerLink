@@ -60,6 +60,11 @@ class Database:
         cursor.execute('DROP TABLE IF EXISTS matches')
         cursor.execute('CREATE TABLE matches ' +
                     '(studentid TEXT, alumid TEXT, similarity TEXT)')
+        # Report posts table
+        cursor.execute('DROP TABLE IF EXISTS moderation')
+        cursor.execute('CREATE TABLE moderation ' +
+                '(postid TEXT, authorid TEXT, reporterid TEXT)')
+
 
         self._connection.commit()
         cursor.close()
@@ -70,7 +75,8 @@ class Database:
         cursor = self._connection.cursor()
         cursor.execute('DROP TABLE IF EXISTS posts')
         cursor.execute('CREATE TABLE posts ' + 
-                '(postid SERIAL, authorname TEXT, authorid TEXT, posttime TEXT, posttitle TEXT, postcontent TEXT, imgurl TEXT, privacy TEXT, communities TEXT, propic TEXT)')
+                '(postid SERIAL, authorname TEXT, authorid TEXT, posttime TEXT, posttitle TEXT, ' + 
+                'postcontent TEXT, imgurl TEXT, privacy TEXT, communities TEXT, propic TEXT, moderation TEXT)')
         cursor.execute('DROP TABLE IF EXISTS comments')
         cursor.execute('CREATE TABLE comments ' +
                 '(postid TEXT, author TEXT, comment TEXT)')
@@ -611,7 +617,7 @@ class Database:
         cursor = self._connection.cursor()
 
         stmtStr = "SELECT postid, authorid, authorname, posttime, posttitle, postcontent, " + \
-                  "imgurl, privacy, communities, propic FROM posts "
+                  "imgurl, privacy, communities, propic, moderation FROM posts "
 
         if limit:
             stmtStr += "ORDER BY postid DESC OFFSET %s LIMIT %s"
@@ -638,6 +644,40 @@ class Database:
         self._connection.commit()
         cursor.close()
 
+    # report post from database
+    # :param postid: unique id of post, reporterid: profileid of the person who reported the post
+    def report_post(self, postid, reporterid):
+        cursor = self._connection.cursor()
+        stmtStr = "SELECT authorid from posts WHERE postid = %s"
+        cursor.execute(stmtStr, [str(postid)])
+        row = cursor.fetchone()
+        authorid = row[0]
+
+        cursor = self._connection.cursor()
+        cursor.execute('SELECT postid, authorid, reporterid FROM moderation WHERE postid=%s AND reporterid=%s', [str(postid), str(reporterid)])
+        row = cursor.fetchone()
+        if (row is not None):
+            return
+
+        cursor = self._connection.cursor()
+        cursor.execute('INSERT INTO moderation(postid, authorid, reporterid) VALUES (%s, %s, %s)', [str(postid), str(authorid), str(reporterid)])
+        self._connection.commit()
+
+        cursor = self._connection.cursor()
+        cursor.execute('SELECT postid, authorid, reporterid FROM moderation WHERE postid=%s', [str(postid)])
+        numposts = 0
+        row = cursor.fetchone()
+        output = []
+        while row is not None:
+            numposts = numposts + 1
+            output.append(row)
+            row = cursor.fetchone()
+            
+        if (numposts > 3):
+            self.delete_post(postid)
+        
+        cursor.close()
+
     # create a new post, add to database
     # :param profileid: unique id of user
     # :param authorName: name of user
@@ -650,9 +690,9 @@ class Database:
     # :param propic: user's profile picture
     def create_post(self, profileid, authorName, time, title, content, image_url, privacy, communities, propic):
         cursor = self._connection.cursor()
-        cursor.execute('INSERT INTO posts(authorid, authorname, posttime, posttitle, postcontent, imgurl, privacy, communities, propic) ' +
-                        'VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)', 
-                        [profileid, authorName, time, title, content, image_url, privacy, communities, propic])
+        cursor.execute('INSERT INTO posts(authorid, authorname, posttime, posttitle, postcontent, imgurl, privacy, communities, propic, moderation) ' +
+                        'VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)', 
+                        [profileid, authorName, time, title, content, image_url, privacy, communities, propic, str(0)])
         self._connection.commit()
         cursor.close()
 

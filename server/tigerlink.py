@@ -243,6 +243,19 @@ def createpost():
 
     return html
 
+@app.route('/reportpost', methods=['POST'])
+def reportpost():
+    postid = request.form['postid']
+    profileid = session['profileid']
+    db = Database()
+    db.connect()
+
+    db.report_post(postid, profileid)
+    db.disconnect()
+
+    response = make_response('success!')
+    return response
+
 
 @app.route('/deletepost', methods=['POST'])
 def deletepost():
@@ -716,7 +729,7 @@ def timeline():
     if max_posts is None:
         max_posts = 0
 
-    if offset > max_posts:
+    if offset > int(max_posts):
         return redirect(f'/timeline?offset={max_posts}')
 
     posts = []
