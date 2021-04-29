@@ -245,9 +245,21 @@
             $('.dataTables_length').addClass('bs-select');
 
             $('#creatematches').click(() => {
-                $.post("/admin/creatematches")
-                    .done(function () { $('#successModal').modal('show'); })
-                    .fail(function () { $('#failureModal').modal('show'); });
+                $('#confirmBody').html("Automatic matches will now be created. Continue?");
+                $('#confirmModal').modal('show');
+                $('#confirmYesBtn').removeClass('btn-danger');
+                $('#confirmYesBtn').addClass('btn-primary');
+                $('#confirmYesBtn').click(() => {
+                    $.post("/admin/creatematches")
+                        .done(function() { 
+                            $('#confirmModal').modal('hide');
+                            $('#successModal').modal('show'); 
+                        })
+                        .fail(function() { fail(); });
+                });
+                $('#confirmNoBtn').click(() => {
+                    $('#confirmModal').modal('hide');
+                });
             });
 
             $('#deletematches').click(() => {
