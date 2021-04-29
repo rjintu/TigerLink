@@ -49,6 +49,7 @@
             <th scope="col">Class Year</th>
             <th scope="col">Email</th>
             <th scope="col">Major</th>
+            <th scope="col">Admin?</th>
           </tr>
         </thead>
         <tbody>
@@ -58,6 +59,7 @@
             <td>{{ student[2] }} </td>
             <td>{{ student[3] }} </td>
             <td>{{ student[4] }} </td>
+            <td>{{ "✓" if admins[student[0]] else "X"}}</td>
           </tr>
           {% endfor %}
         </tbody>
@@ -76,6 +78,7 @@
             <th scope="col">Class Year</th>
             <th scope="col">Email</th>
             <th scope="col">Major</th>
+            <th scope="col">Admin?</th>
           </tr>
         </thead>
         <tbody>
@@ -85,6 +88,7 @@
             <td>{{ alum[2] }} </td>
             <td>{{ alum[3] }} </td>
             <td>{{ alum[4] }} </td>
+            <td>{{ "✓" if admins[alum[0]] else "X" }}</td>
           </tr>
           {% endfor %}
         </tbody>

@@ -141,9 +141,10 @@ def users():
     db.connect()
     students, _, _ = db.get_students()
     alumni, _, _ = db.get_alumni()
+    admin_dict = db.get_admin_dict()
     db.disconnect()
 
-    html = render_template('users.html', students=students, alumni=alumni)
+    html = render_template('users.html', students=students, alumni=alumni, admins=admin_dict)
     return make_response(html)
 
 @admin.route('/deletestudent', methods=['POST'])
