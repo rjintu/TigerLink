@@ -666,8 +666,9 @@ class Database:
 
     # add matches to the matches table
     # :param matches: list objects as created by Match class in matching.py
+    # :param send_email: boolean flag to determine whether to notify users of their match via email
     # note: it is possible for duplicates to be added to the database, so make sure to reset first. 
-    def add_matches(self, matches):
+    def add_matches(self, matches, send_email=False):
         cursor = self._connection.cursor()
         for match in matches:
             studentid = match[0]
@@ -682,12 +683,9 @@ class Database:
             # alum_careers = self.fix_list_format(alum_careers)
             stud_careers = self.fix_list_format(stud_careers)
 
-            # print(alum_interests)
-            # print(stud_interests)
-
-            # info = [name, classyear, email, major zip, nummatch, propic]
-            emailAlumMatch(stud[2], stud[0], alum[2], alum[0], stud[1], stud_interests, stud_careers)
-            emailStudentMatch(stud[2], stud[0], alum[2], alum[0], alum[1], alum_interests, alum_careers)
+            if send_email:
+                emailAlumMatch(stud[2], stud[0], alum[2], alum[0], stud[1], stud_interests, stud_careers)
+                emailStudentMatch(stud[2], stud[0], alum[2], alum[0], alum[1], alum_interests, alum_careers)
         self._connection.commit()
         cursor.close()
 
