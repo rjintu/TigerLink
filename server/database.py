@@ -83,9 +83,15 @@ class Database:
         cursor.execute('DROP TABLE IF EXISTS likes')
         cursor.execute('CREATE TABLE likes ' +
                 '(postid TEXT, authorid TEXT)')
+        # Report posts table
+        cursor.execute('DROP TABLE IF EXISTS moderation')
+        cursor.execute('CREATE TABLE moderation ' +
+                '(postid TEXT, authorid TEXT, reporterid TEXT)')
 
         self._connection.commit()
         cursor.close()
+
+
 
     # add students to database
     # :param students: [profileid, name, classyear, email, major, zipcode, nummatches, propic, industry, interests]
@@ -672,7 +678,7 @@ class Database:
             numposts = numposts + 1
             output.append(row)
             row = cursor.fetchone()
-            
+
         if (numposts > 3):
             self.delete_post(postid)
         
