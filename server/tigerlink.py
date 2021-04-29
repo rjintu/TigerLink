@@ -712,6 +712,10 @@ def timeline():
     
     # ensure we don't start too high with the offsets
     max_posts = db.get_num_posts()
+    # handle case where timeline is empty
+    if max_posts is None:
+        max_posts = 0
+
     if offset > max_posts:
         return redirect(f'/timeline?offset={max_posts}')
 
