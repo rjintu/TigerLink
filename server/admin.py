@@ -111,7 +111,7 @@ def manualmatch():
     db = Database()
     db.connect()
     db.add_matches([[request.form['studentid'], request.form['alumid'],
-                'i', 'want', 'to', 'die', 55.0]])
+                'i', 'want', 'to', 'die', 55.0]], send_email=True)
     db.disconnect()
 
     response = make_response('success!')
