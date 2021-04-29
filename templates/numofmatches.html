@@ -1,7 +1,16 @@
+{% set studNumbers = ['0',
+'1',
+'2'] %}
+
 {% set numbers = ['0',
 '1',
 '2',
-'3'] %}
+'3',
+'4'] %}
+
+{% if thisRole == 'student' %}
+{% set numbers = studNumbers %}
+{% endif %}
 
 {% for i in numbers: %}
 {% if i == selectedNumber %}
