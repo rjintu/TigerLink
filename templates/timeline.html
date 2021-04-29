@@ -106,30 +106,30 @@
     };
 
     function backwardResults() {
-            var numPage = 5;
-            let request = null;
-            const queryString = window.location.search;
-            const urlParams = new URLSearchParams(queryString);
-            var offset = urlParams.get('offset')
-            if (offset === null) {
-                offset = 0; // may need to update
-            }
-            else {
-                offset = parseInt(offset) // note: keep this consistent with the limit
-            }
+        var numPage = 5;
+        let request = null;
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        var offset = urlParams.get('offset')
+        if (offset === null) {
+            offset = 0; // may need to update
+        }
+        else {
+            offset = parseInt(offset) // note: keep this consistent with the limit
+        }
 
-            offset -= numPage;
-            offset = Math.max(0, offset)
-            window.location.href = '/timeline?offset=' + offset;
-            // let url = "/timeline?offset=" + offset;
-            // if (request != null)
-            //     request.abort();
+        offset -= numPage;
+        offset = Math.max(0, offset)
+        window.location.href = '/timeline?offset=' + offset;
+        // let url = "/timeline?offset=" + offset;
+        // if (request != null)
+        //     request.abort();
 
-            // request = $.ajax({
-            //     type: 'GET',
-            //     url: url,
-            //     success: handleResponse
-            //});
+        // request = $.ajax({
+        //     type: 'GET',
+        //     url: url,
+        //     success: handleResponse
+        //});
     };
     $(document).ready(setup);
 </script>
@@ -195,12 +195,14 @@
         <br>
     </div>
     <div class="text-center">
-        <button type="submit" name="submit" id="prev" onclick="backwardResults()" style="display:none;" class="btn btn-warning text-center">Previous Page</button>
-        <button type="submit" name="submit" id="next" onclick="forwardResults()" style="display:none;" class="btn btn-warning text-center">Next Page</button>
+        <button type="submit" name="submit" id="prev" onclick="backwardResults()" style="display:none;"
+            class="btn btn-warning text-center">Previous Page</button>
+        <button type="submit" name="submit" id="next" onclick="forwardResults()" style="display:none;"
+            class="btn btn-warning text-center">Next Page</button>
         <br>
         <br>
     </div>
-    
+
 
     <script>
         function setup() {
@@ -252,10 +254,16 @@
                 </div>
                 <div class="modal-body" id="test123">
                     Welcome to TigerLink! Your account has been successfully created. Please take a moment to
-                    familiarize yourself with the navigation bar at the top. Enjoy!
+                    familiarize yourself with the navigation bar at the top.
+
+                    You can view posts on the Timeline and create them on the Post page. You'll be able to see your
+                    matches
+                    on the Matches tab when they are available, and you can always search from other TigerLink users.
+
+                    Enjoy!
                 </div>
                 <div class="modal-footer">
-                    <a href="/timeline" class="btn btn-secondary mx-auto d-block">Got it!</a>
+                    <a href="/timeline" class="btn btn-success mx-auto d-block">Got it!</a>
                 </div>
             </div>
         </div>
