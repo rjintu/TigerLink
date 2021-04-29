@@ -2,8 +2,6 @@ from flask import Flask, request, make_response, redirect, url_for, session, fla
 from flask import render_template
 from flask_talisman import Talisman
 from datetime import datetime, timezone, timedelta
-# from tzlocal import get_localzone
-# import pytz
 import json
 
 from .database import Database
@@ -46,8 +44,6 @@ def index():
 
 # Note: when testing locally, must use port 8888 for Google SSO
 # general welcome/login page
-
-
 @app.route('/login', methods=['GET'])
 def login():
     if loginutil.is_logged_in(session):
@@ -68,25 +64,20 @@ def about():
     return response
 
 # Note: when testing locally, must use port 8888 for Google SSO
-
-
 @app.route('/login/redirect', methods=['GET'])
 def login_redirect():
     # redirect the user to Google's login page
     request_uri = login_manager.get_login_redirect(request)
     return redirect(request_uri)
 
-
+# for checking if user exists already, setting a session cookie,
+# and redirecting to the next page
 def user_exists(profileid):
     db = Database()
     db.connect()
     does_user_exist = db.user_exists(profileid)
     db.disconnect()
     return does_user_exist
-
-# for checking if user exists already, setting a session cookie,
-# and redirecting to the next page
-
 
 @app.route('/login/auth', methods=['GET'])
 def login_auth():
@@ -112,7 +103,6 @@ def login_auth():
 @app.route('/logout', methods=['GET'])
 def logout():
     # simply clear the user's session
-
     session.pop('profileid', None)
     session.pop('email', None)
     session.pop('fullname', None)
@@ -315,7 +305,7 @@ def studentdetails():
 
         careers = fix_list_format(careers)
         html = render_template('studentdetails.html', student=student,
-                               careers=careers, interests=interests)
+                            careers=careers, interests=interests)
         return make_response(html)
     except Exception as e:
         print(e)
@@ -341,7 +331,7 @@ def alumdetails():
 
         interests = fix_list_format(interests)
         html = render_template('alumdetails.html', alum=alum,
-                               careers=careers, interests=interests)
+                            careers=careers, interests=interests)
         return make_response(html)
     except Exception as e:
         print(e)
@@ -376,7 +366,7 @@ def genericdetails():
 
             interests = fix_list_format(interests)
             html = render_template('alumdetails.html', alum=alum,
-                                   careers=careers, interests=interests)
+                                careers=careers, interests=interests)
             return make_response(html)
 
         else:
@@ -386,7 +376,7 @@ def genericdetails():
 
             careers = fix_list_format(careers)
             html = render_template('studentdetails.html', student=student,
-                                   careers=careers, interests=interests)
+                                careers=careers, interests=interests)
             return make_response(html)
 
     except Exception as e:
@@ -678,10 +668,9 @@ def dosearch():
     db.disconnect()
 
     html = render_template('dosearch.html', picture=session['picture'],
-                           is_admin=is_admin)
+                        is_admin=is_admin)
     response = make_response(html)
     return response
-
 
 @app.route('/timeline', methods=['GET'])
 def timeline():
@@ -694,12 +683,15 @@ def timeline():
         # profile has not been created
         return redirect('/index')
 
+    POSTS_PER_PAGE = 5  # set this to the number of posts to display at any point
+
     db = Database()
     db.connect()
 
     role = str(db.get_role(profileid))
     is_admin = db.get_admin(profileid)
     info, careers, interests = None, None, None
+
     if role == 'student':
         info, careers, interests = db.get_student_by_id(profileid)
     elif role == 'alum':
@@ -707,16 +699,24 @@ def timeline():
         for i in range(0, len(interests)):
             interests[i] = interests[i][0]
 
-    offset = request.args.get('offset', 0)
-    if int(offset) < 0:
+    offset = int(request.args.get('offset', 0))
+
+    # don't allow negative offsets
+    if offset < 0:
         return redirect('/timeline')
+
+    # ensure offsets always start at set intervals
+    if (offset % POSTS_PER_PAGE) != 0:
+        offset = offset // POSTS_PER_PAGE * POSTS_PER_PAGE
+        return redirect(f'/timeline?offset={offset}')
     
+    # ensure we don't start too high with the offsets
     max_posts = db.get_num_posts()
-    if int(offset) > max_posts:
+    if offset > max_posts:
         return redirect(f'/timeline?offset={max_posts}')
 
     posts = []
-    output = db.get_posts(5, offset)
+    output = db.get_posts(POSTS_PER_PAGE, offset)
 
     time_offset = int(request.args.get('time_offset', 240)) # FIXME: need to pass in user time zone from JS (right now offset doesn't exist)
     for i in output:
