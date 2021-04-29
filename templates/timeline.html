@@ -174,11 +174,14 @@
                         <div class="mb-2 text-muted card-subtitle h6">{{res[3]}}</div>
                         <div class="mb-2 h6" style="white-space:pre-wrap; text-indent: 0px;">{{res[5]}}</div>
                         <!--Show the delete button if the user authored the post-->
-                        {% if (profileid == res[1]) %}
                         <div class="d-flex mt-3">
+                            {% if (profileid != res[1]) %}
+                            <button class="btn btn-danger ms-auto reportBtn" id="{{res[0]}}">Report</button>
+                            {% endif %}
+                            {% if (profileid == res[1]) %}
                             <button class="btn btn-danger ms-auto deleteBtn" id="{{res[0]}}">Delete</button>
+                            {% endif %}
                         </div>
-                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -225,6 +228,13 @@
                     .done(function () { location.reload(); })
                     .fail(function () { alert('An error occurred.'); });
             });
+            $('.reportBtn').click((e) => {
+                let postid = $(e.target).attr('id');
+                $.post("reportpost", { postid: postid })
+                    .done(function () { location.reload(); })
+                    .fail(function () { alert('An error occurred.'); });
+            });
+
         }
 
         $(document).ready(setup);
