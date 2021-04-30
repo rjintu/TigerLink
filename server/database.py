@@ -60,6 +60,11 @@ class Database:
         cursor.execute('DROP TABLE IF EXISTS matches')
         cursor.execute('CREATE TABLE matches ' +
                     '(studentid TEXT, alumid TEXT, similarity TEXT)')
+        # Report posts table
+        cursor.execute('DROP TABLE IF EXISTS moderation')
+        cursor.execute('CREATE TABLE moderation ' +
+                '(postid TEXT, authorid TEXT, reporterid TEXT)')
+
 
         self._connection.commit()
         cursor.close()
@@ -70,16 +75,23 @@ class Database:
         cursor = self._connection.cursor()
         cursor.execute('DROP TABLE IF EXISTS posts')
         cursor.execute('CREATE TABLE posts ' + 
-                '(postid SERIAL, authorname TEXT, authorid TEXT, posttime TEXT, posttitle TEXT, postcontent TEXT, imgurl TEXT, privacy TEXT, communities TEXT, propic TEXT)')
+                '(postid SERIAL, authorname TEXT, authorid TEXT, posttime TEXT, posttitle TEXT, ' + 
+                'postcontent TEXT, imgurl TEXT, privacy TEXT, communities TEXT, propic TEXT, moderation TEXT)')
         cursor.execute('DROP TABLE IF EXISTS comments')
         cursor.execute('CREATE TABLE comments ' +
                 '(postid TEXT, author TEXT, comment TEXT)')
         cursor.execute('DROP TABLE IF EXISTS likes')
         cursor.execute('CREATE TABLE likes ' +
                 '(postid TEXT, authorid TEXT)')
+        # Report posts table
+        cursor.execute('DROP TABLE IF EXISTS moderation')
+        cursor.execute('CREATE TABLE moderation ' +
+                '(postid TEXT, authorid TEXT, reporterid TEXT)')
 
         self._connection.commit()
         cursor.close()
+
+
 
     # add students to database
     # :param students: [profileid, name, classyear, email, major, zipcode, nummatches, propic, industry, interests]
@@ -625,7 +637,7 @@ class Database:
         cursor = self._connection.cursor()
 
         stmtStr = "SELECT postid, authorid, authorname, posttime, posttitle, postcontent, " + \
-                  "imgurl, privacy, communities, propic FROM posts "
+                  "imgurl, privacy, communities, propic, moderation FROM posts "
 
         if limit:
             stmtStr += "ORDER BY postid DESC OFFSET %s LIMIT %s"
@@ -652,6 +664,40 @@ class Database:
         self._connection.commit()
         cursor.close()
 
+    # report post from database
+    # :param postid: unique id of post, reporterid: profileid of the person who reported the post
+    def report_post(self, postid, reporterid):
+        cursor = self._connection.cursor()
+        stmtStr = "SELECT authorid from posts WHERE postid = %s"
+        cursor.execute(stmtStr, [str(postid)])
+        row = cursor.fetchone()
+        authorid = row[0]
+
+        cursor = self._connection.cursor()
+        cursor.execute('SELECT postid, authorid, reporterid FROM moderation WHERE postid=%s AND reporterid=%s', [str(postid), str(reporterid)])
+        row = cursor.fetchone()
+        if (row is not None):
+            return
+
+        cursor = self._connection.cursor()
+        cursor.execute('INSERT INTO moderation(postid, authorid, reporterid) VALUES (%s, %s, %s)', [str(postid), str(authorid), str(reporterid)])
+        self._connection.commit()
+
+        cursor = self._connection.cursor()
+        cursor.execute('SELECT postid, authorid, reporterid FROM moderation WHERE postid=%s', [str(postid)])
+        numposts = 0
+        row = cursor.fetchone()
+        output = []
+        while row is not None:
+            numposts = numposts + 1
+            output.append(row)
+            row = cursor.fetchone()
+
+        if (numposts > 3):
+            self.delete_post(postid)
+        
+        cursor.close()
+
     # create a new post, add to database
     # :param profileid: unique id of user
     # :param authorName: name of user
@@ -664,9 +710,9 @@ class Database:
     # :param propic: user's profile picture
     def create_post(self, profileid, authorName, time, title, content, image_url, privacy, communities, propic):
         cursor = self._connection.cursor()
-        cursor.execute('INSERT INTO posts(authorid, authorname, posttime, posttitle, postcontent, imgurl, privacy, communities, propic) ' +
-                        'VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)', 
-                        [profileid, authorName, time, title, content, image_url, privacy, communities, propic])
+        cursor.execute('INSERT INTO posts(authorid, authorname, posttime, posttitle, postcontent, imgurl, privacy, communities, propic, moderation) ' +
+                        'VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)', 
+                        [profileid, authorName, time, title, content, image_url, privacy, communities, propic, str(0)])
         self._connection.commit()
         cursor.close()
 
@@ -680,8 +726,9 @@ class Database:
 
     # add matches to the matches table
     # :param matches: list objects as created by Match class in matching.py
+    # :param send_email: boolean flag to determine whether to notify users of their match via email
     # note: it is possible for duplicates to be added to the database, so make sure to reset first. 
-    def add_matches(self, matches):
+    def add_matches(self, matches, send_email=False):
         cursor = self._connection.cursor()
         for match in matches:
             studentid = match[0]
@@ -696,12 +743,9 @@ class Database:
             # alum_careers = self.fix_list_format(alum_careers)
             stud_careers = self.fix_list_format(stud_careers)
 
-            # print(alum_interests)
-            # print(stud_interests)
-
-            # info = [name, classyear, email, major zip, nummatch, propic]
-            emailAlumMatch(stud[2], stud[0], alum[2], alum[0], stud[1], stud_interests, stud_careers)
-            emailStudentMatch(stud[2], stud[0], alum[2], alum[0], alum[1], alum_interests, alum_careers)
+            if send_email:
+                emailAlumMatch(stud[2], stud[0], alum[2], alum[0], stud[1], stud_interests, stud_careers)
+                emailStudentMatch(stud[2], stud[0], alum[2], alum[0], alum[1], alum_interests, alum_careers)
         self._connection.commit()
         cursor.close()
 
