@@ -742,7 +742,7 @@ def timeline():
         # curr_time = curr_time.replace(tzinfo=timezone.utc).astimezone(tz=local_tz)
         formatted_time = curr_time.strftime("%A, %B %d at %I:%M %p")
 
-        copy = i[:3] + (formatted_time,) + i[4:8] + (', '.join(json.loads(i[8])),)
+        copy = i[:3] + (formatted_time,) + i[4:8] + (', '.join(json.loads(i[8])),) + (i[9],)
         # print(type(json.loads(copy[8])))
         # copy[8] = ' '.join(json.loads(copy[8]))
         if copy[1] == profileid or role == i[7]:
