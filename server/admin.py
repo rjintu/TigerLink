@@ -110,8 +110,25 @@ def manualmatch():
 
     db = Database()
     db.connect()
+
+    # compute similarity score
+    m = Matching()
+    for stud in m._students:
+        if stud._profileid == request.form['studentid']:
+            studObj = stud
+            break
+    for alum in m._alumni:
+        if alum._profileid == request.form['alumid']:
+            alumObj = alum
+            break
+    
+    if stud is None or alum is None:
+        return make_response('failure')
+
+    similarity = m.dotProduct(studObj, alumObj)
+
     db.add_matches([[request.form['studentid'], request.form['alumid'],
-                'i', 'want', 'to', 'die', 55.0]], send_email=True)
+                'i', 'want', 'to', 'die', similarity]], send_email=True)
     db.disconnect()
 
     response = make_response('success!')
@@ -141,9 +158,10 @@ def users():
     db.connect()
     students, _, _ = db.get_students()
     alumni, _, _ = db.get_alumni()
+    admin_dict = db.get_admin_dict()
     db.disconnect()
 
-    html = render_template('users.html', students=students, alumni=alumni)
+    html = render_template('users.html', students=students, alumni=alumni, admins=admin_dict)
     return make_response(html)
 
 @admin.route('/deletestudent', methods=['POST'])
