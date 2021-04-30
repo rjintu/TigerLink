@@ -128,7 +128,7 @@ def manualmatch():
     similarity = m.dotProduct(studObj, alumObj)
 
     db.add_matches([[request.form['studentid'], request.form['alumid'],
-                'i', 'want', 'to', 'die', similarity]])
+                'i', 'want', 'to', 'die', similarity]], send_email=True)
     db.disconnect()
 
     response = make_response('success!')
