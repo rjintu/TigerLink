@@ -110,8 +110,25 @@ def manualmatch():
 
     db = Database()
     db.connect()
+
+    # compute similarity score
+    m = Matching()
+    for stud in m._students:
+        if stud._profileid == request.form['studentid']:
+            studObj = stud
+            break
+    for alum in m._alumni:
+        if alum._profileid == request.form['alumid']:
+            alumObj = alum
+            break
+    
+    if stud is None or alum is None:
+        return make_response('failure')
+
+    similarity = m.dotProduct(studObj, alumObj)
+
     db.add_matches([[request.form['studentid'], request.form['alumid'],
-                'i', 'want', 'to', 'die', 55.0]])
+                'i', 'want', 'to', 'die', similarity]])
     db.disconnect()
 
     response = make_response('success!')
