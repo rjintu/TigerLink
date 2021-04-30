@@ -394,6 +394,20 @@ class Database:
         cursor.close()
         return False if isadmin is None else isadmin[0] == 'true'
 
+    # returns a boolean dictionary: admins[profileid] = True
+    # if that user is an admin, False otherwise
+    def get_admin_dict(self):
+        admins = {}
+        
+        cursor = self._connection.cursor()
+        cursor.execute('SELECT profileid, isadmin FROM roles')
+        admins_list = cursor.fetchall()
+        cursor.close()
+
+        for (profileid, isadmin) in admins_list:
+            admins[profileid] = isadmin == "true"
+        return admins
+
     # promotes/demotes a user to be an admin/non-admin
     # :param profileid: unique id of user
     # :param is_admin: boolean flag for whether the user should be set as an admin or not
