@@ -637,10 +637,10 @@ class Database:
         cursor = self._connection.cursor()
 
         stmtStr = "SELECT postid, authorid, authorname, posttime, posttitle, postcontent, " + \
-                  "imgurl, privacy, communities, propic, moderation FROM posts "
+                "imgurl, privacy, communities, propic, moderation FROM posts ORDER BY postid DESC "
 
         if limit:
-            stmtStr += "ORDER BY postid DESC OFFSET %s LIMIT %s"
+            stmtStr += "OFFSET %s LIMIT %s"
             cursor.execute(stmtStr, [str(offset), str(limit)])
         else:
             cursor.execute(stmtStr)
