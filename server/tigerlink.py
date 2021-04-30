@@ -170,7 +170,6 @@ def loadpost():
         role = db.get_role(profileid)
 
         info, careers, interests = None, None, None
-        print(role)
         if role == 'student':
             info, careers, interests = db.get_student_by_id(profileid)
         elif role == 'alum':
@@ -743,7 +742,9 @@ def timeline():
         # curr_time = curr_time.replace(tzinfo=timezone.utc).astimezone(tz=local_tz)
         formatted_time = curr_time.strftime("%A, %B %d at %I:%M %p")
 
-        copy = i[:3] + (formatted_time,) + i[4:]
+        copy = i[:3] + (formatted_time,) + i[4:8] + (', '.join(json.loads(i[8])),)
+        # print(type(json.loads(copy[8])))
+        # copy[8] = ' '.join(json.loads(copy[8]))
         if copy[1] == profileid or role == i[7]:
             posts.append(copy)
         elif (i[7] == 'private'):
@@ -751,6 +752,13 @@ def timeline():
                 posts.append(copy)
         elif (i[7] == 'everyone'):
             posts.append(copy)
+
+        print(copy)
+        print('end of print')
+
+    print('printing posts ** ')
+    print(posts)
+    print('done printing posts ** ')
 
     db.disconnect()
     html = render_template('timeline.html', posts=posts,
