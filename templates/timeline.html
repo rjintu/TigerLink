@@ -236,7 +236,7 @@
             }
             var numPosts = $('#num-posts').data();
             console.log(numPosts.name)
-            if (numPosts.name < 5) {
+            if (numPosts.name === 0) {
                 $("#next").hide();
                 $("#endresults").show();
             }
