@@ -115,14 +115,7 @@ class Database:
         cursor.close()
 
     # helper method to add individual student to database
-    # TODO: update to use student class
     def _add_student(self, cursor, student):
-        # student_elems = student[:-2]
-        # # convert everything to strings
-        # student_elems = [str(x) for x in student_elems]
-        # profileid = student_elems[0]
-        # industry = student[-2]
-        # interests = student[-1]
         cursor.execute('INSERT INTO roles(profileid, role, isadmin) ' +
                     'VALUES (%s, %s, %s)', [student._profileid, 'student', 'false'])
         cursor.execute('INSERT INTO students(profileid, name, classyear, email, ' +
@@ -136,19 +129,12 @@ class Database:
                         'VALUES (%s, %s)', [student._profileid, elem])
 
     # helper method to add individual alum to database
-    # TODO: update to use alum class
     def _add_alum(self, cursor, alum):
-        # alum_elems = alum[:-2]
-        # # convert everything to strings
-        # alum_elems = [str(x) for x in alum_elems]
-        # profileid = alum_elems[0]
-        # industry = alum[-2]
-        # interests = alum[-1]
         cursor.execute('INSERT INTO roles(profileid, role, isadmin) ' +
                     'VALUES (%s, %s, %s)', [alum._profileid, 'alum', 'false'])
         cursor.execute('INSERT INTO alumni(profileid, name, classyear, email, ' +
                     'major, nummatch, propic) ' +
-                       'VALUES (%s, %s, %s, %s, %s, %s, %s)', [alum._profileid, alum._name, alum._year, alum._email, alum._major, alum._numMatch, alum._propic])
+                    'VALUES (%s, %s, %s, %s, %s, %s, %s)', [alum._profileid, alum._name, alum._year, alum._email, alum._major, alum._numMatch, alum._propic])
         for elem in alum._careers:
             cursor.execute('INSERT INTO careers(profileid, career) ' +
                         'VALUES (%s, %s)', (alum._profileid, elem))
@@ -240,8 +226,7 @@ class Database:
 
     # gets information about a specific student
     # :param profileid: unique user id
-    # outputs info (list), careers (list), interests (list)
-    # TODO: fix param output to return object
+    # outputs student object
     def get_student_by_id(self, profileid):
         profileid = str(profileid)
         cursor = self._connection.cursor()
@@ -274,8 +259,7 @@ class Database:
 
     # gets information about a specific alum
     # :param profileid: unique user id
-    # outputs info (list), careers (list), interests (list)
-    # TODO: update params to return object
+    # outputs alum object
     def get_alum_by_id(self, profileid):
         profileid = str(profileid)
         cursor = self._connection.cursor()
@@ -439,10 +423,7 @@ class Database:
     
     # updates a student entry in the database
     # :param profileid: unique id of user
-    # :param info: [name, classyear, email, major, zip, nummatch]
-    # :param careers: [[profileid, career1], [profileid, career2]]
-    # :param interests: [[profileid, interest1], [profileid, interest2]]
-    # TODO: update params to use student object
+    # :param student: object of class Student
     def update_student(self, profileid, student):
         cursor = self._connection.cursor()
 
@@ -467,10 +448,7 @@ class Database:
 
     # updates alum entry in database
     # :param profileid: unique id of user
-    # :param info: [name, classyear, email, major, zip, nummatch]
-    # :param careers: [[profileid, career1], [profileid, career2]]
-    # :param interests: [[profileid, interest1], [profileid, interest2]]
-    # TODO: update params to use alum object description
+    # :param alum: object of class Alum
     def update_alum(self, profileid, alum):
         cursor = self._connection.cursor()
         cursor.execute('UPDATE alumni SET name=%s, ' +
