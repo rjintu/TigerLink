@@ -4,6 +4,8 @@ from .post import Post
 from .action import emailUser, confirmDeletion, emailAlumMatch, emailStudentMatch
 import os
 from sys import stderr
+from .student import Student
+from .alum import Alum
 
 class Database:
 
@@ -92,9 +94,8 @@ class Database:
         cursor.close()
 
 
-
     # add students to database
-    # :param students: [profileid, name, classyear, email, major, zipcode, nummatches, propic, industry, interests]
+    # :param students: list of students
     def create_students(self, students):
         cursor = self._connection.cursor()
         for student in students:
@@ -104,7 +105,7 @@ class Database:
         cursor.close()
 
     # add alumni to database
-    # :param alumni: [profileid, name, classyear, email, major, zipcode, nummatches, propic, industry, interests]
+    # :param alumni: list of alumni
     def create_alumni(self, alumni):
         cursor = self._connection.cursor()
         for alum in alumni:
@@ -114,45 +115,47 @@ class Database:
         cursor.close()
 
     # helper method to add individual student to database
+    # TODO: update to use student class
     def _add_student(self, cursor, student):
-        student_elems = student[:-2]
-        # convert everything to strings
-        student_elems = [str(x) for x in student_elems]
-        profileid = student_elems[0]
-        industry = student[-2]
-        interests = student[-1]
+        # student_elems = student[:-2]
+        # # convert everything to strings
+        # student_elems = [str(x) for x in student_elems]
+        # profileid = student_elems[0]
+        # industry = student[-2]
+        # interests = student[-1]
         cursor.execute('INSERT INTO roles(profileid, role, isadmin) ' +
-                    'VALUES (%s, %s, %s)', [profileid, 'student', 'false'])
+                    'VALUES (%s, %s, %s)', [student._profileid, 'student', 'false'])
         cursor.execute('INSERT INTO students(profileid, name, classyear, email, ' +
-                    'major, zip, nummatch, propic) ' +
-                    'VALUES (%s, %s, %s, %s, %s, %s, %s, %s)', student_elems)
-        for elem in industry:
+                    'major, nummatch, propic) ' +
+                    'VALUES (%s, %s, %s, %s, %s, %s, %s)', [student._profileid, student._name, student._year, student._email, student._major, student._numMatch, student._propic])
+        for elem in student._careers:
             cursor.execute('INSERT INTO careers(profileid, career) ' +
-                        'VALUES (%s, %s)', [student[0], elem])
+                        'VALUES (%s, %s)', [student._profileid, elem])
 
-        for elem in interests:
+        for elem in student._communities:
             cursor.execute('INSERT INTO interests(profileid, interest) ' +
-                        'VALUES (%s, %s)', [student[0], elem])
+                        'VALUES (%s, %s)', [student._profileid, elem])
 
     # helper method to add individual alum to database
+    # TODO: update to use alum class
     def _add_alum(self, cursor, alum):
-        alum_elems = alum[:-2]
-        # convert everything to strings
-        alum_elems = [str(x) for x in alum_elems]
-        profileid = alum_elems[0]
-        industry = alum[-2]
-        interests = alum[-1]
+        # alum_elems = alum[:-2]
+        # # convert everything to strings
+        # alum_elems = [str(x) for x in alum_elems]
+        # profileid = alum_elems[0]
+        # industry = alum[-2]
+        # interests = alum[-1]
         cursor.execute('INSERT INTO roles(profileid, role, isadmin) ' +
-                    'VALUES (%s, %s, %s)', [profileid, 'alum', 'false'])
+                    'VALUES (%s, %s, %s)', [alum._profileid, 'alum', 'false'])
         cursor.execute('INSERT INTO alumni(profileid, name, classyear, email, ' +
-                    'major, zip, nummatch, propic) ' +
-                    'VALUES (%s, %s, %s, %s, %s, %s, %s, %s)', alum_elems)
-        for elem in industry:
+                    'major, nummatch, propic) ' +
+                       'VALUES (%s, %s, %s, %s, %s, %s, %s)', [alum._profileid, alum._name, alum._year, alum._email, alum._major, alum._numMatch, alum._propic])
+        for elem in alum._careers:
             cursor.execute('INSERT INTO careers(profileid, career) ' +
-                        'VALUES (%s, %s)', (alum[0], elem))
-        for elem in interests:
+                        'VALUES (%s, %s)', (alum._profileid, elem))
+        for elem in alum._communities:
             cursor.execute('INSERT INTO interests(profileid, interest) ' +
-                        'VALUES (%s, %s)', (alum[0], elem))
+                        'VALUES (%s, %s)', (alum._profileid, elem))
 
     # delete student from database
     # :param profileid: unique id of user
@@ -239,12 +242,13 @@ class Database:
     # gets information about a specific student
     # :param profileid: unique user id
     # outputs info (list), careers (list), interests (list)
+    # TODO: fix param output to return object
     def get_student_by_id(self, profileid):
         profileid = str(profileid)
         cursor = self._connection.cursor()
-        cursor.execute('SELECT name, classyear, email, major, zip, ' +
+        cursor.execute('SELECT name, classyear, email, major, ' +
                     'nummatch, propic FROM students WHERE profileid=%s', [profileid])
-        info = cursor.fetchone() # info = [name, classyear, email, major zip, nummatch, propic]
+        name, classyear, email, major, nummatch, propic = cursor.fetchone()
 
         # getting this user's career interests
         cursor.execute(
@@ -259,23 +263,26 @@ class Database:
         cursor.execute(
             'SELECT interest FROM interests WHERE profileid=%s', [profileid])
         temp = cursor.fetchone()
-        interests = []
+        communities = []
         while temp is not None:
-            interests.append(temp[0])
+            communities.append(temp[0])
             temp = cursor.fetchone()
 
         cursor.close()
-        return info, careers, interests
+        student = Student(profileid, name, classyear, email, major, None, nummatch, propic, careers=careers, communities=communities)
+
+        return student
 
     # gets information about a specific alum
     # :param profileid: unique user id
     # outputs info (list), careers (list), interests (list)
+    # TODO: update params to return object
     def get_alum_by_id(self, profileid):
         profileid = str(profileid)
         cursor = self._connection.cursor()
-        cursor.execute('SELECT name, classyear, email, major, zip, ' +
+        cursor.execute('SELECT name, classyear, email, major, ' +
                     'nummatch, propic FROM alumni WHERE profileid=%s', [profileid])
-        info = cursor.fetchone()
+        name, classyear, email, major, nummatch, propic = cursor.fetchone()
 
         # getting this user's career interests
         cursor.execute(
@@ -290,13 +297,16 @@ class Database:
         cursor.execute(
             'SELECT interest FROM interests WHERE profileid=%s', [profileid])
         temp = cursor.fetchone()
-        interests = []
+        communities = []
         while temp is not None:
-            interests.append(temp)
+            communities.append(temp)
             temp = cursor.fetchone()
 
         cursor.close()
-        return info, careers, interests
+        alum = Alum(profileid, name, classyear, email, major, None,
+                        nummatch, propic, careers=careers, communities=communities)
+
+        return alum
 
     # utility function for looking up a user by their email
     # :param email: email address of user
@@ -433,24 +443,32 @@ class Database:
     # :param info: [name, classyear, email, major, zip, nummatch]
     # :param careers: [[profileid, career1], [profileid, career2]]
     # :param interests: [[profileid, interest1], [profileid, interest2]]
-    def update_student(self, profileid, info, careers, interests):
+    # TODO: update params to use student object
+    def update_student(self, profileid, student):
         cursor = self._connection.cursor()
-        args = info.copy()  # dont modify list given to us
-        args.append(profileid)
-        args = [str(x) for x in args]  # just convert everything to strings
+        print(student._numMatch)
+        cursor.execute('SELECT name, profileid, nummatch from students WHERE profileid=%s', [profileid])
+        curr = cursor.fetchone()
+        print(curr)
+
+
         cursor.execute('UPDATE students SET name=%s, ' +
-                    'classyear=%s, email=%s, major=%s, zip=%s, nummatch=%s ' +
-                    'WHERE profileid=%s', args)
+                    'classyear=%s, major=%s, nummatch=%s ' +
+                    'WHERE profileid=%s', [student._name, student._year, student._major, str(student._numMatch), profileid])
+
+        cursor.execute('SELECT name, profileid, nummatch from students WHERE profileid=%s', [profileid])
+        curr = cursor.fetchone()
+        print(curr)
 
         # delete previous career entires from database and insert new ones
-        cursor.execute('DELETE FROM careers WHERE profileid=%s', [profileid])
-        for elem in careers:
+        cursor.execute('DELETE FROM careers WHERE profileid=%s', [student._profileid])
+        for elem in student._careers:
             cursor.execute('INSERT INTO careers(profileid, career) ' +
                         'VALUES (%s, %s)', [profileid, elem])
 
         # delete previous interest entires from database and insert new ones
         cursor.execute('DELETE FROM interests WHERE profileid=%s', [profileid])
-        for elem in interests:
+        for elem in student._communities:
             cursor.execute('INSERT INTO interests(profileid, interest) ' +
                         'VALUES (%s, %s)', [profileid, elem])
 
@@ -462,35 +480,32 @@ class Database:
     # :param info: [name, classyear, email, major, zip, nummatch]
     # :param careers: [[profileid, career1], [profileid, career2]]
     # :param interests: [[profileid, interest1], [profileid, interest2]]
-    def update_alum(self, profileid, contents, careers, interests):
+    # TODO: update params to use alum object description
+    def update_alum(self, profileid, alum):
         cursor = self._connection.cursor()
-        args = contents.copy()  # dont modify list given to us
-        args.append(profileid)
-        args = [str(x) for x in args]  # just convert everything to strings
         cursor.execute('UPDATE alumni SET name=%s, ' +
-                    'classyear=%s, email=%s, major=%s, zip=%s, nummatch=%s ' +
-                    'WHERE profileid=%s', args)
-
+                    'classyear=%s, major=%s, nummatch=%s ' +
+                    'WHERE profileid=%s', [alum._name, alum._year, alum._major, str(alum._numMatch), profileid])
         # delete previous career entires from database and insert new ones
         cursor.execute('DELETE FROM careers WHERE profileid=%s', [profileid])
-        for elem in careers:
+        for elem in alum._careers:
             cursor.execute('INSERT INTO careers(profileid, career) ' +
                         'VALUES (%s, %s)', [profileid, elem])
 
         # delete previous interest entires from database and insert new ones
         cursor.execute('DELETE FROM interests WHERE profileid=%s', [profileid])
-        for elem in interests:
+        for elem in alum._communities:
             cursor.execute('INSERT INTO interests(profileid, interest) ' +
                         'VALUES (%s, %s)', [profileid, elem])
 
         self._connection.commit()
         cursor.close()
 
-    def fix_list_format(self, thisList):
+    # helper method to address issues with tuples
+    def _fix_list_format(self, thisList):
         for i in range(len(thisList)):
             thisList[i] = thisList[i][0]
         return thisList
-
 
     # helper method to determine if a user's list of careers has any overlap with search query careers
     # if no careers specified (i.e. empty list) or there is overlap, returns True. Otherwise returns False
@@ -737,15 +752,15 @@ class Database:
             cursor.execute('INSERT INTO matches(studentid, alumid, similarity) VALUES (%s, %s, %s)', [studentid, alumid, similarity])
             # student_address, student_name, alum_address, alum_name, student_class_year, student_interests, student_career_interests
             # student_address, student_name, alum_address, alum_name, alum_classyear, alum_interests, alum_career_interests
-            alum, alum_careers, alum_interests = self.get_alum_by_id(alumid)
-            stud, stud_careers, stud_interests = self.get_student_by_id(studentid)
+            alum = self.get_alum_by_id(alumid)
+            student = self.get_student_by_id(studentid)
 
             # alum_careers = self.fix_list_format(alum_careers)
-            stud_careers = self.fix_list_format(stud_careers)
+            student._careers = self._fix_list_format(student._careers) # TODO: is this redundant? or do we already have it fixed elsewhere? 
 
             if send_email:
-                emailAlumMatch(stud[2], stud[0], alum[2], alum[0], stud[1], stud_interests, stud_careers)
-                emailStudentMatch(stud[2], stud[0], alum[2], alum[0], alum[1], alum_interests, alum_careers)
+                emailAlumMatch(student._email, student._name, alum._email, alum._name, student._year, student._communities, student._careers)
+                emailStudentMatch(student._email, student._name, alum._email, alum._name, alum._year, alum._communities, student._careers)
         self._connection.commit()
         cursor.close()
 

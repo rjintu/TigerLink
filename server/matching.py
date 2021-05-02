@@ -1,4 +1,3 @@
-# import zipcodes
 from .database import Database
 from .student import Student
 from .alum import Alum
@@ -14,7 +13,7 @@ import random
 class Matching(object):
 
     # convert to a student object
-    def studentize(self, students, careers, organizations):
+    def studentize(self, students, careers, communities):
         newS = []
         for student in students:
             if len(student) >= 7 and int(student[6]) > 0:
@@ -25,18 +24,18 @@ class Matching(object):
                     if (len(row) > 1):
                         if row[0] == pid:
                             cs.append(row[1])
-                for row in organizations:
+                for row in communities:
                     if (len(row) > 1):
                         if row[0] == pid:
                             orgs.append(row[1])
 
                 s = Student(pid, student[1], student[2], student[3],
-                student[4], student[5], student[6], careers=cs, organizations=orgs)
+                student[4], student[5], student[6], propic=None, careers=cs, communities=orgs)
                 newS.append(s)
         return newS
 
     # convert to an alumni object
-    def alumnize(self, alumni, careers, organizations):
+    def alumnize(self, alumni, careers, communities):
         newA = []
         for alum in alumni:
             if len(alum) >= 7 and int(alum[6]) > 0:
@@ -47,13 +46,13 @@ class Matching(object):
                     if (len(row) > 1):
                         if row[0] == pid:
                             cs.append(row[1])
-                for row in organizations:
+                for row in communities:
                     if (len(row) > 1):
                         if row[0] == pid:
                             orgs.append(row[1])
 
                 a = Alum(pid, alum[1], alum[2], alum[3],
-                alum[4], alum[5], alum[6], careers=cs, organizations=orgs)
+                alum[4], alum[5], alum[6], propic=None, careers=cs, communities=orgs)
                 newA.append(a)
         return newA
 
@@ -167,12 +166,12 @@ class Matching(object):
             carS /= len(totalC)
 
         orgS = 0
-        if svec._organizations != None and (len(svec._organizations) + len(avec._organizations)) > 0:
-            for org in svec._organizations:
-                if org in avec._organizations:
+        if svec._communities != None and (len(svec._communities) + len(avec._communities)) > 0:
+            for org in svec._communities:
+                if org in avec._communities:
                     orgS += 1
 
-            totalO = svec._organizations + [x for x in avec._organizations if x not in set(svec._organizations)]
+            totalO = svec._communities + [x for x in avec._communities if x not in set(svec._communities)]
             orgS /= len(totalO)
 
         vals = [m, carS, orgS]

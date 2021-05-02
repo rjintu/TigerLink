@@ -73,13 +73,13 @@ The TigerLink Team
     session.sendmail(sender_address, receiver_address, text)
     session.quit()
 
-def emailStudentMatch(student_address, student_name, alum_address, alum_name, alum_classyear, alum_interests, alum_career_interests):
-    if (len(alum_interests) == 0):
-        alum_interests = 'No interests entered at this point.'
+def emailStudentMatch(student_address, student_name, alum_address, alum_name, alum_classyear, alum_communities, alum_careers):
+    if (len(alum_communities) == 0):
+        alum_communities = 'No communities entered.'
     else:
-        alum_interests = " ".join(str(v) for v in alum_interests)
+        alum_communities = " ".join(str(v) for v in alum_communities)
         
-    alum_career_interests = " ".join(str(v) for v in alum_career_interests)
+    alum_careers = " ".join(str(v) for v in alum_careers)
 
     mail_content = '''Hello %s,
 
@@ -95,7 +95,7 @@ We recommend that you reach out to your alum as soon as possible. If they don't 
 
 Excited to have you,
 TigerLink Team
-''' % (student_name, alum_name, alum_address, alum_classyear, alum_interests, alum_career_interests)
+''' % (student_name, alum_name, alum_address, alum_classyear, alum_communities, alum_careers)
 
     img_data = open('static/img/logo.png', 'rb').read()
 
@@ -118,13 +118,13 @@ TigerLink Team
     session.quit()
     print('Mail Sent')
 
-def emailAlumMatch(student_address, student_name, alum_address, alum_name, student_class_year, student_interests, student_career_interests):
-    if (len(student_interests) == 0):
-        student_interests = 'No interests entered at this point.'
+def emailAlumMatch(student_address, student_name, alum_address, alum_name, student_class_year, student_communities, student_careers):
+    if (len(student_communities) == 0):
+        student_communities = 'No communities entered.'
     else:
-        student_interests = " ".join(str(v) for v in student_interests)
+        student_communities = " ".join(str(v) for v in student_communities)
         
-    student_career_interests = " ".join(str(v) for v in student_career_interests)
+    student_careers = " ".join(str(v) for v in student_careers)
 
     mail_content = '''Hello %s,
 
@@ -140,7 +140,7 @@ We recommend that you reach out to your student as soon as possible. If they don
 
 Excited to have you,
 TigerLink Team
-''' % (alum_name, student_name, student_address, student_class_year, student_interests, student_career_interests)
+''' % (alum_name, student_name, student_address, student_class_year, student_communities, student_careers)
 
     img_data = open('static/img/logo.png', 'rb').read()
 

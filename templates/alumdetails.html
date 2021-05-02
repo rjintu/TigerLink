@@ -1,21 +1,21 @@
-<img src="{{ alum[6] }}" class="rounded img-thumbnail mx-auto d-block"></img>
+<img src="{{ alum._propic }}" class="rounded img-thumbnail mx-auto d-block"></img>
 <table class="table">
 <tbody>
     <tr>
         <td style="width: 30%"><strong>Name:</strong></td>
-        <td>{{ alum[0] }}</td>
+        <td>{{ alum._name }}</td>
     </tr>
     <tr>
         <td><strong>Class Year:</strong></td>
-        <td>{{ alum[1] }}</td>
+        <td>{{ alum._year }}</td>
     </tr>
     <tr>
         <td><strong>Email:</strong></td>
-        <td>{{ alum[2] }}</td>
+        <td>{{ alum._email }}</td>
     </tr>
     <tr>
         <td><strong>Major:</strong></td>
-        <td>{{ alum[3] }}</td>
+        <td>{{ alum._major }}</td>
     </tr>
     <!-- <tr>
         <td><strong>Zip Code:</strong></td>
@@ -23,24 +23,24 @@
     </tr> -->
     <tr>
         <td><strong>Number of Matches:</strong></td>
-        <td>{{ alum[5] }}</td>
+        <td>{{ alum._numMatch }}</td>
     </tr>
     <tr>
         <td><strong>Careers:</strong></td>
         <td>
-            {% for career in range(careers|length -1) %}
-                {{ careers[career] }}, 
+            {% for career in range(alum._careers|length -1) %}
+                {{ alum._careers[career] }}, 
             {% endfor %}
-            {{ careers[-1] }}
+            {{ alum._careers[-1] }}
         </td>
     </tr>
     <tr>
         <td><strong>Communities:</strong></td>
         <td>
-            {% for interest in range(interests|length -1) %}
-                {{ interests[interest] }},
+            {% for community in range(alum._communities|length -1) %}
+                {{ alum._communities[community] }},
             {% endfor %}
-            {{ interests[-1] }}
+            {{ alum._communities[-1] }}
         </td>
     </tr>
 </tbody>
