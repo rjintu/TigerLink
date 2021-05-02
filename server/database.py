@@ -131,7 +131,6 @@ class Database:
         for elem in student._careers:
             cursor.execute('INSERT INTO careers(profileid, career) ' +
                         'VALUES (%s, %s)', [student._profileid, elem])
-
         for elem in student._communities:
             cursor.execute('INSERT INTO interests(profileid, interest) ' +
                         'VALUES (%s, %s)', [student._profileid, elem])
@@ -256,7 +255,7 @@ class Database:
         temp = cursor.fetchone()
         careers = []
         while temp is not None:
-            careers.append(temp)
+            careers.append(temp[0])
             temp = cursor.fetchone()
 
         # getting this user's groups
@@ -299,7 +298,7 @@ class Database:
         temp = cursor.fetchone()
         communities = []
         while temp is not None:
-            communities.append(temp)
+            communities.append(temp[0])
             temp = cursor.fetchone()
 
         cursor.close()
@@ -446,19 +445,10 @@ class Database:
     # TODO: update params to use student object
     def update_student(self, profileid, student):
         cursor = self._connection.cursor()
-        print(student._numMatch)
-        cursor.execute('SELECT name, profileid, nummatch from students WHERE profileid=%s', [profileid])
-        curr = cursor.fetchone()
-        print(curr)
-
 
         cursor.execute('UPDATE students SET name=%s, ' +
                     'classyear=%s, major=%s, nummatch=%s ' +
                     'WHERE profileid=%s', [student._name, student._year, student._major, str(student._numMatch), profileid])
-
-        cursor.execute('SELECT name, profileid, nummatch from students WHERE profileid=%s', [profileid])
-        curr = cursor.fetchone()
-        print(curr)
 
         # delete previous career entires from database and insert new ones
         cursor.execute('DELETE FROM careers WHERE profileid=%s', [student._profileid])
@@ -500,12 +490,6 @@ class Database:
 
         self._connection.commit()
         cursor.close()
-
-    # helper method to address issues with tuples
-    def _fix_list_format(self, thisList):
-        for i in range(len(thisList)):
-            thisList[i] = thisList[i][0]
-        return thisList
 
     # helper method to determine if a user's list of careers has any overlap with search query careers
     # if no careers specified (i.e. empty list) or there is overlap, returns True. Otherwise returns False
@@ -663,7 +647,6 @@ class Database:
         row = cursor.fetchone()
         output = []
         while row is not None:
-            print(row)
             output.append(row)
             row = cursor.fetchone()
 
@@ -754,9 +737,6 @@ class Database:
             # student_address, student_name, alum_address, alum_name, alum_classyear, alum_interests, alum_career_interests
             alum = self.get_alum_by_id(alumid)
             student = self.get_student_by_id(studentid)
-
-            # alum_careers = self.fix_list_format(alum_careers)
-            student._careers = self._fix_list_format(student._careers) # TODO: is this redundant? or do we already have it fixed elsewhere? 
 
             if send_email:
                 emailAlumMatch(student._email, student._name, alum._email, alum._name, student._year, student._communities, student._careers)
