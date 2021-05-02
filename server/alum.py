@@ -2,7 +2,7 @@
 class Alum(object):
 
     def __init__(self, profid, name, year, email,
-    major, zipp, numMatch, careers = None, organizations = None):
+    major, zipp, numMatch, propic, careers = None, communities = None):
         self._profileid = profid
         self._name = name
         self._year = year
@@ -10,8 +10,9 @@ class Alum(object):
         self._major = major
         self._zip = zipp
         self._numMatch = int(numMatch)
+        self._propic = propic
         self._careers = careers
-        self._organizations = organizations
+        self._communities = communities
 
     def addField(self, fieldName, fieldVal):
         setattr(self, fieldName, fieldVal)
