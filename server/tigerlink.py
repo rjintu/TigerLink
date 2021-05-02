@@ -179,9 +179,6 @@ def loadpost():
         elif role == 'alum':
             user = db.get_alum_by_id(profileid)
 
-            user._communities = fix_list_format(user._communities)  # decide if this is good style, or if we can do it all at once elsewhere
-            # for i in range(0, len(user._communities)):
-            #     interests[i] = interests[i][0]
         is_admin = db.get_admin(profileid)
         db.disconnect()
 
@@ -319,7 +316,6 @@ def studentdetails():
         student = db.get_student_by_id(profileid)
         db.disconnect()
 
-        student._careers = fix_list_format(student._careers) # TODO: decide if this is good style or not. Fix it just once?
         html = render_template('studentdetails.html', student=student)
         return make_response(html)
     except Exception as e:
@@ -344,7 +340,6 @@ def alumdetails():
         alum = db.get_alum_by_id(profileid)
         db.disconnect()
 
-        alum._communities = fix_list_format(alum._communities) # bad style?
         html = render_template('alumdetails.html', alum=alum)
         return make_response(html)
     except Exception as e:
@@ -378,7 +373,6 @@ def genericdetails():
             alum = db.get_alum_by_id(profileid)
             db.disconnect()
 
-            alum._communities = fix_list_format(alum._communities) # TODO: style?
             html = render_template('alumdetails.html', alum=alum)
             return make_response(html)
 
@@ -387,7 +381,6 @@ def genericdetails():
             student = db.get_student_by_id(profileid)
             db.disconnect()
 
-            student._careers = fix_list_format(student._careers) # TODO: style?
             html = render_template('studentdetails.html', student=student)
             return make_response(html)
 
@@ -416,18 +409,10 @@ def matchdetails():
         # retrieve information about matches
         db = Database()
         db.connect()
-        student = request.args.get('student')
-        alum = request.args.get('alum')
-        student = db.get_student_by_id(student)
-
-        # student_careers is being returned as a list of tuples
-        # this block fixes that
-        student._careers = fix_list_format(student._careers) # TODO: Fix style?
-
-        alum = db.get_alum_by_id(alum)
-        # alum_interests is being returned as a list of tuples
-        # this block fixes that
-        alum._communities = fix_list_format(alum._communities) # TODO: fix style?
+        student_match = request.args.get('student')
+        alum_match = request.args.get('alum')
+        student = db.get_student_by_id(student_match)
+        alum = db.get_alum_by_id(alum_match)
 
         joint_careers = [
             value for value in student._careers if value in alum._careers]
@@ -436,97 +421,95 @@ def matchdetails():
 
         majorSame = student._major == alum._major # TODO: check the style?
 
+        html = "<table class='table'>"
+
+        html += "<thead>"
+        html += "<tr>\
+                        <td style='width: 20%'><strong></strong></td>\
+                        <td style='width: 40%'><strong>Student</strong></td>\
+                        <td style='width: 40%'><strong>Alum</strong></td>\
+                    </tr>"
+        html += "</thead>"
+        html += "<tbody>"
+
+        # name
+        html += '<tr>'
+        html += '<td ><strong>Name:</strong></td>'
+        html += '<td>' + student._name + '</td>'
+        html += '<td>' + alum._name + '</td>'
+        html += '</tr>'
+
+        # class year
+        html += '<tr>'
+        html += '<td><strong>Class Year:</strong></td>'
+        html += '<td>' + student._year + '</td>'
+        html += '<td>' + alum._year + '</td>'
+        html += '</tr>'
+
+        # email
+        html += '<tr>'
+        html += '<td><strong>Email:</strong></td>'
+        html += '<td>' + student._email + '</td>'
+        html += '<td>' + alum._email + '</td>'
+        html += '</tr>'
+
+        # major
+        html += '<tr>'
+        html += "<td><strong>Major:</strong></td>"
+        if majorSame:
+            html += '<td><strong>' + student._major + '</strong></td>'
+            html += '<td><strong>' + alum._major + '</strong></td>'
+        else:
+            html += '<td>' + student._major + '</td>'
+            html += '<td>' + alum._major + '</td>'
+        html += '</tr>'
+
+        # careers
+        html += '<tr>'
+        html += "<td><strong>Careers:</strong></td>"
+        stud_temp, alum_temp = '', ''
+        if student._careers:
+            for m in range(len(student._careers) - 1):
+                stud_temp += checkOverlap(student._careers[m], joint_careers)
+                stud_temp += ', '
+            stud_temp += checkOverlap(student._careers[-1], joint_careers)
+
+        if alum._careers:
+            for n in range(len(alum._careers) - 1):
+                alum_temp += checkOverlap(alum._careers[n], joint_careers)
+                alum_temp += ', '
+            alum_temp += checkOverlap(alum._careers[-1], joint_careers)
+        html += '<td>' + stud_temp + '</td>'
+        html += '<td>' + alum_temp + '</td>'
+        html += '</tr>'
+
+        # communities
+        html += '<tr>'
+        html += '<td><strong>Communities:</strong></td>'
+        stud_temp, alum_temp = '', ''
+        if student._communities:
+            for m in range(len(student._communities) - 1):
+                stud_temp += checkOverlap(student._communities[m], joint_communities)
+                stud_temp += ', '
+            stud_temp += checkOverlap(student._communities[-1], joint_communities)
+
+        if alum._communities:
+            for n in range(len(alum._communities) - 1):
+                alum_temp += checkOverlap(alum._communities[n], joint_communities)
+                alum_temp += ', '
+            alum_temp += checkOverlap(alum._communities[-1], joint_communities)
+
+        html += '<td>' + stud_temp + '</td>'
+        html += '<td>' + alum_temp + '</td>'
+        html += '</tr>'
+
+        html += '</tbody>'
+        html += '</table>'
+
     except Exception as e:
         html = "error occurred: " + str(e)
         print(e)
-
-    html = "<table class='table'>"
-
-    html += "<thead>"
-    html += "<tr>\
-                    <td style='width: 20%'><strong></strong></td>\
-                    <td style='width: 40%'><strong>Student</strong></td>\
-                    <td style='width: 40%'><strong>Alum</strong></td>\
-                </tr>"
-    html += "</thead>"
-    html += "<tbody>"
-
-    # updated version
-
-    # name
-    html += '<tr>'
-    html += '<td ><strong>Name:</strong></td>'
-    html += '<td>' + student._name + '</td>'
-    html += '<td>' + alum._name + '</td>'
-    html += '</tr>'
-
-    # class year
-    html += '<tr>'
-    html += '<td><strong>Class Year:</strong></td>'
-    html += '<td>' + student._year + '</td>'
-    html += '<td>' + alum._year + '</td>'
-    html += '</tr>'
-
-    # email
-    html += '<tr>'
-    html += '<td><strong>Email:</strong></td>'
-    html += '<td>' + student._email + '</td>'
-    html += '<td>' + alum._email + '</td>'
-    html += '</tr>'
-
-    # major
-    html += '<tr>'
-    html += "<td><strong>Major:</strong></td>"
-    if majorSame:
-        html += '<td><strong>' + student._major + '</strong></td>'
-        html += '<td><strong>' + alum._major + '</strong></td>'
-    else:
-        html += '<td>' + student._major + '</td>'
-        html += '<td>' + alum._major + '</td>'
-    html += '</tr>'
-
-    # careers
-    html += '<tr>'
-    html += "<td><strong>Careers:</strong></td>"
-    stud_temp, alum_temp = '', ''
-    if student._careers:
-        for m in range(len(student._careers) - 1):
-            stud_temp += checkOverlap(student._careers[m], joint_careers)
-            stud_temp += ', '
-        stud_temp += checkOverlap(student._careers[-1], joint_careers)
-
-    if alum._careers:
-        for n in range(len(alum._careers) - 1):
-            alum_temp += checkOverlap(alum._careers[n], joint_careers)
-            alum_temp += ', '
-        alum_temp += checkOverlap(alum._careers[-1], joint_careers)
-    html += '<td>' + stud_temp + '</td>'
-    html += '<td>' + alum_temp + '</td>'
-    html += '</tr>'
-
-    # communities
-    html += '<tr>'
-    html += '<td><strong>Communities:</strong></td>'
-    stud_temp, alum_temp = '', ''
-    if student._communities:
-        for m in range(len(student._communities) - 1):
-            stud_temp += checkOverlap(student._communities[m], joint_communities)
-            stud_temp += ', '
-        stud_temp += checkOverlap(student._communities[-1], joint_communities)
-
-    if alum._communities:
-        for n in range(len(alum._communities) - 1):
-            alum_temp += checkOverlap(alum._communities[n], joint_communities)
-            alum_temp += ', '
-        alum_temp += checkOverlap(alum._communities[-1], joint_communities)
-
-    html += '<td>' + stud_temp + '</td>'
-    html += '<td>' + alum_temp + '</td>'
-    html += '</tr>'
-
-    html += '</tbody>'
-    html += '</table>'
-
+    
     response = make_response(html)
     return response
 
@@ -550,11 +533,9 @@ def getprofile():
         user = None # will be set to student or alum
         if role == 'student':
             user = db.get_student_by_id(profileid)
-            user._careers = fix_list_format(user._careers)
 
         elif role == 'alum':
             user = db.get_alum_by_id(profileid)
-            user._communities = fix_list_format(user._communities)
         is_admin = db.get_admin(profileid)
         db.disconnect()
         html = render_template('editprofile.html', user=user, picture=session['picture'], role=role, is_admin=is_admin)
@@ -565,13 +546,6 @@ def getprofile():
 
     response = make_response(html)
     return response
-
-# method to fix formatting of returned lists
-def fix_list_format(thisList):
-    for i in range(len(thisList)):
-        thisList[i] = thisList[i][0]
-    return thisList
-
 
 # updates profile on save click
 @app.route('/updateprofile', methods=['POST'])
@@ -621,12 +595,7 @@ def changeprofile():
 
         db.disconnect()
         flash("Your profile has been updated successfully.")
-        # reload the editprofile page
-        # db = Database()
-        # db.connect()
-        # info = db.get_student_by_id(profileid)
-        # db.disconnect()
-        # return redirect(url_for('editprofile', info=info))
+
     except Exception as e:
         html = "error occurred: " + str(e)
         print(e)
@@ -762,7 +731,7 @@ def timeline():
         if copy[1] == profileid or role == i[7]:
             posts.append(copy)
         elif (i[7] == 'private'):
-            if not set(alum._communities).isdisjoint(set(json.loads(i[8]))):
+            if not set(user._communities).isdisjoint(set(json.loads(i[8]))):
                 posts.append(copy)
         elif (i[7] == 'everyone'):
             posts.append(copy)
