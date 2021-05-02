@@ -150,7 +150,7 @@
                         </label>
                         <br>
                         <select multiple class="selectpicker" id="careerForm" name="career"
-                            data-selected-text-format="count" required>
+                            data-selected-text-format="count" data-live-search="true" required>
                             {% set temp_list = [] %}
                             {% for c in user._careers:%}
                             <option selected>{{ c }}</option>
@@ -170,7 +170,7 @@
                         </label>
                         <br>
                         <select multiple class="selectpicker" id="interests" name="interests"
-                            data-selected-text-format="count">
+                            data-selected-text-format="count" data-live-search="true">
                             {% set temp_list = [] %}
                             {% for i in user._communities:%}
                             <option selected>{{ i }}</option>
