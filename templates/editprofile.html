@@ -98,43 +98,37 @@
                     <div class="form-group">
                         <label for="name"><strong>Name</strong></label>
                         <input type="text" class="form-control" name="name" id="name" aria-describedby="emailHelp"
-                            value="{{ info[0] }}" required>
+                            value="{{ user._name }}" required>
                     </div>
                     <br>
                     <div class="form-group">
                         <label for="email"><strong>Email</strong></label>
                         <input type="email" class="form-control" name="email" id="email" aria-describedby="emailHelp"
-                            value="{{ info[2] }}" readonly>
+                            value="{{ user._email }}" readonly>
                         <small id="emailHelp" class="form-text text-muted">Your email cannot be changed.</small>
                     </div>
                     <br>
                     <div class="form-group">
                         <label for="classYear"><strong>Class Year</strong></label>
                         <input type="number" min="2021" max="2025" placeholder="Ex: 2023" class="form-control"
-                            name="classYear" id="classYear" aria-describedby="emailHelp" value="{{ info[1] }}" required>
+                            name="classYear" id="classYear" aria-describedby="emailHelp" value="{{ user._year }}" required>
                     </div>
                     <br>
                     <strong>Major</strong>
                     <select class="form-select" aria-label="Default select example" name="major">
-                        <option value="{{ info[3] }}" selected required>{{ info[3] }}</option>
-                        {% set temp_major = info[3]|string %}
+                        <option value="{{ user._major }}" selected required>{{ user._major }}</option>
+                        {% set temp_major = user._major|string %}
                         <!-- send selected careers to template via Jinja -->
                         {% with prevMajor=temp_major %}
                         {% include "allmajors.html" %}
                         {% endwith %}
                     </select>
                     <br>
-                    <!-- <div class="form-group">
-                        <label for="zipcode"><strong>Zip Code</strong></label>
-                        <input type="tel" minlength="5" maxlength="5" class="form-control" name="zipcode" id="zipcode"
-                            aria-describedby="emailHelp" pattern="[0-9]*" value="{{ info[4] }}" required>
-                    </div>
-                    <br> -->
 
                     <strong id="studGroup1">How many alumni would you like to be matched with?</strong>
                     <strong id="alumGroup1">How many students would you like to be matched with?</strong>
                     <select class="form-select" aria-label="Default select example" id="numMatches" name="numMatches">
-                        {% with selectedNumber=info[5], thisRole=role%}
+                        {% with selectedNumber=user._numMatch|string, thisRole=role%}
                         {% include "numofmatches.html" %}
                         {% endwith %}
                     </select>
@@ -158,7 +152,7 @@
                         <select multiple class="selectpicker" id="careerForm" name="career"
                             data-selected-text-format="count" required>
                             {% set temp_list = [] %}
-                            {% for c in careers:%}
+                            {% for c in user._careers:%}
                             <option selected>{{ c }}</option>
                             {{ temp_list.append(c|string)}}
                             {% endfor %}
@@ -178,7 +172,7 @@
                         <select multiple class="selectpicker" id="interests" name="interests"
                             data-selected-text-format="count">
                             {% set temp_list = [] %}
-                            {% for i in interests:%}
+                            {% for i in user._communities:%}
                             <option selected>{{ i }}</option>
                             {{ temp_list.append(i|string)}}
                             {% endfor %}

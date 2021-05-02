@@ -214,11 +214,11 @@
               <label for="groupsForm"><strong>Select the communities you'd like to post to.</strong></label>
               <select multiple class="selectpicker" id="communities" name="communities" data-selected-text-format="count">
                 {% set temp_list = [] %}
-                {% for i in interests:%}
+                {% for i in communities:%}
                 <option>{{ i }}</option>
                 {{ temp_list.append(i|string)}}
                 {% endfor %}
-                <!-- send selected interests to template via Jinja -->
+                <!-- send selected communities to template via Jinja -->
               </select>
             </div>
             <br>
