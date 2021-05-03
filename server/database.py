@@ -422,49 +422,47 @@ class Database:
 
     
     # updates a student entry in the database
-    # :param profileid: unique id of user
     # :param student: object of class Student
-    def update_student(self, profileid, student):
+    def update_student(self, student):
         cursor = self._connection.cursor()
 
         cursor.execute('UPDATE students SET name=%s, ' +
                     'classyear=%s, major=%s, nummatch=%s ' +
-                    'WHERE profileid=%s', [student._name, student._year, student._major, str(student._numMatch), profileid])
+                    'WHERE profileid=%s', [student._name, student._year, student._major, str(student._numMatch), student._profileid])
 
         # delete previous career entires from database and insert new ones
         cursor.execute('DELETE FROM careers WHERE profileid=%s', [student._profileid])
         for elem in student._careers:
             cursor.execute('INSERT INTO careers(profileid, career) ' +
-                        'VALUES (%s, %s)', [profileid, elem])
+                        'VALUES (%s, %s)', [student._profileid, elem])
 
         # delete previous interest entires from database and insert new ones
-        cursor.execute('DELETE FROM interests WHERE profileid=%s', [profileid])
+        cursor.execute('DELETE FROM interests WHERE profileid=%s', [student._profileid])
         for elem in student._communities:
             cursor.execute('INSERT INTO interests(profileid, interest) ' +
-                        'VALUES (%s, %s)', [profileid, elem])
+                        'VALUES (%s, %s)', [student._profileid, elem])
 
         self._connection.commit()
         cursor.close()
 
     # updates alum entry in database
-    # :param profileid: unique id of user
     # :param alum: object of class Alum
-    def update_alum(self, profileid, alum):
+    def update_alum(self, alum):
         cursor = self._connection.cursor()
         cursor.execute('UPDATE alumni SET name=%s, ' +
                     'classyear=%s, major=%s, nummatch=%s ' +
-                    'WHERE profileid=%s', [alum._name, alum._year, alum._major, str(alum._numMatch), profileid])
+                    'WHERE profileid=%s', [alum._name, alum._year, alum._major, str(alum._numMatch), alum._profileid])
         # delete previous career entires from database and insert new ones
-        cursor.execute('DELETE FROM careers WHERE profileid=%s', [profileid])
+        cursor.execute('DELETE FROM careers WHERE profileid=%s', [alum._profileid])
         for elem in alum._careers:
             cursor.execute('INSERT INTO careers(profileid, career) ' +
-                        'VALUES (%s, %s)', [profileid, elem])
+                        'VALUES (%s, %s)', [alum._profileid, elem])
 
         # delete previous interest entires from database and insert new ones
-        cursor.execute('DELETE FROM interests WHERE profileid=%s', [profileid])
+        cursor.execute('DELETE FROM interests WHERE profileid=%s', [alum._profileid])
         for elem in alum._communities:
             cursor.execute('INSERT INTO interests(profileid, interest) ' +
-                        'VALUES (%s, %s)', [profileid, elem])
+                        'VALUES (%s, %s)', [alum._profileid, elem])
 
         self._connection.commit()
         cursor.close()
@@ -641,7 +639,8 @@ class Database:
         cursor.close()
 
     # report post from database
-    # :param postid: unique id of post, reporterid: profileid of the person who reported the post
+    # :param postid: unique id of post
+    # : param reporterid: profileid of the person who reported the post
     def report_post(self, postid, reporterid):
         cursor = self._connection.cursor()
         stmtStr = "SELECT authorid from posts WHERE postid = %s"

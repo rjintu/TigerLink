@@ -580,7 +580,7 @@ def changeprofile():
             student._numMatch = nummatches
             student._careers = careers
             student._communities = communities
-            db.update_student(profileid, student)
+            db.update_student(student) # use the profileid already in Student object
         elif role == 'alum':
             alum = db.get_alum_by_id(profileid)
             alum._name = name
@@ -591,7 +591,7 @@ def changeprofile():
             alum._numMatch = nummatches
             alum._careers = careers
             alum._communities = communities
-            db.update_alum(profileid, alum)
+            db.update_alum(alum) # use the profileid already in Alum object
 
         db.disconnect()
         flash("Your profile has been updated successfully.")
