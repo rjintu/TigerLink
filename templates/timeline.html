@@ -82,6 +82,8 @@
         });
     };
 
+
+
     function forwardResults() {
         var numPage = 5;
         let request = null;
@@ -97,15 +99,6 @@
 
         offset += numPage;
         window.location.href = '/timeline?offset=' + offset;
-        // let url = "/timeline?offset=" + offset;
-        // if (request != null)
-        //     request.abort();
-
-        // request = $.ajax({
-        //     type: 'GET',
-        //     url: url,
-        //     success: handleResponse
-        //});
     };
 
     function backwardResults() {
@@ -142,9 +135,48 @@
     .profile h5 {
         color: black;
     }
+    .card-img-top {
+    width: 100%;
+    max-height: 25vw;
+    object-fit: cover;
+    display: block;
+
+    }
+    .modal {
+    text-align:center;
+}
+.modal-dialog {
+    display: inline-block;
+    width: auto;
+}
+
+
+
 </style>
 
 <body id="generic-body">
+
+    <!-- <a href="#" id="pop">
+        <img id="imageresource" src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Google_2015_logo.svg/1200px-Google_2015_logo.svg.png" style="width: 400px; height: 264px;">
+        Click to Enlarge
+    </a> -->
+    
+
+    <!-- Image and Post Modal -->
+    <div class="modal fade" id="imagemodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- <div class="modal-header">
+            <h4 class="modal-title" id="myModalLabel">Image preview</h4>
+            </div> -->
+            <img src="" class="img-responsive" id="imagepreview" style="max-width: 500px; max-height: 500px;" >
+            <div class="modal-footer">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>            </div>
+        </div>
+        </div>
+    </div>
+
+
     <!-- postid TEXT, authorname TEXT, authorid TEXT, posttime TEXT, posttitle TEXT, postcontent TEXT, imgurl TEXT, privacy TEXT, communities TEXT -->
     {% for res in posts: %}
     <div class="container mt-5 mb-5">
@@ -165,8 +197,8 @@
                 </table>
             </div>
             <div class="col" style="display: block;">
-                <div class="card bg-light shadow p-3 mb-5 bg-white rounded w-50">
-                    <img src={{res[6]}} class="card-img-top" onerror="this.style.display='none'">
+                <div class="card bg-light shadow p-3 mb-5 bg-white rounded w-50">                  
+                    <img src={{res[6]}} id="my_image" class="card-img-top" onerror="this.style.display='none'">
                     <div class="card-body">
                         <div class="card-title h5">{{res[4]}} 
                             {% if res[7] == 'private' %}
@@ -214,6 +246,13 @@
 
     <script>
         function setup() {
+
+            $('img').click(function() {
+                // alert('hello world');
+                $('#imagepreview').attr('src', $(this).attr('src')); // here asign the image to the modal when the user click the enlarge link
+                $('#imagemodal').modal('show'); // imagemodal is the id attribute assigned to the bootstrap modal, then i use the show function
+            });
+
             const queryString = window.location.search;
             const urlParams = new URLSearchParams(queryString);
             var offset = urlParams.get('offset')
