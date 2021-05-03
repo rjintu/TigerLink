@@ -238,7 +238,7 @@
                 $('#confirmModal').modal('show');
                 $('#confirmYesBtn').click(() => {
                     let postid = $(e.target).attr('id');
-                    $.post("/admin/deletepost", { postid: postid })
+                    $.post("/deletepost", { postid: postid })
                         .done(function () { location.reload(); })
                         .fail(function () { alert('An error occurred.'); });
                 });
