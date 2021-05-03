@@ -18,12 +18,6 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans">
     <link rel='stylesheet' type='text/css' href='static/style.css'>
 
-    <!-- Optional JavaScript; choose one of the two! -->
-    <!-- Option 1: Bootstrap Bundle with Popper -->
-    <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
-        crossorigin="anonymous"></script> -->
-
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
     {% with bold='timeline' %}
     {% include "navbar.html" %}
@@ -130,15 +124,6 @@
         offset -= numPage;
         offset = Math.max(0, offset)
         window.location.href = '/timeline?offset=' + offset;
-        // let url = "/timeline?offset=" + offset;
-        // if (request != null)
-        //     request.abort();
-
-        // request = $.ajax({
-        //     type: 'GET',
-        //     url: url,
-        //     success: handleResponse
-        //});
     };
     $(document).ready(setup);
 </script>
@@ -152,6 +137,10 @@
     .profile:hover {
         cursor: pointer;
         opacity: 0.6;
+    }
+
+    .profile h5 {
+        color: black;
     }
 </style>
 
@@ -167,10 +156,10 @@
                             <a class="profile" profileID="{{ res[1] }}">
                                 <img src={{res[9]}} style="width: 100%; max-width: 70px;" class="rounded-circle"
                                     onerror="this.style.display='none'">
+                                <br>
+                                <br>
+                                <h5 style="text-align: center;">{{res[2]}}</h5>
                             </a>
-                            <br>
-                            <br>
-                            <h5 style="text-align: center;">{{res[2]}}</h5>
                         </tr>
                     </tbody>
                 </table>
@@ -245,9 +234,17 @@
             }
             $('.deleteBtn').click((e) => {
                 let postid = $(e.target).attr('id');
-                $.post("deletepost", { postid: postid })
-                    .done(function () { location.reload(); })
-                    .fail(function () { alert('An error occurred.'); });
+                $('#confirmBody').html("Are you sure you want to delete this post?");
+                $('#confirmModal').modal('show');
+                $('#confirmYesBtn').click(() => {
+                    let postid = $(e.target).attr('id');
+                    $.post("/admin/deletepost", { postid: postid })
+                        .done(function () { location.reload(); })
+                        .fail(function () { alert('An error occurred.'); });
+                });
+                $('#confirmNoBtn').click(() => {
+                    $('#confirmModal').modal('hide');
+                });
             });
             $('.reportBtn').click((e) => {
                 let postid = $(e.target).attr('id');
@@ -288,6 +285,7 @@
         </div>
     </div>
 
+    <!-- Details Modal -->
     <div id="detailsModal" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
@@ -299,6 +297,24 @@
                 </div>
                 <div class="modal-footer">
                     <a href="#" id="closeDetailsBtn" class="btn btn-success d-block">Done</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirm Deletion Modal -->
+    <div id="confirmModal" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Please Confirm</h5>
+                </div>
+                <div class="modal-body" id="confirmBody">
+                </div>
+                <div class="modal-footer">
+                    <button id="confirmYesBtn" class="btn btn-danger d-block">Yes</button>
+                    <button id="confirmNoBtn" class="btn btn-secondary d-block">No</button>
                 </div>
             </div>
         </div>
