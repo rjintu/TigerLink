@@ -8,7 +8,7 @@ from .database import Database
 from .matching import Matching
 from . import loginutil
 from .keychain import KeyChain
-from .admin import admin
+from .adminrouter import admin
 from .action import emailUser, confirmDeletion
 from .student import Student
 from .alum import Alum
