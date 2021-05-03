@@ -173,13 +173,14 @@
         <!-- col 1 -->
         <div class="col-6">
           <div class="form-group">
-            <label for="Title"><strong>Title</strong></label>
+            <label for="Title"><h5>Title</h5></label>
             <input type="title" class="form-control" name="title" id="title" aria-describedby="emailHelp"
               placeholder="Ex: 'TigerLink Looking for SWE Interns!'" required>
             <small id="emailHelp" class="form-text text-muted">Descriptive titles can engage audiences.</small>
           </div>
+          <br>
           <div class="form-group">
-            <label for="content"><strong>Content</strong></label>
+            <label for="content"><h5>Content</h5></label>
             <textarea type="content" class="form-control" style='height:300px' name="content" id="content" aria-describedby="emailHelp" placeholder="Ex: 'Basic javascript experience required!'" required></textarea>
           </div>
         </div>
@@ -193,8 +194,7 @@
         <!-- col 2 -->
         <div class="col-5">
           <div class="form-group">
-            <strong>Which community would you like to post to?</strong>
-            <br>
+            <h5>Which community would you like to post to?</h5>
             <div class="form-check">
               <input class="form-check-input" id="private" value="private" type="radio" name="role" required>
               <label class="form-check-label" for="private"> Private Post (only to specific communities) </label>
@@ -222,10 +222,12 @@
               </select>
             </div>
             <br>
-            Upload an Image:
-            <label class="file-upload-container" for="file-upload">
+            <!-- <label class="file-upload-container" for="file-upload">
               <input id="file-upload" type="file" accept='image/*' style="background-color: gray;">
-            </label>
+            </label> -->
+            <label class="form-label" for="file-upload"><h5>Upload an Image:</h5></label>
+            <input type="file" accept='image/*' class="form-control" id="file-upload" />
+                        
           </div>
 
           <input id="imgurl" name="imgurl" type="hidden" value="google.com">
