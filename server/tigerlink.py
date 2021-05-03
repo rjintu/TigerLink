@@ -9,6 +9,7 @@ from .matching import Matching
 from . import loginutil
 from .keychain import KeyChain
 from .adminrouter import admin
+from .loginrouter import login
 from .action import emailUser, confirmDeletion
 from .student import Student
 from .alum import Alum
@@ -17,15 +18,14 @@ keychain = KeyChain()
 app = Flask(__name__, template_folder="../templates",
             static_folder="../static")
 app.secret_key = keychain.FLASK_SECRET
-login_manager = loginutil.GoogleLogin(keychain)
 
 # for forcing HTTPS and adding other security features
 # CSP is disabled cause it messes with bootstrap
 Talisman(app, content_security_policy=None)
 
-
 # add other blueprints
 app.register_blueprint(admin)
+app.register_blueprint(login)
 
 @app.route('/', methods=['GET'])
 @app.route('/index', methods=['GET'])
@@ -44,18 +44,6 @@ def index():
     response = make_response(html)
     return response
 
-# Note: when testing locally, must use port 8888 for Google SSO
-# general welcome/login page
-@app.route('/login', methods=['GET'])
-def login():
-    if loginutil.is_logged_in(session):
-        # no need to be here
-        return redirect('/index')
-
-    html = render_template('login.html')
-    response = make_response(html)
-    return response
-
 @app.route('/about', methods=['GET'])
 def about():
     if loginutil.is_logged_in(session):
@@ -65,13 +53,6 @@ def about():
     response = make_response(html)
     return response
 
-# Note: when testing locally, must use port 8888 for Google SSO
-@app.route('/login/redirect', methods=['GET'])
-def login_redirect():
-    # redirect the user to Google's login page
-    request_uri = login_manager.get_login_redirect(request)
-    return redirect(request_uri)
-
 # for checking if user exists already, setting a session cookie,
 # and redirecting to the next page
 def user_exists(profileid):
@@ -80,38 +61,6 @@ def user_exists(profileid):
     does_user_exist = db.user_exists(profileid)
     db.disconnect()
     return does_user_exist
-
-@app.route('/login/auth', methods=['GET'])
-def login_auth():
-    try:
-        profileid, email, fullname, picture = login_manager.authorize(request)
-
-        # set session!
-        session['profileid'] = profileid
-        session['email'] = email
-        session['fullname'] = fullname
-        session['picture'] = picture
-
-        # check where to redirect user
-        if user_exists(profileid):
-            return redirect('/timeline')
-        else:
-            return redirect('/index')
-
-    except Exception as e:
-        return make_response('Failed to login: ' + str(e))
-
-
-@app.route('/logout', methods=['GET'])
-def logout():
-    # simply clear the user's session
-    session.pop('profileid', None)
-    session.pop('email', None)
-    session.pop('fullname', None)
-    session.pop('picture', None)
-
-    return redirect('/')
-
 
 @app.route('/createuser', methods=['POST'])
 def createuser():
