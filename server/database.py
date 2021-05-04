@@ -1,7 +1,6 @@
 from os import environ
 from psycopg2 import connect
 from .post import Post
-from .action import emailUser, confirmDeletion, emailAlumMatch, emailStudentMatch
 import os
 from sys import stderr
 from .student import Student
@@ -716,9 +715,8 @@ class Database:
 
     # add matches to the matches table
     # :param matches: list objects as created by Match class in matching.py
-    # :param send_email: boolean flag to determine whether to notify users of their match via email
     # note: it is possible for duplicates to be added to the database, so make sure to reset first. 
-    def add_matches(self, matches, send_email=False):
+    def add_matches(self, matches):
         cursor = self._connection.cursor()
         for match in matches:
             studentid = match[0]
@@ -730,9 +728,6 @@ class Database:
             alum = self.get_alum_by_id(alumid)
             student = self.get_student_by_id(studentid)
 
-            if send_email:
-                emailAlumMatch(student._email, student._name, alum._email, alum._name, student._year, student._communities, student._careers)
-                emailStudentMatch(student._email, student._name, alum._email, alum._name, alum._year, alum._communities, student._careers)
         self._connection.commit()
         cursor.close()
 
