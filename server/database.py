@@ -16,11 +16,11 @@ class Database:
     # connect to the database
     def connect(self):
         if self._url is None:
-            print('Using local database')
+            print('Using local database', file=stderr)
             self._connection = connect(host='localhost', port=5432,
                                     user='tigerlink', password='xxx', database='tldata')
         else:
-            print('Using deployed database')
+            print('Using deployed database', file=stderr)
             self._connection = connect(self._url, sslmode='require')
 
     # reset all existing tables
@@ -70,7 +70,7 @@ class Database:
 
         self._connection.commit()
         cursor.close()
-        print('Database reset and initialized successfully')
+        print('Database reset and initialized successfully', file=stderr)
 
     # reset all tables holding posts 
     def reset_posts(self):
@@ -92,6 +92,7 @@ class Database:
 
         self._connection.commit()
         cursor.close()
+        print('Posts successfully reset', file=stderr)
 
 
     # add students to database
@@ -103,6 +104,7 @@ class Database:
         self._connection.commit()
 
         cursor.close()
+        print('Added students to database', file=stderr)
 
     # add alumni to database
     # :param alumni: list of alumni
@@ -113,6 +115,7 @@ class Database:
         self._connection.commit()
 
         cursor.close()
+        print('Added alumni to database', file=stderr)
 
     # helper method to add individual student to database
     def _add_student(self, cursor, student):
@@ -154,6 +157,7 @@ class Database:
         cursor.execute('DELETE FROM posts WHERE authorid=%s', [profileid])
         self._connection.commit()
         cursor.close()
+        print(f'Removed student with profileid {profileid} from database', file=stderr)
 
     # delete alum from database
     # :param profileid: unique id of user
@@ -167,6 +171,7 @@ class Database:
         cursor.execute('DELETE FROM posts WHERE authorid=%s', [profileid])
         self._connection.commit()
         cursor.close()
+        print(f'Removed alum with profileid {profileid} from database', file=stderr)
 
     # get all students from the database
     def get_students(self):
@@ -194,6 +199,7 @@ class Database:
             row = cursor.fetchone()
 
         cursor.close()
+        print(f'Successfully retrieved all students from the database', file=stderr)
         return output, careers, interests
 
     # get all alumni from the database
@@ -222,6 +228,7 @@ class Database:
             row = cursor.fetchone()
 
         cursor.close()
+        print(f'Successfully retrieved all alumni from the database', file=stderr)
         return output, careers, interests
 
     # gets information about a specific student
@@ -242,6 +249,7 @@ class Database:
         while temp is not None:
             careers.append(temp[0])
             temp = cursor.fetchone()
+        careers.sort()
 
         # getting this user's groups
         cursor.execute(
@@ -251,10 +259,11 @@ class Database:
         while temp is not None:
             communities.append(temp[0])
             temp = cursor.fetchone()
+        communities.sort()
 
         cursor.close()
         student = Student(profileid, name, classyear, email, major, None, nummatch, propic, careers=careers, communities=communities)
-
+        print(f'Successfully retrieved student with profileid {profileid}. Name: {student._name}', file=stderr)
         return student
 
     # gets information about a specific alum
@@ -275,6 +284,7 @@ class Database:
         while temp is not None:
             careers.append(temp[0])
             temp = cursor.fetchone()
+        careers.sort()
 
         # getting this user's groups
         cursor.execute(
@@ -284,11 +294,12 @@ class Database:
         while temp is not None:
             communities.append(temp[0])
             temp = cursor.fetchone()
+        communities.sort()
 
         cursor.close()
         alum = Alum(profileid, name, classyear, email, major, None,
                         nummatch, propic, careers=careers, communities=communities)
-
+        print(f'Successfully retrieved alum with profileid {profileid}. Name: {alum._name}', file=stderr)
         return alum
 
     # utility function for looking up a user by their email
@@ -304,7 +315,9 @@ class Database:
             cursor.execute('SELECT profileid FROM alumni WHERE email=%s', [email])
             profileid = cursor.fetchone()
             if profileid is None:
+                print('Profileid not found from email lookup.', file=stderr)
                 return None
+        print(f'Found profileid for given email {email}', file=stderr)
         return profileid[0]
 
     # gets the role of the user
@@ -372,8 +385,8 @@ class Database:
 
         # update the role
         cursor.execute('UPDATE roles SET role=%s WHERE profileid=%s', [newrole, profileid])
-        cursor.close()
         self._connection.commit()
+        cursor.close()
 
     # returns whether the user is an admin or not
     # :param profileid: unique id of user
@@ -410,10 +423,12 @@ class Database:
         cursor = self._connection.cursor()
         if is_admin:
             cursor.execute('UPDATE roles SET isadmin=%s WHERE profileid=%s', ['true', profileid])
+            print(f'Promoted user {profileid} to admin', file=stderr)
         else:
             cursor.execute('UPDATE roles SET isadmin=%s WHERE profileid=%s', ['false', profileid])
-        cursor.close()
+            print(f'Demoted user {profileid} from admin', file=stderr)
         self._connection.commit()
+        cursor.close()
 
     # returns True if user exists, False otherwise
     # :param profileid: unique id of user
