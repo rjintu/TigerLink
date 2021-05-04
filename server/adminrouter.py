@@ -3,6 +3,8 @@ from flask import Blueprint, request, make_response, redirect, render_template, 
 from . import loginutil
 from .database import Database
 from .matching import Matching
+from .action import emailAlumMatch, emailStudentMatch
+
 from datetime import datetime, timedelta
 
 admin = Blueprint('admin', __name__, 
@@ -128,8 +130,14 @@ def manualmatch():
     similarity = m.dotProduct(studObj, alumObj)
 
     db.add_matches([[request.form['studentid'], request.form['alumid'],
-                'i', 'want', 'to', 'die', similarity]], send_email=True)
+                'i', 'want', 'to', 'die', similarity]])
     db.disconnect()
+
+    # send an email to student / alum
+    emailAlumMatch(studObj._email, studObj._name, alumObj._email, alumObj._name,
+        studObj._year, studObj._communities, studObj._careers)
+    emailStudentMatch(studObj._email, studObj._name, alumObj._email, alumObj._name,
+        alumObj._year, alumObj._communities, alumObj._careers)
 
     response = make_response('success!')
     return response
