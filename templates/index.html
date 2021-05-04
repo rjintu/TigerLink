@@ -166,8 +166,8 @@
               <strong id="alumGroup2">Select the career areas you've worked in. </strong>
             </label>
             <br>
-            <select multiple class="selectpicker" id="industry" name="industry" data-selected-text-format="count" data-live-search="true"
-              required>
+            <select multiple class="selectpicker" id="industry" name="industry" data-selected-text-format="count"
+              data-live-search="true" required>
               {% include 'careeroptions.html' %}
             </select>
           </div>
@@ -180,7 +180,8 @@
               <strong id="alumGroup3">Select the communities you were involved in as a student. </strong>
             </label>
             <br>
-            <select multiple class="selectpicker" id="interests" name="interests" data-selected-text-format="count" data-live-search="true">
+            <select multiple class="selectpicker" id="interests" name="interests" data-selected-text-format="count"
+              data-live-search="true">
               {% include 'interestoptions.html' %}
             </select>
           </div>
@@ -191,6 +192,11 @@
     <br>
     <div class="container">
       <div class="row justify-content-center">
+        <div class="col-1">
+          <a href="/login/logout">
+            <button id="button" type="button" name="danger" class="btn btn-danger">Logout</button>
+          </a>
+        </div>
         <div class="col-1">
           <button id="submit" type="submit" name="submit" class="btn btn-primary">Submit</button>
         </div>
