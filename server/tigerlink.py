@@ -692,8 +692,9 @@ def timeline():
             posts.append(copy)            
 
     posts = posts[offset:offset+5]
-    if (len(posts)) > (offset+5):
-        return None
+
+    if (len(posts) == 0) and (offset != 0):
+        return redirect(f'/timeline?offset={0}')
 
     print(posts)
     db.disconnect()
