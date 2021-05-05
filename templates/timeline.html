@@ -291,7 +291,16 @@
                 $('#confirmYesBtn').click(() => {
                     let postid = $(e.target).attr('id');
                     $.post("/reportpost", { postid: postid })
-                        .done(function () { location.reload(); })
+                        .done(function () { 
+                            $('#confirmModal').modal('hide');
+                            $('#reportBody').html("Post successfully reported.");
+                            // location.reload();
+                            $('#reportModal').modal('show');
+                            $('#donebtn').click(() => {
+                                $('#reportModal').modal('hide');
+                                location.reload();
+                            });
+                        })
                         .fail(function () { alert('An error occurred.'); });
                 });
                 $('#confirmNoBtn').click(() => {
@@ -361,6 +370,23 @@
                 <div class="modal-footer">
                     <button id="confirmYesBtn" class="btn btn-danger d-block">Yes</button>
                     <button id="confirmNoBtn" class="btn btn-secondary d-block">No</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirm Report Modal -->
+    <div id="reportModal" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Post Reported.</h5>
+                </div>
+                <div class="modal-body" id="reportBody">
+                </div>
+                <div class="modal-footer">
+                    <button id="donebtn" class="btn btn-danger d-block">Done</button>
                 </div>
             </div>
         </div>
