@@ -644,6 +644,7 @@ def timeline():
             user._communities[i] = user._communities[i][0]
 
     offset = int(request.args.get('offset', 0))
+    print("offset: " + str(offset))
 
     # don't allow negative offsets
     if offset < 0:
@@ -664,7 +665,12 @@ def timeline():
         return redirect(f'/timeline?offset={max_posts}')
 
     posts = []
-    output = db.get_posts(POSTS_PER_PAGE, offset)
+    output = db.get_posts()
+    reported_posts = db.get_reports_byprofileid(profileid)
+
+    print("reported posts:")
+    print(reported_posts)
+    print("end of reported posts:")
 
     time_offset = int(request.args.get('time_offset', 240)) # FIXME: need to pass in user time zone from JS (right now offset doesn't exist)
     for i in output:
@@ -675,16 +681,21 @@ def timeline():
         formatted_time = curr_time.strftime("%A, %B %d at %I:%M %p")
 
         copy = i[:3] + (formatted_time,) + i[4:8] + (', '.join(json.loads(i[8])),) + (i[9],)
-        # print(type(json.loads(copy[8])))
-        # copy[8] = ' '.join(json.loads(copy[8]))
-        if copy[1] == profileid or role == i[7]:
+        if str(copy[0]) in reported_posts:
+            continue
+        elif copy[1] == profileid or role == i[7]:
             posts.append(copy)
         elif (i[7] == 'private'):
             if not set(user._communities).isdisjoint(set(json.loads(i[8]))):
                 posts.append(copy)
         elif (i[7] == 'everyone'):
-            posts.append(copy)
+            posts.append(copy)            
 
+    posts = posts[offset:offset+5]
+    if (len(posts)) > (offset+5):
+        return None
+
+    print(posts)
     db.disconnect()
     html = render_template('timeline.html', posts=posts,
                         picture=session['picture'], profileid=profileid, is_admin=is_admin)

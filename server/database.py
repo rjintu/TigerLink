@@ -656,6 +656,8 @@ class Database:
     # :param postid: unique id of post
     # : param reporterid: profileid of the person who reported the post
     def report_post(self, postid, reporterid):
+        print("trying to report post %s %s", [str(postid), str(reporterid)])
+
         cursor = self._connection.cursor()
         stmtStr = "SELECT authorid from posts WHERE postid = %s"
         cursor.execute(stmtStr, [str(postid)])
@@ -667,7 +669,6 @@ class Database:
         row = cursor.fetchone()
         if (row is not None):
             return
-
         cursor = self._connection.cursor()
         cursor.execute('INSERT INTO moderation(postid, authorid, reporterid) VALUES (%s, %s, %s)', [str(postid), str(authorid), str(reporterid)])
         self._connection.commit()
@@ -686,6 +687,20 @@ class Database:
             self.delete_post(postid)
         
         cursor.close()
+
+    def get_reports_byprofileid(self, profileid):
+        cursor = self._connection.cursor()
+        stmtStr = "SELECT postid from moderation WHERE reporterid=%s"
+        cursor.execute(stmtStr, [str(profileid)])
+        posts = []
+        row = cursor.fetchone()
+        while (row is not None):
+            posts.append(row[0])
+            row = cursor.fetchone()
+    
+        print("posts:")
+        print(posts)
+        return posts
 
     # create a new post, add to database
     # :param profileid: unique id of user

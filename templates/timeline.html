@@ -25,7 +25,6 @@
 
 </head>
 
-
 <script>
     "use strict";
 
@@ -121,6 +120,7 @@
     $(document).ready(setup);
 </script>
 
+    
 
 <style>
     body {
@@ -263,7 +263,7 @@
             }
             var numPosts = $('#num-posts').data();
             console.log(numPosts.name)
-            if (numPosts.name === 0) {
+            if (numPosts.name < 5) {
                 $("#next").hide();
                 $("#endresults").show();
             }
@@ -286,9 +286,17 @@
             });
             $('.reportBtn').click((e) => {
                 let postid = $(e.target).attr('id');
-                $.post("reportpost", { postid: postid })
-                    .done(function () { location.reload(); })
-                    .fail(function () { alert('An error occurred.'); });
+                $('#confirmBody').html("Are you sure you want to report this post?");
+                $('#confirmModal').modal('show');
+                $('#confirmYesBtn').click(() => {
+                    let postid = $(e.target).attr('id');
+                    $.post("/reportpost", { postid: postid })
+                        .done(function () { location.reload(); })
+                        .fail(function () { alert('An error occurred.'); });
+                });
+                $('#confirmNoBtn').click(() => {
+                    $('#confirmModal').modal('hide');
+                });
             });
 
         }
@@ -357,6 +365,7 @@
             </div>
         </div>
     </div>
+
 
 </body>
 
