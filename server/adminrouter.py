@@ -33,7 +33,7 @@ def index():
     if action is not None:
         return action
         
-    return redirect('/admin/matches')
+    return redirect('/admin/timeline')
 
 @admin.route('/matches', methods=['GET'])
 def matches():

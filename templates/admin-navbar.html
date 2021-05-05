@@ -49,6 +49,9 @@ b { color: #FF7700; }
 /* .navbar {margin-bottom: 200px;} */
 </style>
 
+<link href="static/css/pe-icon-7-stroke.css" rel="stylesheet" />
+<link href="static/css/ct-navbar.css" rel="stylesheet" />
+
 <nav class="navbar navbar-expand fixed-top" style="background-color: white;">
   <div class="container-fluid">
     <ul class="nav navbar-nav navbar-left" id="two">  
@@ -59,13 +62,14 @@ b { color: #FF7700; }
         </li>
     </ul>
     <ul class="nav navbar-nav navbar-right" id="one">             
-        {% if bold == 'matches' %}
+        {% if bold == 'timeline' %}
         <li id="nav-disable">
         {% else %}
         <li>
         {% endif %}
-            <a href="/admin/matches" data-toggle="search">
-                <p>Matches</p>
+            <a href="/admin/timeline" data-toggle="search">
+                <i class="pe-7s-home"></i>
+                <p>Timeline</p>
             </a>
         </li>
         {% if bold == 'users' %}
@@ -74,16 +78,18 @@ b { color: #FF7700; }
         <li>
         {% endif %}
             <a href="/admin/users" data-toggle="search">
+                <i class="pe-7s-user"></i>
                 <p>Users</p>
             </a>
         </li>
-        {% if bold == 'timeline' %}
+        {% if bold == 'matches' %}
         <li id="nav-disable">
         {% else %}
         <li>
         {% endif %}
-            <a href="/admin/timeline" data-toggle="search">
-                <p>Timeline</p>
+            <a href="/admin/matches" data-toggle="search">
+                <i class="pe-7s-gift"></i>
+                <p>Matches</p>
             </a>
         </li>
     </ul>
