@@ -6,7 +6,11 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="shortcut icon" type="image/png" href="../static/img/favicon.png" />
+    <link href="static/css/pe-icon-7-stroke.css" rel="stylesheet" />
+    <link href="static/css/ct-navbar.css" rel="stylesheet" />
+
+    <!-- Meta tag for number of posts -->
+    <meta id="num-posts" data-name="{{posts|length}}">
 
     <!-- Bootstrap CSS and stylesheet -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -14,8 +18,6 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans">
     <link rel='stylesheet' type='text/css' href='static/style.css'>
 
-    <!-- Optional JavaScript; choose one of the two! -->
-    <!-- Option 1: Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
         crossorigin="anonymous"></script>
@@ -27,13 +29,142 @@
 
 </head>
 
+
+<script>
+    "use strict";
+
+    let request = null;
+
+    function handleResponse(response) {
+        $('#detailsBody').html(response);
+        $('#detailsModal').modal('show');
+    }
+
+    function setup() {
+
+        $('[data-toggle="popover"]').each( function() {
+        $(this).popover({ 
+            placement: 'right',
+            trigger: 'hover',
+            content: 'Visible to only: ' + $(this).attr('privacy'),
+        });
+        });
+
+        $('#closeDetailsBtn').click(function () {
+            $('#detailsModal').modal('hide');
+        });
+
+        $('.profile').click((e) => {
+            let profileid = $(e.target).closest('a').attr('profileID');
+            let profileidU = encodeURIComponent(profileid);
+
+            let url = "/genericdetails?profileid=" + profileidU;
+            if (request != null)
+                request.abort();
+
+            request = $.ajax({
+                type: 'GET',
+                url: url,
+                success: handleResponse
+            });
+        });
+    };
+
+
+
+    function forwardResults() {
+        var numPage = 5;
+        let request = null;
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        var offset = urlParams.get('offset')
+        if (offset === null) {
+            offset = 0; // may need to update
+        }
+        else {
+            offset = parseInt(offset) // note: keep this consistent with the limit
+        }
+
+        offset += numPage;
+        window.location.href = '/timeline?offset=' + offset;
+    };
+
+    function backwardResults() {
+        var numPage = 5;
+        let request = null;
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        var offset = urlParams.get('offset')
+        if (offset === null) {
+            offset = 0; // may need to update
+        }
+        else {
+            offset = parseInt(offset) // note: keep this consistent with the limit
+        }
+
+        offset -= numPage;
+        offset = Math.max(0, offset)
+        window.location.href = '/timeline?offset=' + offset;
+    };
+    $(document).ready(setup);
+</script>
+
+
 <style>
     body {
         padding-top: 65px;
     }
+
+    .profile:hover {
+        cursor: pointer;
+        opacity: 0.6;
+    }
+
+    .profile h5 {
+        color: black;
+    }
+    .card-img-top {
+    width: 100%;
+    max-height: 25vw;
+    object-fit: cover;
+    display: block;
+
+    }
+#imagemodal {
+    text-align:center;
+}
+#image-dialog {
+    display: inline-block;
+    width: auto;
+}
+
+
+
 </style>
 
 <body id="generic-body">
+
+    <!-- <a href="#" id="pop">
+        <img id="imageresource" src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Google_2015_logo.svg/1200px-Google_2015_logo.svg.png" style="width: 400px; height: 264px;">
+        Click to Enlarge
+    </a> -->
+    
+
+    <!-- Image and Post Modal -->
+    <div class="modal fade" id="imagemodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog" id="image-dialog">
+        <div class="modal-content">
+            <!-- <div class="modal-header">
+            <h4 class="modal-title" id="myModalLabel">Image preview</h4>
+            </div> -->
+            <img src="" class="img-responsive" id="imagepreview" style="max-width: 500px; max-height: 500px;" >
+            <div class="modal-footer">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>            </div>
+        </div>
+        </div>
+    </div>
+
+
     <!-- postid TEXT, authorname TEXT, authorid TEXT, posttime TEXT, posttitle TEXT, postcontent TEXT, imgurl TEXT, privacy TEXT, communities TEXT -->
     {% for res in posts: %}
     <div class="container mt-5 mb-5">
@@ -42,27 +173,34 @@
                 <table>
                     <tbody>
                         <tr style="text-align: center;">
-                            <a target="_blank">
-                                <img src={{res[9]}} style="width: 100%; max-width: 100px;" class="rounded-circle"
+                            <a class="profile" profileID="{{ res[1] }}">
+                                <img src={{res[9]}} style="width: 100%; max-width: 70px;" class="rounded-circle"
                                     onerror="this.style.display='none'">
+                                <br>
+                                <br>
+                                <h5 style="text-align: center;">{{res[2]}}</h5>
                             </a>
-                            <br>
-                            <h5 style="text-align: center;">{{ res[2] }}</h5>
                         </tr>
                     </tbody>
                 </table>
             </div>
             <div class="col" style="display: block;">
-                <div class="card bg-light shadow p-3 mb-5 bg-white rounded w-50">
-                    <img src={{res[6]}} class="card-img-top" onerror="this.style.display='none'">
+                <div class="card bg-light shadow p-3 mb-5 bg-white rounded w-50">                  
+                    <img src={{res[6]}} id="my_image" class="card-img-top" onerror="this.style.display='none'">
                     <div class="card-body">
-                        <div class="card-title h5"> {{res[4]}} </div>
-                        <div class="mb-2 text-muted card-subtitle h6">
-                            {{res[3]}}
+                        <div class="card-title h5">{{res[4]}} 
+                            {% if res[7] == 'private' %}
+                            <img data-toggle="popover" privacy="{{ res[8] }}" src="../static/img/lock.png" width="15" height="auto" alt="">
+                            {% endif %}
+                            {% if res[7] == 'student' %}
+                            <img data-toggle="popover" privacy="Students" src="../static/img/lock.png" width="15" height="auto" alt="">
+                            {% endif %}
+                            {% if res[7] == 'alum' %}
+                            <img data-toggle="popover" privacy="Alumni" src="../static/img/lock.png" width="15" height="auto" alt="">
+                            {% endif %}
                         </div>
-                        <div class="mb-2 h6">
-                            {{res[5]}}
-                        </div>
+                        <div class="mb-2 text-muted card-subtitle h6">{{res[3]}}</div>
+                        <div class="mb-2 h6" style="white-space:pre-wrap; text-indent: 0px;">{{res[5]}}</div>
                         <div class="d-flex mt-3">
                             <button class="btn btn-danger ms-auto deleteBtn" id="{{res[0]}}">Delete</button>
                         </div>
@@ -73,35 +211,23 @@
     </div>
 
     {% endfor %}
-
-    <div id="confirmModal" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-  aria-labelledby="staticBackdropLabel" aria-hidden="true">
-      <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Please Confirm</h5>
-        </div>
-        <div class="modal-body" id="confirmBody">
-        </div>
-        <div class="modal-footer">
-            <button id="confirmYesBtn" class="btn btn-danger d-block">Yes</button>
-            <button id="confirmNoBtn" class="btn btn-secondary d-block">No</button>
-        </div>
-      </div>
-      </div>
-    </div>
-
     <script>
         function setup() {
+
+            $('.card-img-top').click(function() {
+                $('#imagepreview').attr('src', $(this).attr('src')); // here asign the image to the modal when the user click the enlarge link
+                $('#imagemodal').modal('show'); // imagemodal is the id attribute assigned to the bootstrap modal, then i use the show function
+            });
+
             $('.deleteBtn').click((e) => {
                 let postid = $(e.target).attr('id');
                 $('#confirmBody').html("Are you sure you want to delete this post?");
                 $('#confirmModal').modal('show');
                 $('#confirmYesBtn').click(() => {
                     let postid = $(e.target).attr('id');
-                    $.post("/admin/deletepost", {postid: postid})
-                        .done(function() { location.reload(); })
-                        .fail(function() { alert('An error occurred.'); });
+                    $.post("/admin/deletepost", { postid: postid })
+                        .done(function () { location.reload(); })
+                        .fail(function () { alert('An error occurred.'); });
                 });
                 $('#confirmNoBtn').click(() => {
                     $('#confirmModal').modal('hide');
@@ -111,6 +237,42 @@
 
         $(document).ready(setup);
     </script>
+
+    <!-- Details Modal -->
+    <div id="detailsModal" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">User Details</h5>
+                </div>
+                <div class="modal-body" id="detailsBody">
+                </div>
+                <div class="modal-footer">
+                    <a href="#" id="closeDetailsBtn" class="btn btn-success d-block">Done</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirm Deletion Modal -->
+    <div id="confirmModal" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Please Confirm</h5>
+                </div>
+                <div class="modal-body" id="confirmBody">
+                </div>
+                <div class="modal-footer">
+                    <button id="confirmYesBtn" class="btn btn-danger d-block">Yes</button>
+                    <button id="confirmNoBtn" class="btn btn-secondary d-block">No</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </body>
 
 </html>
