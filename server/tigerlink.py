@@ -714,8 +714,7 @@ def timeline():
         print(e, file=stderr)
         abort(500)
 
-# TODO: turn this into a post request? 
-@app.route('/delete', methods=['GET'])
+@app.route('/delete', methods=['POST'])
 def deleteProfile():
     if not loginutil.is_logged_in(session):
         # user not logged in
