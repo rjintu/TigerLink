@@ -43,7 +43,29 @@
         background-color: white;
 
     }
+    @media (max-width: 576px) {
+    #one>li>a {
+        margin: 100px 100px;
+        /* padding: 6px 7px; */
+        text-align: right;
+        /* min-width: 70px; */
+    }
 
+    #two {
+        margin: 0px 0px;
+        /* padding: 6px 7px; */
+        text-align: right;
+        /* min-width: 70px; */
+    }
+
+    #three {
+        margin: 0px 0px;
+        /* padding: 6px 7px; */
+        text-align: right;
+        /* min-width: 70px; */
+    }
+    }
+    @media (min-width: 576px) {
     #one>li>a {
         margin: 100px 100px;
         /* padding: 6px 7px; */
@@ -63,6 +85,7 @@
         /* padding: 6px 7px; */
         text-align: center;
         /* min-width: 70px; */
+    }
     }
 
     .navbar .navbar-nav [class^="pe"] {
@@ -94,9 +117,8 @@
 
     /* .navbar {margin-bottom: 200px;} */
 </style>
-<nav class="navbar navbar-expand fixed-top" style="background-color: white;">
+<nav class="navbar navbar-expand-sm fixed-top navbar-light bg-light" style="background-color: white;">
     <div class="container-fluid">
-
         <ul class="nav navbar-nav navbar-left" id="two">
             <li>
                 <a href="timeline" data-toggle="search">
@@ -105,74 +127,69 @@
             </li>
         </ul>
 
-        <ul class="nav navbar-nav navbar-right" id="one">
-            {% if bold == 'timeline' %}
-            <li id='nav-disable'>
-                {% else %}
-            <li>
-                {% endif %}
-                <a href="timeline" data-toggle="search">
-                    <i class="pe-7s-home"></i>
-                    <p>Timeline</p>
-                </a>
-            </li>
-            {% if bold == 'search' %}
-            <li id='nav-disable'>
-                {% else %}
-            <li>
-                {% endif %}
-                <a href="dosearch" data-toggle="search">
-                    <i class="pe-7s-search"></i>
-                    <p>Search</p>
-                </a>
-            </li>
-            {% if bold == 'matches' %}
-            <li id='nav-disable'>
-                {% else %}
-            <li>
-                {% endif %}
-                <a href="displaymatches" data-toggle="Matches">
-                    <i class="pe-7s-gift"></i>
-                    <p>Matches</p>
-                </a>
-            </li>
-            {% if bold == 'post' %}
-            <li id='nav-disable'>
-                {% else %}
-            <li>
-                {% endif %}
-                <a href="loadpost" data-toggle="LoadPost">
-                    <i class="pe-7s-plus"></i>
-                    <p>Post</p>
-                </a>
-            </li>
-        </ul>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <ul class="nav navbar-nav ms-auto" id="one">
+                    <li class="nav-item">
+                        <a href="timeline" data-toggle="search">
+                            <i class="pe-7s-home"></i>
+                            <p>Timeline</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="dosearch" data-toggle="search">
+                            <i class="pe-7s-search"></i>
+                            <p>Search</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="displaymatches" data-toggle="Matches">
+                            <i class="pe-7s-gift"></i>
+                            <p>Matches</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="loadpost" data-toggle="LoadPost">
+                            <i class="pe-7s-plus"></i>
+                            <p>Post</p>
+                        </a>
+                    </li>
+        
 
-        <ul class="nav navbar-nav navbar-right" id="three">
-            <li>
-                <!-- <a href="editprofile" data-toggle="Messages" class="hidden-xs">
-                    <img src="{{picture}}" height=40px width=40px class="rounded-circle" alt="">
-                    Profile
-                </a> -->
 
-                <!-- Default dropstart button -->
-                <div class="btn-group dropstart">
-                    <p data-bs-toggle="dropdown">
-                        <img class="logoutImage" src="{{picture}}" alt="">
-                    </p>
-                    <ul class="dropdown-menu dropdown-menu-light">
-                        <li><a class="dropdown-item" href="editprofile">My Profile</a></li>
-                        {% if is_admin %}
-                        <div class="dropdown-divider"></div>
-                        <li><a class="dropdown-item" href="/admin">Admin</a></li>
-                        {% endif %}
-                        <div class="dropdown-divider"></div>
-                        <li><a class="dropdown-item" href="/login/logout">Logout</a></li>
-                    </ul>
-                </div>
+                </ul>
+                <ul class="nav navbar-nav navbar-nav ms-auto" id="three">
+                    <li>
+        
+                        <!-- Default dropstart button -->
+                        <div class="btn-group dropstart">
+                            <p data-bs-toggle="dropdown">
+                                <img class="logoutImage" src="{{picture}}" alt="">
+                            </p>
+                            <ul class="dropdown-menu dropdown-menu-light">
+                                <li><a class="dropdown-item" href="editprofile">My Profile</a></li>
+                                {% if is_admin %}
+                                <div class="dropdown-divider"></div>
+                                <li><a class="dropdown-item" href="/admin">Admin</a></li>
+                                {% endif %}
+                                <div class="dropdown-divider"></div>
+                                <li><a class="dropdown-item" href="/login/logout">Logout</a></li>
+                            </ul>
+                        </div>
+        
+                    </li>
+                </ul>
+        
+            </div>
+    
+          </div>
+            
 
-            </li>
-        </ul>
+
+
+
 
     </div>
 </nav>
