@@ -65,6 +65,7 @@ class Matching(object):
         try:
             db = Database()
             db.connect()
+            self._curMatches = db.all_matches()
             s, c, i = db.get_students()
             self._students = self.studentize(s, c, i)
             s2, c2, i2 = db.get_alumni()
@@ -74,6 +75,7 @@ class Matching(object):
             'ENG': 0.68, 'FIT': 0.88, 'GEO': 0.35, 'GLL': 0.90, 'HIS': 0.40, 'HUM': 0.70, 'LAT': 0.92,
             'LIN': 0.97, 'MAE': 3.40, 'MAT': 3.47, 'MOL': 3.20, 'MUS': 0.05, 'NES': 0.85, 'ORF': 3.45, 'PHI': 0.12, 
             'PHY': 3.32, 'POL': 0.45, 'PSY': 3.25, 'REL': 0.30, 'SOC': 0.28, 'SPI': 0.48, 'VIS': 0.10}
+            db.disconnect()
         except Exception as e:
             html = "error occurred: " + str(e)
             print(e)
@@ -89,11 +91,22 @@ class Matching(object):
     # generate a vector representing a specific person and then dot-product with all others
     # according to a specific set of preferences
 
+    def _processMatches(self):
+        matches = []
+        for match in self._curMatches:
+            matches.append((match[0], match[1]))
+            if match[0] in self._students:
+                self._students[match[0]]._numMatch -= 1
+            if match[1] in self._alumni:
+                self._alumni[match[1]]._numMatch -= 1
+            match[6] = self.dotProduct(match[0], match[1])
+
+        return matches, self._curMatches
+
     def match(self):
         students = self._students
         alumni = self._alumni
-        matches = []
-        finalMatches = []
+        matches, finalMatches = self._processMatches()
         absoluteFinal = []
         topSim = 0
         while (len(students) > 0):
