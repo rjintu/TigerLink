@@ -755,18 +755,44 @@ class Database:
                 [studentid, alumid])
         self._connection.commit()
         cursor.close()
+
+    def all_matches(self):
+        cursor = self._connection.cursor()
+        stmtStr = "SELECT studentid, alumid, similarity FROM matches"
+        cursor.execute(stmtStr)
+        row = cursor.fetchone()
+
+        output = [] # will store (studname, studyear, alumname, alumyear)
+        while row is not None:
+            curr_stud = row[0] # profileid of the student in the match
+            curr_alum = row[1] # profileid of the alum in the match
+            curr_sim = row[2] # similarity score
+        
+            det_cursor.execute('SELECT name, classyear FROM students WHERE profileid LIKE %s', [curr_stud])
+            studname, studyear = det_cursor.fetchone()
+
+            det_cursor.execute('SELECT name, classyear FROM alumni WHERE profileid LIKE %s', [curr_alum])
+            alumname, alumyear = det_cursor.fetchone()
+
+            # note: we need to return the profileids in the tuple because they are used for matchdetails JS
+            output.append((curr_stud, curr_alum, studname, studyear, alumname, alumyear, curr_sim))
+
+            row = cursor.fetchone()
+        
+        return output
+
     
     # retrieve matches for a specific profileid
     # if display_all is set to True, then output all matches for all individuals
     def retrieve_matches(self, profileid, display_all=False):
         cursor = self._connection.cursor()
-        role = self.get_role(profileid)
         stmtStr = ""
         if display_all:
             stmtStr = "SELECT studentid, alumid, similarity FROM matches"
             cursor.execute(stmtStr)
         
         else:
+            role = self.get_role(profileid)
             if role == 'student':
                 stmtStr = "SELECT studentid, alumid, similarity FROM matches WHERE studentid LIKE %s"
             elif role == 'alum':
