@@ -30,7 +30,6 @@
     a {
         text-decoration: None;
     }
-
     .navbar {
         height: 75px;
         border: 0 none;
@@ -39,52 +38,49 @@
         font-size: 14px;
     }
 
-    .navbar-default {
-        background-color: white;
-
-    }
     @media (max-width: 576px) {
-    #one>li>a {
-        margin: 100px 100px;
-        /* padding: 6px 7px; */
-        text-align: right;
-        /* min-width: 70px; */
+    /* .navbar {
+        padding-top: 0;
+        border: 0;
     }
+    .navbar {
+        margin-bottom: 0;
+    } */
 
-    #two {
-        margin: 0px 0px;
-        /* padding: 6px 7px; */
-        text-align: right;
-        /* min-width: 70px; */
+    #one>li>a>p {
+        visibility: hidden;
     }
-
     #three {
-        margin: 0px 0px;
-        /* padding: 6px 7px; */
+        visibility:visible;
         text-align: right;
-        /* min-width: 70px; */
     }
+
+    #one>li>a {
+        margin: 25px 25px;
+        text-align: right;
+    }
+    .navbar-collapse {
+        padding-top:0;
+        padding-bottom: 0;
+    }
+
+
     }
     @media (min-width: 576px) {
     #one>li>a {
-        margin: 100px 100px;
-        /* padding: 6px 7px; */
+        margin: 80px 80px;
+        /* text-align: justify; */
         text-align: center;
-        /* min-width: 70px; */
     }
 
     #two {
         margin: 0px 0px;
-        /* padding: 6px 7px; */
         text-align: center;
-        /* min-width: 70px; */
     }
 
     #three {
         margin: 0px 0px;
-        /* padding: 6px 7px; */
         text-align: center;
-        /* min-width: 70px; */
     }
     }
 
@@ -95,7 +91,6 @@
 
     .navbar .navbar-nav p {
         display: block;
-
         margin: 0px 0 0;
         font-size: 15px;
     }
@@ -117,12 +112,12 @@
 
     /* .navbar {margin-bottom: 200px;} */
 </style>
-<nav class="navbar navbar-expand-sm fixed-top navbar-light bg-light" style="background-color: white;">
+<nav class="navbar navbar-expand-sm fixed-top navbar-light" style="background-color: white;">
     <div class="container-fluid">
         <ul class="nav navbar-nav navbar-left" id="two">
             <li>
                 <a href="timeline" data-toggle="search">
-                    <img src="../static/img/logo.png" width="100" alt="">
+                    <img src="../static/img/logo.png" width="75" alt="">
                 </a>
             </li>
         </ul>
