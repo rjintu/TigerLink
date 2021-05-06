@@ -6,6 +6,7 @@ from .matching import Matching
 from .action import emailAlumMatch, emailStudentMatch
 
 from datetime import datetime, timedelta
+from sys import stderr
 
 admin = Blueprint('admin', __name__, 
         template_folder="../templates",
@@ -40,35 +41,40 @@ def matches():
     action = verify_access(session)
     if action is not None:
         return action
+    
+    try:
+        db = Database()
+        db.connect()
+        matches = db.retrieve_matches(session['profileid'], display_all=True)
+        # count num matches currently in db for each user
+        studCnt = {}
+        alumCnt = {}
+        for match in matches:
+            if studCnt.get(match[0]):
+                studCnt[match[0]] += 1
+            else:
+                studCnt[match[0]] = 1
+            if alumCnt.get(match[1]):
+                alumCnt[match[1]] += 1
+            else:
+                alumCnt[match[1]] = 1
 
-    db = Database()
-    db.connect()
-    matches = db.retrieve_matches(session['profileid'], display_all=True)
-    # count num matches currently in db for each user
-    studCnt = {}
-    alumCnt = {}
-    for match in matches:
-        if studCnt.get(match[0]):
-            studCnt[match[0]] += 1
-        else:
-            studCnt[match[0]] = 1
-        if alumCnt.get(match[1]):
-            alumCnt[match[1]] += 1
-        else:
-            alumCnt[match[1]] = 1
+        students, _, _ = db.get_students()
+        for i in range(len(students)):
+            students[i] = list(students[i])
+            students[i].append(studCnt.get(students[i][0], 0))
 
-    students, _, _ = db.get_students()
-    for i in range(len(students)):
-        students[i] = list(students[i])
-        students[i].append(studCnt.get(students[i][0], 0))
-
-    alumni, _, _ = db.get_alumni()
-    for i in range(len(alumni)):
-        alumni[i] = list(alumni[i])
-        alumni[i].append(alumCnt.get(alumni[i][0], 0))
-    db.disconnect()
-    html = render_template('matches.html', matches=matches, students=students, alumni=alumni)
-    return make_response(html)
+        alumni, _, _ = db.get_alumni()
+        for i in range(len(alumni)):
+            alumni[i] = list(alumni[i])
+            alumni[i].append(alumCnt.get(alumni[i][0], 0))
+        db.disconnect()
+        html = render_template('matches.html', matches=matches, students=students, alumni=alumni)
+        return make_response(html)
+    
+    except Exception as e:
+        print(e, file=stderr)
+        abort(500)
 
 @admin.route('/creatematches', methods=['POST'])
 def creatematches():
@@ -85,7 +91,6 @@ def creatematches():
     db.add_matches(matches)
     db.disconnect()
 
-    # todo: add error handling
     response = make_response('success!')
     return response
 
@@ -100,7 +105,6 @@ def deletematches():
     db.reset_matches()
     db.disconnect()
 
-    # todo: add error handling
     response = make_response('success!')
     return response
 
@@ -162,15 +166,20 @@ def users():
     if action is not None:
         return action
 
-    db = Database()
-    db.connect()
-    students, _, _ = db.get_students()
-    alumni, _, _ = db.get_alumni()
-    admin_dict = db.get_admin_dict()
-    db.disconnect()
+    try:
+        db = Database()
+        db.connect()
+        students, _, _ = db.get_students()
+        alumni, _, _ = db.get_alumni()
+        admin_dict = db.get_admin_dict()
+        db.disconnect()
 
-    html = render_template('users.html', students=students, alumni=alumni, admins=admin_dict)
-    return make_response(html)
+        html = render_template('users.html', students=students, alumni=alumni, admins=admin_dict)
+        return make_response(html)
+
+    except Exception as e:
+        print(e, file=stderr)
+        abort(500)
 
 @admin.route('/deletestudent', methods=['POST'])
 def deletestudent():
@@ -206,23 +215,28 @@ def timeline():
     if action is not None:
         return action
 
-    db = Database()
-    db.connect()
-    output = db.get_posts()
-    posts = []
-        
-    offset = 240 # FIXME: change to user's time zone? 
-    for post in output:
-        curr_time = datetime.fromisoformat(post[3])
-        curr_time = curr_time - timedelta(minutes=offset)
-        formatted_time = curr_time.strftime("%A, %B %d at %I:%M %p")
-        copy = post[:3] + (formatted_time,) + post[4:]
-        posts.append(copy)
+    try:
+        db = Database()
+        db.connect()
+        output = db.get_posts()
+        posts = []
+            
+        offset = 240 # FIXME: change to user's time zone? 
+        for post in output:
+            curr_time = datetime.fromisoformat(post[3])
+            curr_time = curr_time - timedelta(minutes=offset)
+            formatted_time = curr_time.strftime("%A, %B %d at %I:%M %p")
+            copy = post[:3] + (formatted_time,) + post[4:]
+            posts.append(copy)
 
-    db.disconnect()
-    html = render_template('admin-timeline.html', posts=posts)
-    response = make_response(html)
-    return response
+        db.disconnect()
+        html = render_template('admin-timeline.html', posts=posts)
+        response = make_response(html)
+        return response
+
+    except Exception as e:
+        print(e, file=stderr)
+        abort(500)
 
 @admin.route('/deletepost', methods=['POST'])
 def deletepost():

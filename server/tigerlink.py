@@ -1,8 +1,9 @@
-from flask import Flask, request, make_response, redirect, url_for, session, flash
+from flask import Flask, request, make_response, redirect, url_for, session, flash, abort
 from flask import render_template
 from flask_talisman import Talisman
 from datetime import datetime, timezone, timedelta
 import json
+from sys import stderr
 
 from .database import Database
 from .matching import Matching
@@ -38,20 +39,29 @@ def index():
     if user_exists(profileid):
         return redirect('/timeline')
 
-    name = session['fullname']
-
-    html = render_template('index.html', name=name)
-    response = make_response(html)
-    return response
+    try:
+        name = session['fullname']
+        html = render_template('index.html', name=name)
+        response = make_response(html)
+        return response
+    
+    except Exception as e:
+        print(e, file=stderr)
+        abort(500)
 
 @app.route('/about', methods=['GET'])
 def about():
     if loginutil.is_logged_in(session):
         # no need to be here
         return redirect('/index')
-    html = render_template('about.html')
-    response = make_response(html)
-    return response
+    try:
+        html = render_template('about.html')
+        response = make_response(html)
+        return response
+    
+    except Exception as e:
+        print(e, file=stderr)
+        abort(500)
 
 # for checking if user exists already, setting a session cookie,
 # and redirecting to the next page
@@ -99,9 +109,8 @@ def createuser():
         emailUser(str(email), str(name), str(role), str(year))
 
     except Exception as e:
-        html = "error occurred: " + str(e)
-        print(e)
-        return make_response(html)
+        print(e, file=stderr)
+        abort(500)
 
     return redirect(url_for('timeline', firstLogin='True'))
 
@@ -133,12 +142,12 @@ def loadpost():
 
         html = render_template(
             'createpost.html', picture=session['picture'], communities=user._communities, is_admin=is_admin)
+        response = make_response(html)
+        return response
+    
     except Exception as e:
-        html = "error occurred: " + str(e)
-        print(e)
-        return make_response(html)
-
-    return html
+        print(e, file=stderr)
+        abort(500)
 
 
 @app.route('/createpost', methods=['POST'])
@@ -185,12 +194,10 @@ def createpost():
                     str(content), str(imgurl), str(private), json.dumps(communities), str(session['picture']))
         db.disconnect()
         return redirect('/timeline')
+    
     except Exception as e:
-        html = "error occurred: " + str(e)
-        print(e)
-        return make_response(html)
-
-    return html
+        print(e, file=stderr)
+        abort(500)
 
 @app.route('/reportpost', methods=['POST'])
 def reportpost():
@@ -204,7 +211,6 @@ def reportpost():
 
     response = make_response('success!')
     return response
-
 
 @app.route('/deletepost', methods=['POST'])
 def deletepost():
@@ -220,7 +226,7 @@ def deletepost():
 
     response = make_response('success!')
     return response
-
+    
 @app.route('/displaymatches', methods=['GET'])
 def getmatches():
     if not loginutil.is_logged_in(session):
@@ -239,15 +245,15 @@ def getmatches():
         is_admin = db.get_admin(profileid)
         db.disconnect()
         html = render_template('displaymatches.html', matches=matches,
-                               picture=session['picture'], is_admin=is_admin)
+                            picture=session['picture'], is_admin=is_admin)   
+        response = make_response(html)
+        return response
+    
     except Exception as e:
-        html = "error occurred: " + str(e)
-        print(e)
+        print(e, file=stderr)
+        abort(500)
 
-    response = make_response(html)
-    return response
-
-
+# modal component
 @app.route('/studentdetails', methods=['GET'])
 def studentdetails():
     if not loginutil.is_logged_in(session):
@@ -267,11 +273,12 @@ def studentdetails():
 
         html = render_template('studentdetails.html', student=student)
         return make_response(html)
+    
     except Exception as e:
-        print(e)
+        print(e, file=stderr)
         return make_response("An error occurred. Please try again later.")
 
-
+# modal component
 @app.route('/alumdetails', methods=['GET'])
 def alumdetails():
     if not loginutil.is_logged_in(session):
@@ -291,11 +298,12 @@ def alumdetails():
 
         html = render_template('alumdetails.html', alum=alum)
         return make_response(html)
+    
     except Exception as e:
-        print(e)
+        print(e, file=stderr)
         return make_response("An error occurred. Please try again later.")
 
-
+# modal component
 @app.route('/genericdetails', methods=['GET'])
 def genericdetails():
     if not loginutil.is_logged_in(session):
@@ -334,7 +342,7 @@ def genericdetails():
             return make_response(html)
 
     except Exception as e:
-        print(e)
+        print(e, file=stderr)
         return make_response("An error occurred. Please try again later.")
 
 
@@ -456,8 +464,8 @@ def matchdetails():
         html += '</table>'
 
     except Exception as e:
-        html = "error occurred: " + str(e)
-        print(e)
+        print(e, file=stderr)
+        return make_response("An error occurred. Please try again later.")
     
     response = make_response(html)
     return response
@@ -488,17 +496,16 @@ def getprofile():
         is_admin = db.get_admin(profileid)
         db.disconnect()
         html = render_template('editprofile.html', user=user, picture=session['picture'], role=role, is_admin=is_admin)
+        response = make_response(html)
+        return response
 
     except Exception as e:
-        html = "error occurred: " + str(e)
-        print(e)
-
-    response = make_response(html)
-    return response
+        print(e, file=stderr)
+        abort(500)
 
 # updates profile on save click
 @app.route('/updateprofile', methods=['POST'])
-def changeprofile():
+def updateprofile():
     try:
         profileid = session['profileid']
         # first update the entry in the database
@@ -543,17 +550,14 @@ def changeprofile():
             db.update_alum(alum) # use the profileid already in Alum object
 
         db.disconnect()
-        flash("Your profile has been updated successfully.")
+        flash("Your profile has been updated successfully.", "success")
 
     except Exception as e:
-        html = "error occurred: " + str(e)
-        print(e)
-        response = make_response(html)
-        return response
+        print(e, file=stderr)
+        flash("There was an issue updating your profile. Please try again later.", "danger")
 
     return redirect('editprofile')
 
-# Note: search will automatically query both students and alumni
 @app.route('/search', methods=['GET'])
 def search():
     if not loginutil.is_logged_in(session):
@@ -586,13 +590,12 @@ def search():
             'search.html', results=results, picture=session['picture'],
             is_admin=is_admin)
 
+        response = make_response(html)
+        return response
+
     except Exception as e:
-        html = str(search_query)
-        print(e)
-
-    response = make_response(html)
-    return response
-
+        print(e, file=stderr)
+        abort(500)
 
 @app.route('/dosearch', methods=['GET'])
 def dosearch():
@@ -605,15 +608,21 @@ def dosearch():
         # profile has not been created
         return redirect('/index')
 
-    db = Database()
-    db.connect()
-    is_admin = db.get_admin(profileid)
-    db.disconnect()
+    try:
+        db = Database()
+        db.connect()
+        is_admin = db.get_admin(profileid)
+        db.disconnect()
 
-    html = render_template('dosearch.html', picture=session['picture'],
-                        is_admin=is_admin)
-    response = make_response(html)
-    return response
+        html = render_template('dosearch.html', picture=session['picture'],
+                            is_admin=is_admin)
+    
+        response = make_response(html)
+        return response
+
+    except Exception as e:
+        print(e, file=stderr)
+        abort(500)
 
 @app.route('/timeline', methods=['GET'])
 def timeline():
@@ -626,113 +635,119 @@ def timeline():
         # profile has not been created
         return redirect('/index')
 
-    POSTS_PER_PAGE = 5  # set this to the number of posts to display at any point
+    try:
+        POSTS_PER_PAGE = 5  # set this to the number of posts to display at any point
+        db = Database()
+        db.connect()
 
-    db = Database()
-    db.connect()
+        role = str(db.get_role(profileid))
+        is_admin = db.get_admin(profileid)
+        user = None
 
-    role = str(db.get_role(profileid))
-    is_admin = db.get_admin(profileid)
-    user = None
+        if role == 'student':
+            user = db.get_student_by_id(profileid)
+        elif role == 'alum':
+            user = db.get_alum_by_id(profileid)
+            # TODO: do I need this part?
+            for i in range(0, len(user._communities)):
+                user._communities[i] = user._communities[i][0]
 
-    if role == 'student':
-        user = db.get_student_by_id(profileid)
-    elif role == 'alum':
-        user = db.get_alum_by_id(profileid)
-        # TODO: do I need this part?
-        for i in range(0, len(user._communities)):
-            user._communities[i] = user._communities[i][0]
+        offset = int(request.args.get('offset', 0))
 
-    offset = int(request.args.get('offset', 0))
-    print("offset: " + str(offset))
+        # don't allow negative offsets
+        if offset < 0:
+            return redirect('/timeline')
 
-    # don't allow negative offsets
-    if offset < 0:
-        return redirect('/timeline')
+        # ensure offsets always start at set intervals
+        if offset % POSTS_PER_PAGE != 0:
+            offset = offset // POSTS_PER_PAGE * POSTS_PER_PAGE
+            return redirect(f'/timeline?offset={offset}')
+        
+        # ensure we don't start too high with the offsets
+        max_posts = db.get_num_posts()
+        # handle case where timeline is empty
+        if max_posts is None:
+            max_posts = 0
 
-    # ensure offsets always start at set intervals
-    if (offset % POSTS_PER_PAGE) != 0:
-        offset = offset // POSTS_PER_PAGE * POSTS_PER_PAGE
-        return redirect(f'/timeline?offset={offset}')
-    
-    # ensure we don't start too high with the offsets
-    max_posts = db.get_num_posts()
-    # handle case where timeline is empty
-    if max_posts is None:
-        max_posts = 0
+        if offset > int(max_posts):
+            return redirect(f'/timeline?offset={max_posts}')
 
-    if offset > int(max_posts):
-        return redirect(f'/timeline?offset={max_posts}')
+        posts = []
+        output = db.get_posts()
+        reported_posts = db.get_reports_byprofileid(profileid)
 
-    posts = []
-    output = db.get_posts()
-    reported_posts = db.get_reports_byprofileid(profileid)
+        print("reported posts:")
+        print(reported_posts)
+        print("end of reported posts:")
 
-    print("reported posts:")
-    print(reported_posts)
-    print("end of reported posts:")
+        time_offset = int(request.args.get('time_offset', 240)) # FIXME: need to pass in user time zone from JS (right now offset doesn't exist)
+        for i in output:
+            curr_time = datetime.fromisoformat(i[3])
+            # local_tz = get_localzone()
+            curr_time = curr_time - timedelta(minutes=time_offset)
+            # curr_time = curr_time.replace(tzinfo=timezone.utc).astimezone(tz=local_tz)
+            formatted_time = curr_time.strftime("%A, %B %d at %I:%M %p")
 
-    time_offset = int(request.args.get('time_offset', 240)) # FIXME: need to pass in user time zone from JS (right now offset doesn't exist)
-    for i in output:
-        curr_time = datetime.fromisoformat(i[3])
-        # local_tz = get_localzone()
-        curr_time = curr_time - timedelta(minutes=time_offset)
-        # curr_time = curr_time.replace(tzinfo=timezone.utc).astimezone(tz=local_tz)
-        formatted_time = curr_time.strftime("%A, %B %d at %I:%M %p")
-
-        copy = i[:3] + (formatted_time,) + i[4:8] + (', '.join(json.loads(i[8])),) + (i[9],)
-        if str(copy[0]) in reported_posts:
-            continue
-        elif copy[1] == profileid or role == i[7]:
-            posts.append(copy)
-        elif (i[7] == 'private'):
-            if not set(user._communities).isdisjoint(set(json.loads(i[8]))):
+            copy = i[:3] + (formatted_time,) + i[4:8] + (', '.join(json.loads(i[8])),) + (i[9],)
+            if str(copy[0]) in reported_posts:
+                continue
+            elif copy[1] == profileid or role == i[7]:
                 posts.append(copy)
-        elif (i[7] == 'everyone'):
-            posts.append(copy)            
+            elif (i[7] == 'private'):
+                if not set(user._communities).isdisjoint(set(json.loads(i[8]))):
+                    posts.append(copy)
+            elif (i[7] == 'everyone'):
+                posts.append(copy)            
 
-    posts = posts[offset:offset+5]
+        posts = posts[offset:offset+5]
 
-    if (len(posts) == 0) and (offset != 0):
-        return redirect(f'/timeline?offset={0}')
+        if (len(posts) == 0) and (offset != 0):
+            return redirect(f'/timeline?offset={0}')
 
-    print(posts)
-    db.disconnect()
-    html = render_template('timeline.html', posts=posts,
-                        picture=session['picture'], profileid=profileid, is_admin=is_admin)
-    response = make_response(html)
-    return response
+        db.disconnect()
+        html = render_template('timeline.html', posts=posts,
+                            picture=session['picture'], profileid=profileid, is_admin=is_admin)
+        response = make_response(html)
+        return response
 
+    except Exception as e:
+        print(e, file=stderr)
+        abort(500)
 
-@app.route('/delete', methods=['GET'])
+@app.route('/delete', methods=['POST'])
 def deleteProfile():
     if not loginutil.is_logged_in(session):
         # user not logged in
         return redirect('/login')
 
-    profileid = session['profileid']
-    if not user_exists(profileid):
-        # profile has not been created
-        return redirect('/index')
+    try:
+        profileid = session['profileid']
+        if not user_exists(profileid):
+            # profile has not been created
+            return redirect('/index')
 
-    email = session['email']
+        email = session['email']
 
-    db = Database()
-    db.connect()
-    role = db.get_role(profileid)
+        db = Database()
+        db.connect()
+        role = db.get_role(profileid)
 
-    if role == 'student':
-        db.delete_student(profileid)
-    else:
-        db.delete_alum(profileid)
+        if role == 'student':
+            db.delete_student(profileid)
+        else:
+            db.delete_alum(profileid)
 
-    db.disconnect()
+        db.disconnect()
 
-    confirmDeletion(str(email))
+        confirmDeletion(str(email))
 
-    html = render_template('delete.html')
-    response = make_response(html)
-    return response
+        html = render_template('delete.html')
+        response = make_response(html)
+        return response
+    
+    except Exception as e:
+        print(e, file=stderr)
+        abort(500)
     
 @app.errorhandler(404)
 def page_not_found(err):
@@ -746,4 +761,9 @@ def page_not_found(err):
         return redirect('/index')
 
     html = render_template('404.html', picture=session['picture'])
+    return make_response(html)
+
+@app.errorhandler(500)
+def server_error(err):
+    html = render_template('servererror.html')
     return make_response(html)
