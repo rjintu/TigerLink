@@ -93,15 +93,16 @@ class Matching(object):
 
     def _processMatches(self):
         matches = []
+        fm = []
         for match in self._curMatches:
             matches.append((match[0], match[1]))
             if match[0] in self._students:
-                self._students[match[0]]._numMatch -= 1
+                match[0]._numMatch -= 1
             if match[1] in self._alumni:
-                self._alumni[match[1]]._numMatch -= 1
-            match[6] = self.dotProduct(match[0], match[1])
+                match[1]._numMatch -= 1
+            fm.append((match[0]._profileid, match[1]._profileid, match[2], match[3], match[4], match[5], dotProduct(match[0], match[1])))
 
-        return matches, self._curMatches
+        return matches, fm
 
     def match(self):
         students = self._students
