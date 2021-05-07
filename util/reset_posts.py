@@ -1,5 +1,5 @@
 # run this script to reset your local posts
-# usage: python util/resetdb.py
+# usage: python util/reset_posts.py
 import os, sys
 currentdir = os.path.dirname(os.path.realpath(__file__))
 parentdir = os.path.dirname(currentdir)

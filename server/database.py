@@ -727,6 +727,7 @@ class Database:
         cursor.execute('CREATE TABLE matches (studentid TEXT, alumid TEXT, similarity TEXT)')
         self._connection.commit()
         cursor.close()
+        print('Matches reset', file=stderr)
 
     # add matches to the matches table
     # :param matches: list objects as created by Match class in matching.py
