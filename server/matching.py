@@ -65,11 +65,11 @@ class Matching(object):
         try:
             db = Database()
             db.connect()
-            self._curMatches = db.all_matches()
             s, c, i = db.get_students()
             self._students = self.studentize(s, c, i)
             s2, c2, i2 = db.get_alumni()
             self._alumni = self.alumnize(s2, c2, i2)
+            # self._curMatches = db.all_matches()
             self._majorScore = {'AAR': 0.33, 'ANT': 0.25, 'ARC': 3.35, 'AST': 3.30, 'CEE': 3.00, 'CBE': 3.10,
             'CHM': 3.15, 'CLA': 0.63, 'COL': 1000, 'COS': 3.40, 'EAS': 0.83, 'ECO': 3.60, 'EEB': 3.13, 'ECE': 3.42,
             'ENG': 0.68, 'FIT': 0.88, 'GEO': 0.35, 'GLL': 0.90, 'HIS': 0.40, 'HUM': 0.70, 'LAT': 0.92,
