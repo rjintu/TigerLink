@@ -724,6 +724,7 @@ class Database:
 
             row = cursor.fetchone()
         
+        cursor.close()
         return output
 
     
