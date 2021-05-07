@@ -75,7 +75,7 @@ class Matching(object):
             'ENG': 0.68, 'FIT': 0.88, 'GEO': 0.35, 'GLL': 0.90, 'HIS': 0.40, 'HUM': 0.70, 'LAT': 0.92,
             'LIN': 0.97, 'MAE': 3.40, 'MAT': 3.47, 'MOL': 3.20, 'MUS': 0.05, 'NES': 0.85, 'ORF': 3.45, 'PHI': 0.12, 
             'PHY': 3.32, 'POL': 0.45, 'PSY': 3.25, 'REL': 0.30, 'SOC': 0.28, 'SPI': 0.48, 'VIS': 0.10}
-            db.disconnect()
+            #db.disconnect()
         except Exception as e:
             html = "error occurred: " + str(e)
             print(e)
@@ -107,8 +107,8 @@ class Matching(object):
     def match(self):
         students = self._students
         alumni = self._alumni
-        #matches, finalMatches = self._processMatches()
-        matches, finalMatches = [], []
+        matches, finalMatches = self._processMatches()
+        #matches, finalMatches = [], []
         absoluteFinal = []
         topSim = 0
         while (len(students) > 0):
