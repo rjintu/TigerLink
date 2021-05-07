@@ -36,7 +36,7 @@
         <br>
         <br>
         <h2>
-          <img src="../static/img/landing.jpeg" width="620" class="d-inline-block align-top d-none d-sm-block" alt="">
+          <img src="../static/img/landing.jpeg" width="620" class="d-inline-block align-top" id="tigerlink-image" alt="">
         </h2>
       </div>
       <div class="column text-center">
@@ -53,19 +53,19 @@
             And the best part? Our moderated community timeline makes the experience seamless and fun. Give it a try!
           </small>
         </h4>
+          <!-- Vertical Spacing -->
+        <div class="my-5"></div>
+        <div class="mx-auto d-block text-center">
+        <a href="/login/redirect" class="btn btn-warning" style="width: 300px; font-size: 24px;">Login With
+          Google</a>
+          <br>
+          <br>
+          <br>
+          </div>
+        </div>
     </div>
   </div>
-  <!-- Vertical Spacing -->
-  <div class="my-5"></div>
-  <div class="mx-auto d-block text-center">
-  <a href="/login/redirect" class="btn btn-warning" style="width: 300px; font-size: 24px;">Login With
-    Google</a>
-    <br>
-    <br>
-    <br>
-    </div>
-  </div>
-  <div id="footer-wrapper">
+<div id="footer-wrapper">
   <div class="footer fixed-bottom">
     A COS 333 Project by
     <a href="https://github.com/jshah1006" target="_blank" style="text-decoration: none"
@@ -116,6 +116,11 @@
 
   .column {
     flex: 50%;
+  }
+  @media (max-width: 576px) {
+    #tigerlink-image {
+      display: none !important;
+    }
   }
 
 </style>
