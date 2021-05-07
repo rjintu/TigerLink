@@ -724,6 +724,7 @@ class Database:
 
             row = cursor.fetchone()
         
+        self._connection.commit()
         cursor.close()
         return output
 
