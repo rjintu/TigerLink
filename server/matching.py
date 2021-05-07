@@ -107,7 +107,8 @@ class Matching(object):
     def match(self):
         students = self._students
         alumni = self._alumni
-        matches, finalMatches = self._processMatches()
+        #matches, finalMatches = self._processMatches()
+        matches, finalMatches = [], []
         absoluteFinal = []
         topSim = 0
         while (len(students) > 0):
