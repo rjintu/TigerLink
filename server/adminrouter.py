@@ -119,6 +119,7 @@ def manualmatch():
 
     # compute similarity score
     m = Matching()
+    matches, final = m._processMatches()
     for stud in m._students:
         if stud._profileid == request.form['studentid']:
             studObj = stud
@@ -129,6 +130,8 @@ def manualmatch():
             break
     
     if stud is None or alum is None:
+        return make_response('failure')
+    if (stud._profileid, alum._profileid) in matches:
         return make_response('failure')
 
     similarity = m.dotProduct(studObj, alumObj)
