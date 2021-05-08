@@ -1,9 +1,10 @@
 from os import environ
 from psycopg2 import connect
 from .post import Post
-from .action import emailUser, confirmDeletion, emailAlumMatch, emailStudentMatch
 import os
 from sys import stderr
+from .student import Student
+from .alum import Alum
 
 class Database:
 
@@ -14,11 +15,11 @@ class Database:
     # connect to the database
     def connect(self):
         if self._url is None:
-            print('Using local database')
+            print('Using local database', file=stderr)
             self._connection = connect(host='localhost', port=5432,
                                     user='tigerlink', password='xxx', database='tldata')
         else:
-            print('Using deployed database')
+            print('Using deployed database', file=stderr)
             self._connection = connect(self._url, sslmode='require')
 
     # reset all existing tables
@@ -60,29 +61,41 @@ class Database:
         cursor.execute('DROP TABLE IF EXISTS matches')
         cursor.execute('CREATE TABLE matches ' +
                     '(studentid TEXT, alumid TEXT, similarity TEXT)')
+        # Report posts table
+        cursor.execute('DROP TABLE IF EXISTS moderation')
+        cursor.execute('CREATE TABLE moderation ' +
+                '(postid TEXT, authorid TEXT, reporterid TEXT)')
+
 
         self._connection.commit()
         cursor.close()
-        print('Database reset and initialized successfully')
+        print('Database reset and initialized successfully', file=stderr)
 
     # reset all tables holding posts 
     def reset_posts(self):
         cursor = self._connection.cursor()
         cursor.execute('DROP TABLE IF EXISTS posts')
         cursor.execute('CREATE TABLE posts ' + 
-                '(postid SERIAL, authorname TEXT, authorid TEXT, posttime TEXT, posttitle TEXT, postcontent TEXT, imgurl TEXT, privacy TEXT, communities TEXT, propic TEXT)')
+                '(postid SERIAL, authorname TEXT, authorid TEXT, posttime TEXT, posttitle TEXT, ' + 
+                'postcontent TEXT, imgurl TEXT, privacy TEXT, communities TEXT, propic TEXT, moderation TEXT)')
         cursor.execute('DROP TABLE IF EXISTS comments')
         cursor.execute('CREATE TABLE comments ' +
                 '(postid TEXT, author TEXT, comment TEXT)')
         cursor.execute('DROP TABLE IF EXISTS likes')
         cursor.execute('CREATE TABLE likes ' +
                 '(postid TEXT, authorid TEXT)')
+        # Report posts table
+        cursor.execute('DROP TABLE IF EXISTS moderation')
+        cursor.execute('CREATE TABLE moderation ' +
+                '(postid TEXT, authorid TEXT, reporterid TEXT)')
 
         self._connection.commit()
         cursor.close()
+        print('Posts successfully reset', file=stderr)
+
 
     # add students to database
-    # :param students: [profileid, name, classyear, email, major, zipcode, nummatches, propic, industry, interests]
+    # :param students: list of students
     def create_students(self, students):
         cursor = self._connection.cursor()
         for student in students:
@@ -90,9 +103,10 @@ class Database:
         self._connection.commit()
 
         cursor.close()
+        print('Added students to database', file=stderr)
 
     # add alumni to database
-    # :param alumni: [profileid, name, classyear, email, major, zipcode, nummatches, propic, industry, interests]
+    # :param alumni: list of alumni
     def create_alumni(self, alumni):
         cursor = self._connection.cursor()
         for alum in alumni:
@@ -100,47 +114,35 @@ class Database:
         self._connection.commit()
 
         cursor.close()
+        print('Added alumni to database', file=stderr)
 
     # helper method to add individual student to database
     def _add_student(self, cursor, student):
-        student_elems = student[:-2]
-        # convert everything to strings
-        student_elems = [str(x) for x in student_elems]
-        profileid = student_elems[0]
-        industry = student[-2]
-        interests = student[-1]
         cursor.execute('INSERT INTO roles(profileid, role, isadmin) ' +
-                    'VALUES (%s, %s, %s)', [profileid, 'student', 'false'])
+                    'VALUES (%s, %s, %s)', [student._profileid, 'student', 'false'])
         cursor.execute('INSERT INTO students(profileid, name, classyear, email, ' +
-                    'major, zip, nummatch, propic) ' +
-                    'VALUES (%s, %s, %s, %s, %s, %s, %s, %s)', student_elems)
-        for elem in industry:
+                    'major, nummatch, propic) ' +
+                    'VALUES (%s, %s, %s, %s, %s, %s, %s)', [student._profileid, student._name, student._year, student._email, student._major, student._numMatch, student._propic])
+        for elem in student._careers:
             cursor.execute('INSERT INTO careers(profileid, career) ' +
-                        'VALUES (%s, %s)', [student[0], elem])
-
-        for elem in interests:
+                        'VALUES (%s, %s)', [student._profileid, elem])
+        for elem in student._communities:
             cursor.execute('INSERT INTO interests(profileid, interest) ' +
-                        'VALUES (%s, %s)', [student[0], elem])
+                        'VALUES (%s, %s)', [student._profileid, elem])
 
     # helper method to add individual alum to database
     def _add_alum(self, cursor, alum):
-        alum_elems = alum[:-2]
-        # convert everything to strings
-        alum_elems = [str(x) for x in alum_elems]
-        profileid = alum_elems[0]
-        industry = alum[-2]
-        interests = alum[-1]
         cursor.execute('INSERT INTO roles(profileid, role, isadmin) ' +
-                    'VALUES (%s, %s, %s)', [profileid, 'alum', 'false'])
+                    'VALUES (%s, %s, %s)', [alum._profileid, 'alum', 'false'])
         cursor.execute('INSERT INTO alumni(profileid, name, classyear, email, ' +
-                    'major, zip, nummatch, propic) ' +
-                    'VALUES (%s, %s, %s, %s, %s, %s, %s, %s)', alum_elems)
-        for elem in industry:
+                    'major, nummatch, propic) ' +
+                    'VALUES (%s, %s, %s, %s, %s, %s, %s)', [alum._profileid, alum._name, alum._year, alum._email, alum._major, alum._numMatch, alum._propic])
+        for elem in alum._careers:
             cursor.execute('INSERT INTO careers(profileid, career) ' +
-                        'VALUES (%s, %s)', (alum[0], elem))
-        for elem in interests:
+                        'VALUES (%s, %s)', (alum._profileid, elem))
+        for elem in alum._communities:
             cursor.execute('INSERT INTO interests(profileid, interest) ' +
-                        'VALUES (%s, %s)', (alum[0], elem))
+                        'VALUES (%s, %s)', (alum._profileid, elem))
 
     # delete student from database
     # :param profileid: unique id of user
@@ -154,6 +156,7 @@ class Database:
         cursor.execute('DELETE FROM posts WHERE authorid=%s', [profileid])
         self._connection.commit()
         cursor.close()
+        print(f'Removed student with profileid {profileid} from database', file=stderr)
 
     # delete alum from database
     # :param profileid: unique id of user
@@ -167,6 +170,7 @@ class Database:
         cursor.execute('DELETE FROM posts WHERE authorid=%s', [profileid])
         self._connection.commit()
         cursor.close()
+        print(f'Removed alum with profileid {profileid} from database', file=stderr)
 
     # get all students from the database
     def get_students(self):
@@ -194,6 +198,7 @@ class Database:
             row = cursor.fetchone()
 
         cursor.close()
+        print(f'Successfully retrieved all students from the database', file=stderr)
         return output, careers, interests
 
     # get all alumni from the database
@@ -222,48 +227,18 @@ class Database:
             row = cursor.fetchone()
 
         cursor.close()
+        print(f'Successfully retrieved all alumni from the database', file=stderr)
         return output, careers, interests
 
     # gets information about a specific student
     # :param profileid: unique user id
-    # outputs info (list), careers (list), interests (list)
+    # outputs student object
     def get_student_by_id(self, profileid):
         profileid = str(profileid)
         cursor = self._connection.cursor()
-        cursor.execute('SELECT name, classyear, email, major, zip, ' +
+        cursor.execute('SELECT name, classyear, email, major, ' +
                     'nummatch, propic FROM students WHERE profileid=%s', [profileid])
-        info = cursor.fetchone() # info = [name, classyear, email, major zip, nummatch, propic]
-
-        # getting this user's career interests
-        cursor.execute(
-            'SELECT career FROM careers WHERE profileid=%s', [profileid])
-        temp = cursor.fetchone()
-        careers = []
-        while temp is not None:
-            careers.append(temp)
-            temp = cursor.fetchone()
-
-        # getting this user's groups
-        cursor.execute(
-            'SELECT interest FROM interests WHERE profileid=%s', [profileid])
-        temp = cursor.fetchone()
-        interests = []
-        while temp is not None:
-            interests.append(temp[0])
-            temp = cursor.fetchone()
-
-        cursor.close()
-        return info, careers, interests
-
-    # gets information about a specific alum
-    # :param profileid: unique user id
-    # outputs info (list), careers (list), interests (list)
-    def get_alum_by_id(self, profileid):
-        profileid = str(profileid)
-        cursor = self._connection.cursor()
-        cursor.execute('SELECT name, classyear, email, major, zip, ' +
-                    'nummatch, propic FROM alumni WHERE profileid=%s', [profileid])
-        info = cursor.fetchone()
+        name, classyear, email, major, nummatch, propic = cursor.fetchone()
 
         # getting this user's career interests
         cursor.execute(
@@ -273,18 +248,58 @@ class Database:
         while temp is not None:
             careers.append(temp[0])
             temp = cursor.fetchone()
+        careers.sort()
 
         # getting this user's groups
         cursor.execute(
             'SELECT interest FROM interests WHERE profileid=%s', [profileid])
         temp = cursor.fetchone()
-        interests = []
+        communities = []
         while temp is not None:
-            interests.append(temp)
+            communities.append(temp[0])
             temp = cursor.fetchone()
+        communities.sort()
 
         cursor.close()
-        return info, careers, interests
+        student = Student(profileid, name, classyear, email, major, None, nummatch, propic, careers=careers, communities=communities)
+        print(f'Successfully retrieved student with profileid {profileid}. Name: {student._name}', file=stderr)
+        return student
+
+    # gets information about a specific alum
+    # :param profileid: unique user id
+    # outputs alum object
+    def get_alum_by_id(self, profileid):
+        profileid = str(profileid)
+        cursor = self._connection.cursor()
+        cursor.execute('SELECT name, classyear, email, major, ' +
+                    'nummatch, propic FROM alumni WHERE profileid=%s', [profileid])
+        name, classyear, email, major, nummatch, propic = cursor.fetchone()
+
+        # getting this user's career interests
+        cursor.execute(
+            'SELECT career FROM careers WHERE profileid=%s', [profileid])
+        temp = cursor.fetchone()
+        careers = []
+        while temp is not None:
+            careers.append(temp[0])
+            temp = cursor.fetchone()
+        careers.sort()
+
+        # getting this user's groups
+        cursor.execute(
+            'SELECT interest FROM interests WHERE profileid=%s', [profileid])
+        temp = cursor.fetchone()
+        communities = []
+        while temp is not None:
+            communities.append(temp[0])
+            temp = cursor.fetchone()
+        communities.sort()
+
+        cursor.close()
+        alum = Alum(profileid, name, classyear, email, major, None,
+                        nummatch, propic, careers=careers, communities=communities)
+        print(f'Successfully retrieved alum with profileid {profileid}. Name: {alum._name}', file=stderr)
+        return alum
 
     # utility function for looking up a user by their email
     # :param email: email address of user
@@ -299,7 +314,9 @@ class Database:
             cursor.execute('SELECT profileid FROM alumni WHERE email=%s', [email])
             profileid = cursor.fetchone()
             if profileid is None:
+                print('Profileid not found from email lookup.', file=stderr)
                 return None
+        print(f'Found profileid for given email {email}', file=stderr)
         return profileid[0]
 
     # gets the role of the user
@@ -367,8 +384,8 @@ class Database:
 
         # update the role
         cursor.execute('UPDATE roles SET role=%s WHERE profileid=%s', [newrole, profileid])
-        cursor.close()
         self._connection.commit()
+        cursor.close()
 
     # returns whether the user is an admin or not
     # :param profileid: unique id of user
@@ -382,6 +399,20 @@ class Database:
         cursor.close()
         return False if isadmin is None else isadmin[0] == 'true'
 
+    # returns a boolean dictionary: admins[profileid] = True
+    # if that user is an admin, False otherwise
+    def get_admin_dict(self):
+        admins = {}
+        
+        cursor = self._connection.cursor()
+        cursor.execute('SELECT profileid, isadmin FROM roles')
+        admins_list = cursor.fetchall()
+        cursor.close()
+
+        for (profileid, isadmin) in admins_list:
+            admins[profileid] = isadmin == "true"
+        return admins
+
     # promotes/demotes a user to be an admin/non-admin
     # :param profileid: unique id of user
     # :param is_admin: boolean flag for whether the user should be set as an admin or not
@@ -391,10 +422,12 @@ class Database:
         cursor = self._connection.cursor()
         if is_admin:
             cursor.execute('UPDATE roles SET isadmin=%s WHERE profileid=%s', ['true', profileid])
+            print(f'Promoted user {profileid} to admin', file=stderr)
         else:
             cursor.execute('UPDATE roles SET isadmin=%s WHERE profileid=%s', ['false', profileid])
-        cursor.close()
+            print(f'Demoted user {profileid} from admin', file=stderr)
         self._connection.commit()
+        cursor.close()
 
     # returns True if user exists, False otherwise
     # :param profileid: unique id of user
@@ -403,68 +436,50 @@ class Database:
 
     
     # updates a student entry in the database
-    # :param profileid: unique id of user
-    # :param info: [name, classyear, email, major, zip, nummatch]
-    # :param careers: [[profileid, career1], [profileid, career2]]
-    # :param interests: [[profileid, interest1], [profileid, interest2]]
-    def update_student(self, profileid, info, careers, interests):
+    # :param student: object of class Student
+    def update_student(self, student):
         cursor = self._connection.cursor()
-        args = info.copy()  # dont modify list given to us
-        args.append(profileid)
-        args = [str(x) for x in args]  # just convert everything to strings
+
         cursor.execute('UPDATE students SET name=%s, ' +
-                    'classyear=%s, email=%s, major=%s, zip=%s, nummatch=%s ' +
-                    'WHERE profileid=%s', args)
+                    'classyear=%s, major=%s, nummatch=%s ' +
+                    'WHERE profileid=%s', [student._name, student._year, student._major, str(student._numMatch), student._profileid])
 
         # delete previous career entires from database and insert new ones
-        cursor.execute('DELETE FROM careers WHERE profileid=%s', [profileid])
-        for elem in careers:
+        cursor.execute('DELETE FROM careers WHERE profileid=%s', [student._profileid])
+        for elem in student._careers:
             cursor.execute('INSERT INTO careers(profileid, career) ' +
-                        'VALUES (%s, %s)', [profileid, elem])
+                        'VALUES (%s, %s)', [student._profileid, elem])
 
         # delete previous interest entires from database and insert new ones
-        cursor.execute('DELETE FROM interests WHERE profileid=%s', [profileid])
-        for elem in interests:
+        cursor.execute('DELETE FROM interests WHERE profileid=%s', [student._profileid])
+        for elem in student._communities:
             cursor.execute('INSERT INTO interests(profileid, interest) ' +
-                        'VALUES (%s, %s)', [profileid, elem])
+                        'VALUES (%s, %s)', [student._profileid, elem])
 
         self._connection.commit()
         cursor.close()
 
     # updates alum entry in database
-    # :param profileid: unique id of user
-    # :param info: [name, classyear, email, major, zip, nummatch]
-    # :param careers: [[profileid, career1], [profileid, career2]]
-    # :param interests: [[profileid, interest1], [profileid, interest2]]
-    def update_alum(self, profileid, contents, careers, interests):
+    # :param alum: object of class Alum
+    def update_alum(self, alum):
         cursor = self._connection.cursor()
-        args = contents.copy()  # dont modify list given to us
-        args.append(profileid)
-        args = [str(x) for x in args]  # just convert everything to strings
         cursor.execute('UPDATE alumni SET name=%s, ' +
-                    'classyear=%s, email=%s, major=%s, zip=%s, nummatch=%s ' +
-                    'WHERE profileid=%s', args)
-
+                    'classyear=%s, major=%s, nummatch=%s ' +
+                    'WHERE profileid=%s', [alum._name, alum._year, alum._major, str(alum._numMatch), alum._profileid])
         # delete previous career entires from database and insert new ones
-        cursor.execute('DELETE FROM careers WHERE profileid=%s', [profileid])
-        for elem in careers:
+        cursor.execute('DELETE FROM careers WHERE profileid=%s', [alum._profileid])
+        for elem in alum._careers:
             cursor.execute('INSERT INTO careers(profileid, career) ' +
-                        'VALUES (%s, %s)', [profileid, elem])
+                        'VALUES (%s, %s)', [alum._profileid, elem])
 
         # delete previous interest entires from database and insert new ones
-        cursor.execute('DELETE FROM interests WHERE profileid=%s', [profileid])
-        for elem in interests:
+        cursor.execute('DELETE FROM interests WHERE profileid=%s', [alum._profileid])
+        for elem in alum._communities:
             cursor.execute('INSERT INTO interests(profileid, interest) ' +
-                        'VALUES (%s, %s)', [profileid, elem])
+                        'VALUES (%s, %s)', [alum._profileid, elem])
 
         self._connection.commit()
         cursor.close()
-
-    def fix_list_format(self, thisList):
-        for i in range(len(thisList)):
-            thisList[i] = thisList[i][0]
-        return thisList
-
 
     # helper method to determine if a user's list of careers has any overlap with search query careers
     # if no careers specified (i.e. empty list) or there is overlap, returns True. Otherwise returns False
@@ -611,10 +626,10 @@ class Database:
         cursor = self._connection.cursor()
 
         stmtStr = "SELECT postid, authorid, authorname, posttime, posttitle, postcontent, " + \
-                  "imgurl, privacy, communities, propic FROM posts "
+                "imgurl, privacy, communities, propic, moderation FROM posts ORDER BY postid DESC "
 
         if limit:
-            stmtStr += "ORDER BY postid DESC OFFSET %s LIMIT %s"
+            stmtStr += "OFFSET %s LIMIT %s"
             cursor.execute(stmtStr, [str(offset), str(limit)])
         else:
             cursor.execute(stmtStr)
@@ -622,7 +637,6 @@ class Database:
         row = cursor.fetchone()
         output = []
         while row is not None:
-            print(row)
             output.append(row)
             row = cursor.fetchone()
 
@@ -638,6 +652,56 @@ class Database:
         self._connection.commit()
         cursor.close()
 
+    # report post from database
+    # :param postid: unique id of post
+    # : param reporterid: profileid of the person who reported the post
+    def report_post(self, postid, reporterid):
+        print("trying to report post %s %s", [str(postid), str(reporterid)])
+
+        cursor = self._connection.cursor()
+        stmtStr = "SELECT authorid from posts WHERE postid = %s"
+        cursor.execute(stmtStr, [str(postid)])
+        row = cursor.fetchone()
+        authorid = row[0]
+
+        cursor = self._connection.cursor()
+        cursor.execute('SELECT postid, authorid, reporterid FROM moderation WHERE postid=%s AND reporterid=%s', [str(postid), str(reporterid)])
+        row = cursor.fetchone()
+        if (row is not None):
+            return
+        cursor = self._connection.cursor()
+        cursor.execute('INSERT INTO moderation(postid, authorid, reporterid) VALUES (%s, %s, %s)', [str(postid), str(authorid), str(reporterid)])
+        self._connection.commit()
+
+        cursor = self._connection.cursor()
+        cursor.execute('SELECT postid, authorid, reporterid FROM moderation WHERE postid=%s', [str(postid)])
+        numposts = 0
+        row = cursor.fetchone()
+        output = []
+        while row is not None:
+            numposts = numposts + 1
+            output.append(row)
+            row = cursor.fetchone()
+
+        if (numposts > 3):
+            self.delete_post(postid)
+        
+        cursor.close()
+
+    def get_reports_byprofileid(self, profileid):
+        cursor = self._connection.cursor()
+        stmtStr = "SELECT postid from moderation WHERE reporterid=%s"
+        cursor.execute(stmtStr, [str(profileid)])
+        posts = []
+        row = cursor.fetchone()
+        while (row is not None):
+            posts.append(row[0])
+            row = cursor.fetchone()
+    
+        print("posts:")
+        print(posts)
+        return posts
+
     # create a new post, add to database
     # :param profileid: unique id of user
     # :param authorName: name of user
@@ -650,9 +714,9 @@ class Database:
     # :param propic: user's profile picture
     def create_post(self, profileid, authorName, time, title, content, image_url, privacy, communities, propic):
         cursor = self._connection.cursor()
-        cursor.execute('INSERT INTO posts(authorid, authorname, posttime, posttitle, postcontent, imgurl, privacy, communities, propic) ' +
-                        'VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)', 
-                        [profileid, authorName, time, title, content, image_url, privacy, communities, propic])
+        cursor.execute('INSERT INTO posts(authorid, authorname, posttime, posttitle, postcontent, imgurl, privacy, communities, propic, moderation) ' +
+                        'VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)', 
+                        [profileid, authorName, time, title, content, image_url, privacy, communities, propic, str(0)])
         self._connection.commit()
         cursor.close()
 
@@ -663,6 +727,7 @@ class Database:
         cursor.execute('CREATE TABLE matches (studentid TEXT, alumid TEXT, similarity TEXT)')
         self._connection.commit()
         cursor.close()
+        print('Matches reset', file=stderr)
 
     # add matches to the matches table
     # :param matches: list objects as created by Match class in matching.py
@@ -676,18 +741,9 @@ class Database:
             cursor.execute('INSERT INTO matches(studentid, alumid, similarity) VALUES (%s, %s, %s)', [studentid, alumid, similarity])
             # student_address, student_name, alum_address, alum_name, student_class_year, student_interests, student_career_interests
             # student_address, student_name, alum_address, alum_name, alum_classyear, alum_interests, alum_career_interests
-            alum, alum_careers, alum_interests = self.get_alum_by_id(alumid)
-            stud, stud_careers, stud_interests = self.get_student_by_id(studentid)
+            alum = self.get_alum_by_id(alumid)
+            student = self.get_student_by_id(studentid)
 
-            # alum_careers = self.fix_list_format(alum_careers)
-            stud_careers = self.fix_list_format(stud_careers)
-
-            # print(alum_interests)
-            # print(stud_interests)
-
-            # info = [name, classyear, email, major zip, nummatch, propic]
-            emailAlumMatch(stud[2], stud[0], alum[2], alum[0], stud[1], stud_interests, stud_careers)
-            emailStudentMatch(stud[2], stud[0], alum[2], alum[0], alum[1], alum_interests, alum_careers)
         self._connection.commit()
         cursor.close()
 
@@ -713,11 +769,11 @@ class Database:
             curr_alum = row[1] # profileid of the alum in the match
             curr_sim = row[2] # similarity score
         
-            cursor.execute('SELECT name, classyear FROM students WHERE profileid LIKE %s', [curr_stud])
-            studname, studyear = cursor.fetchone()
+            det_cursor.execute('SELECT name, classyear FROM students WHERE profileid LIKE %s', [curr_stud])
+            studname, studyear = det_cursor.fetchone()
 
-            cursor.execute('SELECT name, classyear FROM alumni WHERE profileid LIKE %s', [curr_alum])
-            alumname, alumyear = cursor.fetchone()
+            det_cursor.execute('SELECT name, classyear FROM alumni WHERE profileid LIKE %s', [curr_alum])
+            alumname, alumyear = det_cursor.fetchone()
 
             # note: we need to return the profileids in the tuple because they are used for matchdetails JS
             output.append((curr_stud, curr_alum, studname, studyear, alumname, alumyear, curr_sim))
@@ -727,18 +783,19 @@ class Database:
         self._connection.commit()
         cursor.close()
         return output
+
     
     # retrieve matches for a specific profileid
     # if display_all is set to True, then output all matches for all individuals
     def retrieve_matches(self, profileid, display_all=False):
         cursor = self._connection.cursor()
-        role = self.get_role(profileid)
         stmtStr = ""
         if display_all:
             stmtStr = "SELECT studentid, alumid, similarity FROM matches"
             cursor.execute(stmtStr)
         
         else:
+            role = self.get_role(profileid)
             if role == 'student':
                 stmtStr = "SELECT studentid, alumid, similarity FROM matches WHERE studentid LIKE %s"
             elif role == 'alum':
