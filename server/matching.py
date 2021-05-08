@@ -95,8 +95,15 @@ class Matching(object):
             make_response(html)
 
         for match in self._curMatches:
-            student = self._db.get_student_by_id(match[0])
-            alumnus = self._db.get_alum_by_id(match[1])
+            for s in self._students:
+                if s._profileid == match[0]:
+                    student = s
+                    break
+            
+            for a in self._alumni:
+                if a._profileid == match[1]:
+                    alumnus = a
+                    break
 
             student._numMatch -= 1
             alumnus._numMatch -= 1
