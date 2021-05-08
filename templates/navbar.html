@@ -39,14 +39,6 @@
     }
 
     @media (max-width: 576px) {
-    /* .navbar {
-        padding-top: 0;
-        border: 0;
-    }
-    .navbar {
-        margin-bottom: 0;
-    } */
-
     #one>li>a>p {
         visibility: hidden;
     }
@@ -77,6 +69,11 @@
     #two {
         margin: 0px 0px;
         text-align: center;
+    }
+
+    #two>li {
+        width: 60px;
+        margin: 5px;
     }
 
     #three {
@@ -115,19 +112,15 @@
 </style>
 <nav class="navbar navbar-expand-sm fixed-top navbar-light" style="background-color: white;">
     <div class="container-fluid">
-        <ul class="nav navbar-nav navbar-left" id="two">
-            <li>
-                <a href="timeline" data-toggle="search">
-                    <img src="../static/img/logo.png" width="75" alt="">
-                </a>
-            </li>
-        </ul>
+        <a class="navbar-brand" href="timeline" data-toggle="search">
+            <img src="../static/img/logo.png" width="75" alt="">
+        </a>
 
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
-          </button>
+        </button>
           <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-                <ul class="nav navbar-nav ms-auto" id="one">
+                <ul class="navbar-nav ms-auto" id="two">
                     <li class="nav-item">
                         <a href="timeline" data-toggle="search">
                             <i class="pe-7s-home"></i>
@@ -152,9 +145,6 @@
                             <p>Post</p>
                         </a>
                     </li>
-        
-
-
                 </ul>
                 <ul class="nav navbar-nav navbar-nav ms-auto" id="three">
                     <li>
