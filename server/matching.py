@@ -100,8 +100,8 @@ class Matching(object):
 
             student._numMatch -= 1
             alumnus._numMatch -= 1
-            
-            matches.append((student, alumnus))
+
+            matches.append((match[0], match[1]))
             fm.append((match[0], match[1], match[2], match[3], match[4], match[5], self.dotProduct(student, alumnus)))
         
         return matches, fm
@@ -132,7 +132,7 @@ class Matching(object):
                 for idx in range(len(alumni)):
                     avec = alumni[idx]
                     # make sure no re-matches EVER
-                    potentialMatch = (svec, avec)
+                    potentialMatch = (svec._profileid, avec._profileid)
                     if potentialMatch not in matches and avec._numMatch > 0:
                         sim = self.dotProduct(svec, avec)
                         if sim > bestSim:
@@ -144,7 +144,7 @@ class Matching(object):
                     if topSim < bestSim:
                         topSim = bestSim
                     alum = alumni[bestIdx]
-                    match = (svec, alum)
+                    match = (svec._profileid, alum._profileid)
                     
                     #match = (svec._name, svec._year, alum._name, alum._year, bestSim)
                     matches.append(match)
