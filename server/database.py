@@ -769,11 +769,11 @@ class Database:
             curr_alum = row[1] # profileid of the alum in the match
             curr_sim = row[2] # similarity score
         
-            det_cursor.execute('SELECT name, classyear FROM students WHERE profileid LIKE %s', [curr_stud])
-            studname, studyear = det_cursor.fetchone()
+            cursor.execute('SELECT name, classyear FROM students WHERE profileid LIKE %s', [curr_stud])
+            studname, studyear = cursor.fetchone()
 
-            det_cursor.execute('SELECT name, classyear FROM alumni WHERE profileid LIKE %s', [curr_alum])
-            alumname, alumyear = det_cursor.fetchone()
+            cursor.execute('SELECT name, classyear FROM alumni WHERE profileid LIKE %s', [curr_alum])
+            alumname, alumyear = cursor.fetchone()
 
             # note: we need to return the profileids in the tuple because they are used for matchdetails JS
             output.append((curr_stud, curr_alum, studname, studyear, alumname, alumyear, curr_sim))
