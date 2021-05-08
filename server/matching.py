@@ -62,13 +62,13 @@ class Matching(object):
     #           major, zipp, numMatch, career = None, organizations = None
     def __init__(self):
         try:
-            db = Database()
-            db.connect()
-            s, c, i = db.get_students()
+            self._db = Database()
+            self._db.connect()
+            s, c, i = self._db.get_students()
             self._students = self.studentize(s, c, i)
-            s2, c2, i2 = db.get_alumni()
+            s2, c2, i2 = self._db.get_alumni()
             self._alumni = self.alumnize(s2, c2, i2)
-            self._curMatches = db.all_matches()
+            self._curMatches = self._db.all_matches()
             
             self._majorScore = {'AAR': 0.33, 'ANT': 0.25, 'ARC': 3.35, 'AST': 3.30, 'CEE': 3.00, 'CBE': 3.10,
             'CHM': 3.15, 'CLA': 0.63, 'COL': 1000, 'COS': 3.40, 'EAS': 0.83, 'ECO': 3.60, 'EEB': 3.13, 'ECE': 3.42,
@@ -95,18 +95,15 @@ class Matching(object):
         matches = []
         fm = []
         for match in self._curMatches:
-            stud, scar, sint = db.get_student_by_id(match[0])
-            alum, acar, aint = db.get_alum_by_id(match[1])
-
-            student = self.studentize(stud, scar, sint)
-            alumni = self.alumnize(alum, acar, aint)
+            student = self._db.get_student_by_id(match[0])
+            alumnus = self._db.get_alum_by_id(match[1])
 
             if student in self._students:
                 student._numMatch -= 1
-            if alumni in self._alumni:
-                alumni._numMatch -= 1
-            matches.append((student, alumni))
-            fm.append((match[0], match[1], match[2], match[3], match[4], match[5], dotProduct(student, alumni)))
+            if alumnus in self._alumni:
+                alumnus._numMatch -= 1
+            matches.append((student, alumnus))
+            fm.append((match[0], match[1], match[2], match[3], match[4], match[5], self.dotProduct(student, alumnus)))
         
         return matches, fm
 
