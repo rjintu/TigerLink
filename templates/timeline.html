@@ -175,13 +175,18 @@
     {% for res in posts: %}
     <div class="container mt-5 mb-5">
         <div class="row">
-            <div class="col-md-2 col-12 offset-md-1 offset-xl-2" style="display: block; text-align: center;">
-                    <a class="profile" profileID="{{ res[1] }}">
+            <div class="col-md-2 col-12 offset-md-1 offset-xl-2" style="display: block">
+                    <a class="profile d-none d-md-block" profileID="{{ res[1] }}" style="text-align: center;">
                         <img src={{res[9]}} style="width: 100%; max-width: 70px;" class="rounded-circle"
                             onerror="this.style.display='none'">
                         <br>
                         <br>
                         <h5 style="text-align: center;">{{res[2]}}</h5>
+                    </a>
+                    <a class="profile d-block d-md-none m-2" profileID="{{ res[1] }}">
+                        <img src={{res[9]}} style="width: 100%; max-width: 70px; display: inline;" class="rounded-circle"
+                            onerror="this.style.display='none'">
+                        <h5 style="text-align: center; display: inline;" class="ms-2">{{res[2]}}</h5>
                     </a>
             </div>
             <div class="col col-md-6 col-xl-4" style="display: block;">
