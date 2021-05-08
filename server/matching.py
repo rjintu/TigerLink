@@ -98,10 +98,9 @@ class Matching(object):
             student = self._db.get_student_by_id(match[0])
             alumnus = self._db.get_alum_by_id(match[1])
 
-            if student in self._students:
-                student._numMatch -= 1
-            if alumnus in self._alumni:
-                alumnus._numMatch -= 1
+            student._numMatch -= 1
+            alumnus._numMatch -= 1
+            
             matches.append((student, alumnus))
             fm.append((match[0], match[1], match[2], match[3], match[4], match[5], self.dotProduct(student, alumnus)))
         
