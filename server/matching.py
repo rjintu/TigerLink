@@ -101,6 +101,11 @@ class Matching(object):
             student._numMatch -= 1
             alumnus._numMatch -= 1
 
+            if student._numMatch <=0:
+                self._students.remove(student)
+            if alumnus._numMatch <=0:
+                self._alumni.remove(alumnus)
+
             matches.append((match[0], match[1]))
             fm.append((match[0], match[1], match[2], match[3], match[4], match[5], self.dotProduct(student, alumnus)))
         
