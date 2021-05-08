@@ -39,47 +39,29 @@
     }
 
     @media (max-width: 576px) {
-    #one>li>a>p {
-        visibility: hidden;
-    }
-    #three {
-        visibility:visible;
-        text-align: right;
-    }
+        #two {
+            align-items: flex-end;
+        }
 
-    #one>li>a {
-        background-color: white;
-        margin: 25px 25px;
-        text-align: right;
-    }
-    .navbar-collapse {
-        padding-top:0;
-        padding-bottom: 0;
-    }
+        #two>li {
+            width: 60px;
+            text-align: center;
+        }
 
-
+        .w-100-sm {
+            width: 100% !important;
+        }
     }
     @media (min-width: 576px) {
-    #one>li>a {
-        margin: 80px 80px;
-        /* text-align: justify; */
-        text-align: center;
-    }
+        #two {
+            margin: 0px 0px;
+            text-align: center;
+        }
 
-    #two {
-        margin: 0px 0px;
-        text-align: center;
-    }
-
-    #two>li {
-        width: 60px;
-        margin: 5px;
-    }
-
-    #three {
-        margin: 0px 0px;
-        text-align: center;
-    }
+        #two>li {
+            width: 60px;
+            margin: 5px;
+        }
     }
 
     .navbar .navbar-nav [class^="pe"] {
@@ -146,27 +128,25 @@
                         </a>
                     </li>
                 </ul>
-                <ul class="nav navbar-nav navbar-nav ms-auto" id="three">
-                    <li>
+
+                <!-- Default dropstart button -->
+                <div class="ms-auto d-flex justify-content-end">
+                <div class="btn-group dropstart px-1">
+                    <div data-bs-toggle="dropdown">
+                        <img class="logoutImage" src="{{picture}}" alt="">
+                    </div>
+                    <ul class="dropdown-menu dropdown-menu-light">
+                        <li><a class="dropdown-item" href="editprofile">My Profile</a></li>
+                        {% if is_admin %}
+                        <div class="dropdown-divider"></div>
+                        <li><a class="dropdown-item" href="/admin">Admin</a></li>
+                        {% endif %}
+                        <div class="dropdown-divider"></div>
+                        <li><a class="dropdown-item" href="/login/logout">Logout</a></li>
+                    </ul>
+                </div>
+                </div>
         
-                        <!-- Default dropstart button -->
-                        <div class="btn-group dropstart">
-                            <p data-bs-toggle="dropdown">
-                                <img class="logoutImage" src="{{picture}}" alt="">
-                            </p>
-                            <ul class="dropdown-menu dropdown-menu-light">
-                                <li><a class="dropdown-item" href="editprofile">My Profile</a></li>
-                                {% if is_admin %}
-                                <div class="dropdown-divider"></div>
-                                <li><a class="dropdown-item" href="/admin">Admin</a></li>
-                                {% endif %}
-                                <div class="dropdown-divider"></div>
-                                <li><a class="dropdown-item" href="/login/logout">Logout</a></li>
-                            </ul>
-                        </div>
-        
-                    </li>
-                </ul>
         
             </div>
     
