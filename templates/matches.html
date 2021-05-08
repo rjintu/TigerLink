@@ -354,7 +354,7 @@
             $('#manualSaveBtn').click((e) => {
                 $.post("/admin/manualmatch", { studentid: currStudent, alumid: currAlum })
                     .done(function () { location.reload(); })
-                    .fail(function () { failureModal.show(); });
+                    .fail(function () { fail(); });
             });
         }
 
