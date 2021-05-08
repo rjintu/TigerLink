@@ -107,9 +107,9 @@ class Matching(object):
         return matches, fm
 
     def match(self):
+        matches, finalMatches = self._processMatches()
         students = self._students
         alumni = self._alumni
-        matches, finalMatches = self._processMatches()
         #matches, finalMatches = [], []
         absoluteFinal = []
         topSim = 0
