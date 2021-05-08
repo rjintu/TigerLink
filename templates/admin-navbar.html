@@ -1,3 +1,7 @@
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+        crossorigin="anonymous"></script>
+
 <style>
 a { text-decoration: None; } 
 
@@ -10,27 +14,31 @@ b { color: black; }
     -webkit-transition: all 0.4s;
     font-size: 14px;
 }
-.navbar-default {
-    background-color: white;
-    
+
+@media (max-width: 576px) {
+    #two {
+        align-items: flex-end;
+    }
+
+    #two>li {
+        width: 60px;
+        text-align: center;
+    }
+
+    .w-100-sm {
+        width: 100% !important;
+    }
 }
-#one > li > a {
-    margin: 100px 100px;
-    /* padding: 6px 7px; */
-    text-align: center;
-    /* min-width: 70px; */
-}
-#two  {
-    margin: 0px 0px;
-    /* padding: 6px 7px; */
-    text-align: center;
-    /* min-width: 70px; */
-}
-#three {
-    margin: 0px 0px;
-    /* padding: 6px 7px; */
-    text-align: center;
-    /* min-width: 70px; */
+@media (min-width: 576px) {
+    #two {
+        margin: 0px 0px;
+        text-align: center;
+    }
+
+    #two>li {
+        width: 60px;
+        margin: 5px;
+    }
 }
 
 .navbar .navbar-nav [class^="pe"]{
@@ -39,14 +47,12 @@ b { color: black; }
 }
 .navbar .navbar-nav p{
     display:block;
-
     margin: 0px 0 0;
     font-size: 15px;
 }
 .navbar-nav > li > a {
     color: black;
 }
-/* .navbar {margin-bottom: 200px;} */
 </style>
 
 <link href="static/css/pe-icon-7-stroke.css" rel="stylesheet" />
@@ -54,49 +60,37 @@ b { color: black; }
 
 <nav class="navbar navbar-expand fixed-top" style="background-color: #ffab55;">
   <div class="container-fluid">
-    <ul class="nav navbar-nav navbar-left" id="two">  
-        <li>
-            <a href="/admin" data-toggle="search">
-                <b>TigerLink Admin</b>
-            </a>
-        </li>
-    </ul>
-    <ul class="nav navbar-nav navbar-right" id="one">             
-        {% if bold == 'timeline' %}
-        <li id="nav-disable">
-        {% else %}
-        <li>
-        {% endif %}
-            <a href="/admin/timeline" data-toggle="search">
-                <i class="pe-7s-home"></i>
-                <p>Timeline</p>
-            </a>
-        </li>
-        {% if bold == 'users' %}
-        <li id="nav-disable">
-        {% else %}
-        <li>
-        {% endif %}
-            <a href="/admin/users" data-toggle="search">
-                <i class="pe-7s-user"></i>
-                <p>Users</p>
-            </a>
-        </li>
-        {% if bold == 'matches' %}
-        <li id="nav-disable">
-        {% else %}
-        <li>
-        {% endif %}
-            <a href="/admin/matches" data-toggle="search">
-                <i class="pe-7s-gift"></i>
-                <p>Matches</p>
-            </a>
-        </li>
-    </ul>
-    <ul class="nav navbar-nav navbar-right" id="three"> 
-        <li>
-           <a class="btn btn-light" href="/">Exit Admin Mode</a> 
-        </li>    
-    </ul>
+    <a class="navbar-brand" href="/admin" data-toggle="search">
+        <b>TigerLink Admin</b>
+    </a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <ul class="navbar-nav ms-auto" id="two">             
+            <li class="nav-item">
+                <a href="/admin/timeline" data-toggle="search">
+                    <i class="pe-7s-home"></i>
+                    <p>Timeline</p>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/admin/users" data-toggle="search">
+                    <i class="pe-7s-user"></i>
+                    <p>Users</p>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/admin/matches" data-toggle="search">
+                    <i class="pe-7s-gift"></i>
+                    <p>Matches</p>
+                </a>
+            </li>
+        </ul>
+        <div class="ms-auto d-flex justify-content-end">
+            <a class="btn btn-light" href="/">Exit Admin</a>
+        </div>
+    </div>
 </div>
 </nav>
