@@ -26,6 +26,8 @@
     <script type="text/javascript" charset="utf8"
         src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.js"></script>
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
     <style>
         .selected {
             background: #ffdc8e;
@@ -62,9 +64,42 @@
                     <tr class="clickable-row" id='{{match[0]}}' value='{{match[1]}}'>
                         {% for i in range (2, match|length): %}
                         {% if (i == 6) %}
-                        <td>{{ match[i] }}%</td>
+                            {% if {{ match[i] }} > 80 %}
+                            <span class="fa fa-star checked"></span>
+                            <span class="fa fa-star checked"></span>
+                            <span class="fa fa-star checked"></span>
+                            <span class="fa fa-star checked"></span>
+                            <span class="fa fa-star checked"></span>
+                            {% elif {{ match[i] }} > 60 %}
+                            <span class="fa fa-star checked"></span>
+                            <span class="fa fa-star checked"></span>
+                            <span class="fa fa-star checked"></span>
+                            <span class="fa fa-star checked"></span>
+                            <span class="fa fa-star"></span>
+                            {% elif {{ match[i] }} > 40 %}
+                            <span class="fa fa-star checked"></span>
+                            <span class="fa fa-star checked"></span>
+                            <span class="fa fa-star checked"></span>
+                            <span class="fa fa-star"></span>
+                            <span class="fa fa-star"></span>
+                            {% elif {{ match[i] }} > 20 %}
+                            <span class="fa fa-star checked"></span>
+                            <span class="fa fa-star checked"></span>
+                            <span class="fa fa-star"></span>
+                            <span class="fa fa-star"></span>
+                            <span class="fa fa-star"></span>
+                            {% else %}
+                            <span class="fa fa-star checked"></span>
+                            <span class="fa fa-star"></span>
+                            <span class="fa fa-star"></span>
+                            <span class="fa fa-star"></span>
+                            <span class="fa fa-star"></span>
+                            {% endif %}
+
+                            <!-- <td>{{ match[i] }}%</td> -->
                         {% else %}
-                        <td>{{ match[i] }}</td>
+                            <td>{{ match[i] }}</td>
+
                         {% endif %}
                         {% endfor %}
                     </tr>
