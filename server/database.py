@@ -625,8 +625,8 @@ class Database:
     def get_posts(self, limit=None, offset=0):
         cursor = self._connection.cursor()
 
-        stmtStr = "SELECT postid, authorid, authorname, posttime, posttitle, postcontent, " + \
-                "imgurl, privacy, communities, propic, moderation FROM posts ORDER BY postid DESC "
+        stmtStr = "SELECT postid, authorid, posttime, posttitle, postcontent, " + \
+                "imgurl, privacy, communities, moderation FROM posts ORDER BY postid DESC "
 
         if limit:
             stmtStr += "OFFSET %s LIMIT %s"
@@ -637,12 +637,28 @@ class Database:
         row = cursor.fetchone()
         output = []
         while row is not None:
-            output.append(row)
+            curr_post = Post(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8])
+            output.append(curr_post)
             row = cursor.fetchone()
 
-        # output.reverse()
+        # add author name, author propic to each post object
+        for post in output:
+            profileid = post._authorid
+            stmtStr = "SELECT students.name, students.propic FROM students WHERE students.profileid LIKE %s \
+            UNION SELECT alumni.name, alumni.propic FROM alumni WHERE alumni.profileid LIKE %s"
+            cursor.execute(stmtStr, (profileid, profileid))
+            row = cursor.fetchone()
+            post._authorname = row[0]
+            post._propic = row[1]
+        
+        # convert back to list output, since this is what we use elsewhere
+        revised_output = []
+        for post in output:
+            revised_output.append((post._postid, post._authorid, post._authorname, post._posttime, post._posttitle, post._postcontent, post._imgurl, 
+            post._privacy, post._communities, post._propic, post._moderation))
+            
         cursor.close()
-        return output
+        return revised_output
 
     # delete post from database
     # :param postid: unique id of post
