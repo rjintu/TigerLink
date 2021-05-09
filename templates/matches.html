@@ -267,7 +267,7 @@
                 $('#confirmYesBtn').click(() => {
                     $('#confirmYesBtn').prop('disabled', true);
                     $('#confirmNoBtn').prop('disabled', true);
-                    $.post("/admin/creatematches", {email: $('#autoEmailCheck').checked} )
+                    $.post("/admin/creatematches", { email: $('#autoEmailCheck').prop('checked') } )
                         .done(function() { 
                             $('#confirmModal').modal('hide');
                             $('#successModal').modal('show'); 
@@ -388,7 +388,7 @@
                 $('#manualSaveBtn').prop('disabled', true);
                 $('#manualSaveBtn').html("Saving...");
                 $('#manualCancelBtn').prop('disabled', true);
-                $.post("/admin/manualmatch", { studentid: currStudent, alumid: currAlum, email: $('#autoEmailCheck').checked })
+                $.post("/admin/manualmatch", { studentid: currStudent, alumid: currAlum, email: $('#manualEmailCheck').prop('checked') })
                     .done(function (m) { 
                         console.log(m);
                         if(m == "success!") {
