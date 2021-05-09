@@ -48,3 +48,7 @@ table.dataTable thead .sorting_desc_disabled:before {
   color: #fff; 
   box-shadow: 0px 10px 10px 0px rgba(0,0,0,0.15)!important;
 }
+
+.checked {
+  color: orange;
+}
