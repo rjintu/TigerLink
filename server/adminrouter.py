@@ -85,6 +85,8 @@ def creatematches():
     m = Matching()
     matches = m.match()
 
+    do_email = request.form['email'] == 'true'
+
     db = Database()
     db.connect()
     db.reset_matches()
@@ -143,10 +145,12 @@ def manualmatch():
     db.disconnect()
 
     # send an email to student / alum
-    emailAlumMatch(studObj._email, studObj._name, alumObj._email, alumObj._name,
-        studObj._year, studObj._communities, studObj._careers)
-    emailStudentMatch(studObj._email, studObj._name, alumObj._email, alumObj._name,
-        alumObj._year, alumObj._communities, alumObj._careers)
+    do_email = request.form['email'] == 'true'
+    if do_email:
+        emailAlumMatch(studObj._email, studObj._name, alumObj._email, alumObj._name,
+            studObj._year, studObj._communities, studObj._careers)
+        emailStudentMatch(studObj._email, studObj._name, alumObj._email, alumObj._name,
+            alumObj._year, alumObj._communities, alumObj._careers)
 
     response = make_response('success!')
     return response
