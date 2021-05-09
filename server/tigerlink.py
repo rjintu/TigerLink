@@ -699,14 +699,16 @@ def timeline():
             elif (i[7] == 'everyone'):
                 posts.append(copy)            
 
-        posts = posts[offset:offset+5]
+        # if empty list, means there are no more posts. more_posts is True iff more posts to show.
+        more_posts = (posts[offset + POSTS_PER_PAGE:] != [])
+        posts = posts[offset:offset+POSTS_PER_PAGE]
 
         if (len(posts) == 0) and (offset != 0):
             return redirect(f'/timeline?offset={0}')
 
         db.disconnect()
         html = render_template('timeline.html', posts=posts,
-                            picture=session['picture'], profileid=profileid, is_admin=is_admin)
+                            picture=session['picture'], profileid=profileid, more_posts=more_posts, is_admin=is_admin)
         response = make_response(html)
         return response
 
