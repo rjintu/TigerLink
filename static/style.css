@@ -33,6 +33,10 @@ table.dataTable thead .sorting_desc_disabled:before {
   border-bottom: 8px solid #ffdc8e;
 }
 
+#nav-disable2 {
+  border-bottom: 8px solid #55a9ff;
+}
+
 .clickable-row {
   transition: transform 0s;
 }

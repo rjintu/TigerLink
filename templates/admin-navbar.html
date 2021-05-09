@@ -68,20 +68,32 @@ b { color: black; }
         <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-        <ul class="navbar-nav ms-auto" id="two">             
+        <ul class="navbar-nav ms-auto" id="two">  
+            {% if bold == 'timeline' %}       
+            <li id='nav-disable2' class = 'nav-item'>
+            {% else %}
             <li class="nav-item">
+            {% endif %}
                 <a href="/admin/timeline" data-toggle="search">
                     <i class="pe-7s-home"></i>
                     <p>Timeline</p>
                 </a>
             </li>
+            {% if bold == 'users' %}
+            <li id="nav-disable2" class="nav-item">
+            {% else %}
             <li class="nav-item">
+            {% endif %}
                 <a href="/admin/users" data-toggle="search">
                     <i class="pe-7s-user"></i>
                     <p>Users</p>
                 </a>
             </li>
+            {% if bold == 'matches' %}
+            <li id="nav-disable2" class="nav-item">
+            {% else %}
             <li class="nav-item">
+            {% endif %}
                 <a href="/admin/matches" data-toggle="search">
                     <i class="pe-7s-gift"></i>
                     <p>Matches</p>
