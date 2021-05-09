@@ -360,6 +360,7 @@ def matchdetails():
         return redirect('/login')
 
     profileid = session['profileid']
+
     if not user_exists(profileid):
         # profile has not been created
         return redirect('/index')
@@ -368,10 +369,12 @@ def matchdetails():
         # retrieve information about matches
         db = Database()
         db.connect()
+        role = db.get_role(profileid)
         student_match = request.args.get('student')
         alum_match = request.args.get('alum')
         student = db.get_student_by_id(student_match)
         alum = db.get_alum_by_id(alum_match)
+        db.disconnect()
 
         joint_careers = [
             value for value in student._careers if value in alum._careers]
@@ -408,8 +411,14 @@ def matchdetails():
         # email
         html += '<tr>'
         html += '<td><strong>Email:</strong></td>'
-        html += '<td>' + student._email + '</td>'
-        html += '<td>' + alum._email + '</td>'
+
+        if role == 'alum':
+            html += '<td> <a href = \"mailto: ' + student._email + '\">' + student._email + '</a></td>' #hyperlink
+            html += '<td>' + alum._email + '</td>'
+        else:
+            html += '<td>' + student._email + '</td>'
+            html += '<td <a href = \"mailto: ' + alum._email + '\">' + alum._email + '</a></td>' # hyperlink
+
         html += '</tr>'
 
         # major
