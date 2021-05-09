@@ -85,12 +85,23 @@ def creatematches():
     m = Matching()
     matches = m.match()
 
-    do_email = request.form['email'] == 'true'
-
     db = Database()
     db.connect()
     db.reset_matches()
     db.add_matches(matches)
+
+    do_email = request.form['email'] == 'true'
+    if do_email:
+        for curr_match in matches:
+            studentid = curr_match[0]
+            studObj = db.get_student_by_id(studentid)
+            alumid = curr_match[1]
+            alumObj = db.get_alum_by_id(alumid)
+            emailAlumMatch(studObj._email, studObj._name, alumObj._email, alumObj._name,
+                studObj._year, studObj._communities, studObj._careers)
+            emailStudentMatch(studObj._email, studObj._name, alumObj._email, alumObj._name,
+                alumObj._year, alumObj._communities, alumObj._careers)
+
     db.disconnect()
 
     response = make_response('success!')
