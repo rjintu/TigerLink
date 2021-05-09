@@ -104,7 +104,7 @@
                 <div class="modal-header">
                     <h5 class="modal-title text-danger">Error</h5>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body" id="failureDetails">
                     Something went wrong when trying to edit matches in the server. Please contact the TigerLink
                     developers for support.
                 </div>
@@ -197,6 +197,13 @@
                             </tbody>
                         </table>
                     </div>
+
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="manualEmailCheck" checked>
+                        <label class="form-check-label" for="flexCheckDefault">
+                            Email users about new match
+                        </label>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button id="manualCancelBtn" class="btn btn-secondary mr-auto">Cancel</button>
@@ -245,17 +252,32 @@
             $('.dataTables_length').addClass('bs-select');
 
             $('#creatematches').click(() => {
-                $('#confirmBody').html("Automatic matches will now be created. Continue?");
+                $('#confirmBody').html(
+                    'Automatic matches will now be created. Continue? <br> <br>'
+                  + '<div class="form-check">'
+                  + '   <input class="form-check-input" type="checkbox" value="" id="autoEmailCheck">'
+                  + '   <label class="form-check-label" for="flexCheckDefault">'
+                  + '       Email users about new matches'
+                  + '   </label>'
+                  + '</div>'
+                );
                 $('#confirmModal').modal('show');
                 $('#confirmYesBtn').removeClass('btn-danger');
                 $('#confirmYesBtn').addClass('btn-primary');
                 $('#confirmYesBtn').click(() => {
-                    $.post("/admin/creatematches")
+                    $('#confirmYesBtn').prop('disabled', true);
+                    $('#confirmYesBtn').html('Saving...');
+                    $('#confirmNoBtn').prop('disabled', true);
+                    $.post("/admin/creatematches", { email: $('#autoEmailCheck').prop('checked') } )
                         .done(function() { 
                             $('#confirmModal').modal('hide');
                             $('#successModal').modal('show'); 
                         })
-                        .fail(function() { fail(); });
+                        .fail(function() { 
+                            $('#confirmYesBtn').prop('disabled', false);
+                            $('#confirmNoBtn').prop('disabled', false);
+                            fail(); 
+                        });
                 });
                 $('#confirmNoBtn').click(() => {
                     $('#confirmModal').modal('hide');
@@ -266,9 +288,15 @@
                 $('#confirmBody').html("Are you sure you want to delete all matches? This cannot be undone.");
                 $('#confirmModal').modal('show');
                 $('#confirmYesBtn').click(() => {
+                    $('#confirmYesBtn').prop('disabled', true);
+                    $('#confirmNoBtn').prop('disabled', true);
                     $.post("/admin/deletematches")
                         .done(function() { location.reload(); })
-                        .fail(function() { fail(); });
+                        .fail(function() { 
+                            fail(); 
+                            $('#confirmYesBtn').prop('disabled', false);
+                            $('#confirmNoBtn').prop('disabled', false);
+                        });
                 });
                 $('#confirmNoBtn').click(() => {
                     $('#confirmModal').modal('hide');
@@ -306,9 +334,15 @@
                 $('#confirmBody').html("Are you sure you want to delete this match?");
                 $('#confirmModal').modal('show');
                 $('#confirmYesBtn').click(() => {
+                    $('#confirmYesBtn').prop('disabled', true);
+                    $('#confirmNoBtn').prop('disabled', true);
                     $.post("/admin/deletematch", { studentid: currStudent, alumid: currAlum })
                         .done(function() { location.reload(); })
-                        .fail(function() { fail(); });
+                        .fail(function() { 
+                            fail(); 
+                            $('#confirmYesBtn').prop('disabled', false);
+                            $('#confirmNoBtn').prop('disabled', false);
+                        });
                 });
                 $('#confirmNoBtn').click(() => {
                     $('#confirmModal').modal('hide');
@@ -352,9 +386,24 @@
             });
 
             $('#manualSaveBtn').click((e) => {
-                $.post("/admin/manualmatch", { studentid: currStudent, alumid: currAlum })
-                    .done(function () { location.reload(); })
-                    .fail(function () { fail(); });
+                $('#manualSaveBtn').prop('disabled', true);
+                $('#manualSaveBtn').html("Saving...");
+                $('#manualCancelBtn').prop('disabled', true);
+                $.post("/admin/manualmatch", { studentid: currStudent, alumid: currAlum, email: $('#manualEmailCheck').prop('checked') })
+                    .done(function (m) { 
+                        console.log(m);
+                        if(m == "success!") {
+                            location.reload();
+                        } else {
+                            $('#failureDetails').html(m);
+                            fail();
+                        }
+                    })
+                    .fail(function () { 
+                        fail(); 
+                        $('#manualSaveBtn').prop('disabled', false);
+                        $('#manualCancelBtn').prop('disabled', false);
+                    });
             });
         }
 

@@ -89,6 +89,19 @@ def creatematches():
     db.connect()
     db.reset_matches()
     db.add_matches(matches)
+
+    do_email = request.form['email'] == 'true'
+    if do_email:
+        for curr_match in matches:
+            studentid = curr_match[0]
+            studObj = db.get_student_by_id(studentid)
+            alumid = curr_match[1]
+            alumObj = db.get_alum_by_id(alumid)
+            emailAlumMatch(studObj._email, studObj._name, alumObj._email, alumObj._name,
+                studObj._year, studObj._communities, studObj._careers)
+            emailStudentMatch(studObj._email, studObj._name, alumObj._email, alumObj._name,
+                alumObj._year, alumObj._communities, alumObj._careers)
+
     db.disconnect()
 
     response = make_response('success!')
@@ -120,19 +133,21 @@ def manualmatch():
     # compute similarity score
     m = Matching()
     matches, final = m._processMatches()
+    studObj = None
     for stud in m._students:
         if stud._profileid == request.form['studentid']:
             studObj = stud
             break
+    alumObj = None
     for alum in m._alumni:
         if alum._profileid == request.form['alumid']:
             alumObj = alum
             break
     
-    if stud is None or alum is None:
-        return make_response('failure')
-    if (stud._profileid, alum._profileid) in matches:
-        return make_response('failure')
+    if studObj is None or alumObj is None:
+        return make_response('You cannot exceed the maximum number of matches for the selected student & alum!')
+    if (studObj._profileid, alumObj._profileid) in matches:
+        return make_response('The selected student and alum are already matched!')
 
     similarity = m.dotProduct(studObj, alumObj)
 
@@ -141,10 +156,12 @@ def manualmatch():
     db.disconnect()
 
     # send an email to student / alum
-    emailAlumMatch(studObj._email, studObj._name, alumObj._email, alumObj._name,
-        studObj._year, studObj._communities, studObj._careers)
-    emailStudentMatch(studObj._email, studObj._name, alumObj._email, alumObj._name,
-        alumObj._year, alumObj._communities, alumObj._careers)
+    do_email = request.form['email'] == 'true'
+    if do_email:
+        emailAlumMatch(studObj._email, studObj._name, alumObj._email, alumObj._name,
+            studObj._year, studObj._communities, studObj._careers)
+        emailStudentMatch(studObj._email, studObj._name, alumObj._email, alumObj._name,
+            alumObj._year, alumObj._communities, alumObj._careers)
 
     response = make_response('success!')
     return response
