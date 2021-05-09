@@ -250,12 +250,18 @@
                 $('#confirmYesBtn').removeClass('btn-danger');
                 $('#confirmYesBtn').addClass('btn-primary');
                 $('#confirmYesBtn').click(() => {
+                    $('#confirmYesBtn').prop('disabled', true);
+                    $('#confirmNoBtn').prop('disabled', true);
                     $.post("/admin/creatematches")
                         .done(function() { 
                             $('#confirmModal').modal('hide');
                             $('#successModal').modal('show'); 
                         })
-                        .fail(function() { fail(); });
+                        .fail(function() { 
+                            $('#confirmYesBtn').prop('disabled', false);
+                            $('#confirmNoBtn').prop('disabled', false);
+                            fail(); 
+                        });
                 });
                 $('#confirmNoBtn').click(() => {
                     $('#confirmModal').modal('hide');
@@ -266,9 +272,15 @@
                 $('#confirmBody').html("Are you sure you want to delete all matches? This cannot be undone.");
                 $('#confirmModal').modal('show');
                 $('#confirmYesBtn').click(() => {
+                    $('#confirmYesBtn').prop('disabled', true);
+                    $('#confirmNoBtn').prop('disabled', true);
                     $.post("/admin/deletematches")
                         .done(function() { location.reload(); })
-                        .fail(function() { fail(); });
+                        .fail(function() { 
+                            fail(); 
+                            $('#confirmYesBtn').prop('disabled', false);
+                            $('#confirmNoBtn').prop('disabled', false);
+                        });
                 });
                 $('#confirmNoBtn').click(() => {
                     $('#confirmModal').modal('hide');
@@ -306,9 +318,15 @@
                 $('#confirmBody').html("Are you sure you want to delete this match?");
                 $('#confirmModal').modal('show');
                 $('#confirmYesBtn').click(() => {
+                    $('#confirmYesBtn').prop('disabled', true);
+                    $('#confirmNoBtn').prop('disabled', true);
                     $.post("/admin/deletematch", { studentid: currStudent, alumid: currAlum })
                         .done(function() { location.reload(); })
-                        .fail(function() { fail(); });
+                        .fail(function() { 
+                            fail(); 
+                            $('#confirmYesBtn').prop('disabled', false);
+                            $('#confirmNoBtn').prop('disabled', false);
+                        });
                 });
                 $('#confirmNoBtn').click(() => {
                     $('#confirmModal').modal('hide');
@@ -352,9 +370,16 @@
             });
 
             $('#manualSaveBtn').click((e) => {
+                $('#manualSaveBtn').prop('disabled', true);
+                $('#manualSaveBtn').html("Saving...");
+                $('#manualCancelBtn').prop('disabled', true);
                 $.post("/admin/manualmatch", { studentid: currStudent, alumid: currAlum })
                     .done(function () { location.reload(); })
-                    .fail(function () { fail(); });
+                    .fail(function () { 
+                        fail(); 
+                        $('#manualSaveBtn').prop('disabled', false);
+                        $('#manualCancelBtn').prop('disabled', false);
+                    });
             });
         }
 
