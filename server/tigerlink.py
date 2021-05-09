@@ -370,6 +370,7 @@ def matchdetails():
         db = Database()
         db.connect()
         role = db.get_role(profileid)
+        is_admin = db.get_admin(profileid)
         student_match = request.args.get('student')
         alum_match = request.args.get('alum')
         student = db.get_student_by_id(student_match)
@@ -412,12 +413,16 @@ def matchdetails():
         html += '<tr>'
         html += '<td><strong>Email:</strong></td>'
 
-        if role == 'alum':
-            html += '<td> <a href = \"mailto: ' + student._email + '\">' + student._email + '</a></td>' #hyperlink
-            html += '<td>' + alum._email + '</td>'
+        if not is_admin:
+            if role == 'alum':
+                html += '<td> <a href = \"mailto: ' + student._email + '\">' + student._email + '</a></td>' #hyperlink
+                html += '<td>' + alum._email + '</td>'
+            else:
+                html += '<td>' + student._email + '</td>'
+                html += '<td <a href = \"mailto: ' + alum._email + '\">' + alum._email + '</a></td>' # hyperlink
         else:
             html += '<td>' + student._email + '</td>'
-            html += '<td <a href = \"mailto: ' + alum._email + '\">' + alum._email + '</a></td>' # hyperlink
+            html += '<td>' + student._email + '</td>'
 
         html += '</tr>'
 
