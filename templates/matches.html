@@ -266,6 +266,7 @@
                 $('#confirmYesBtn').addClass('btn-primary');
                 $('#confirmYesBtn').click(() => {
                     $('#confirmYesBtn').prop('disabled', true);
+                    $('#confirmYesBtn').html('Saving...');
                     $('#confirmNoBtn').prop('disabled', true);
                     $.post("/admin/creatematches", { email: $('#autoEmailCheck').prop('checked') } )
                         .done(function() { 
