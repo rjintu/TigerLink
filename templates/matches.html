@@ -67,39 +67,14 @@
                             <td>
                             {% if match[i] > '80' %}
                                 &#9733;&#9733;&#9733;&#9733;&#9733;
-                                <!-- <span class="fa fa-star checked"></span>
-                                <span class="fa fa-star checked"></span>
-                                <span class="fa fa-star checked"></span>
-                                <span class="fa fa-star checked"></span>
-                                <span class="fa fa-star checked"></span> -->
                             {% elif match[i] > '60' %}
                                 &#9733;&#9733;&#9733;&#9733;&#9734;
-                                <!-- <span class="fa fa-star checked"></span>
-                                <span class="fa fa-star checked"></span>
-                                <span class="fa fa-star checked"></span>
-                                <span class="fa fa-star checked"></span>
-                                <span class="fa fa-star"></span> -->
                             {% elif match[i] > '40' %}
                                 &#9733;&#9733;&#9733;&#9734;&#9734;
-                                <!-- <span class="fa fa-star checked"></span>
-                                <span class="fa fa-star checked"></span>
-                                <span class="fa fa-star checked"></span>
-                                <span class="fa fa-star"></span>
-                                <span class="fa fa-star"></span> -->
                             {% elif match[i] > '20' %}
                                 &#9733;&#9733;&#9734;&#9734;&#9734;
-                                <!-- <span class="fa fa-star checked"></span>
-                                <span class="fa fa-star checked"></span>
-                                <span class="fa fa-star"></span>
-                                <span class="fa fa-star"></span>
-                                <span class="fa fa-star"></span> -->
                             {% else %}
                                 &#9733;&#9734;&#9734;&#9734;&#9734;
-                                <!-- <span class="fa fa-star checked"></span>
-                                <span class="fa fa-star"></span>
-                                <span class="fa fa-star"></span>
-                                <span class="fa fa-star"></span>
-                                <span class="fa fa-star"></span> -->
                             {% endif %}
                             </td>
 
@@ -281,8 +256,8 @@
             $('[data-toggle="popover"]').popover({
                 placement: 'top',
                 trigger: 'hover',
-                title: 'Similarity Score',
-                content: 'The similarity score is a percentage that quantifies the overlap in majors, careers, and organizations between the student and the alum. It assigns an equal weightage to each of these three categories, although the weighting may be adjusted by the admin.'
+                title: 'Similarity Rating',
+                content: 'The similarity rating quantifies the overlap in majors, careers, and organizations between the student and the alum. It assigns an equal weightage to each of these three categories, although the weighting may be adjusted by the admin.'
             });
 
             $('#verticalScroll').DataTable({

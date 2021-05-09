@@ -73,9 +73,21 @@
                     <tr class="clickable-row shadow" id="allRows" infoStudent='{{match[0]}}' infoAlum='{{match[1]}}'>
                         {% for i in range (2, 7): %}
                         {% if (i == 6) %}
-                        <td>{{ match[i] }}%</td>
+                            <td>
+                                {% if match[i] > '80' %}
+                                    &#9733;&#9733;&#9733;&#9733;&#9733;
+                                {% elif match[i] > '60' %}
+                                    &#9733;&#9733;&#9733;&#9733;&#9734;
+                                {% elif match[i] > '40' %}
+                                    &#9733;&#9733;&#9733;&#9734;&#9734;
+                                {% elif match[i] > '20' %}
+                                    &#9733;&#9733;&#9734;&#9734;&#9734;
+                                {% else %}
+                                    &#9733;&#9734;&#9734;&#9734;&#9734;
+                                {% endif %}
+                            </td>
                         {% else %}
-                        <td>{{ match[i] }}</td>
+                            <td>{{ match[i] }}</td>
                         {% endif %}
                         {% endfor %}
                     </tr>
@@ -136,8 +148,8 @@
             $('[data-toggle="popover"]').popover({
                 placement: 'top',
                 trigger: 'hover',
-                title: 'Similarity Score',
-                content: 'The similarity score measures the overlap in majors, careers, and organizations between the student and alum.'
+                title: 'Similarity Rating',
+                content: 'The similarity rating quantifies the overlap in majors, careers, and organizations between the student and the alum. It assigns an equal weightage to each of these three categories, although the weighting may be adjusted by the admin.'
             });
 
             $('#closeDetailsBtn').click(function () {
