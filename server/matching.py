@@ -88,7 +88,7 @@ class Matching(object):
             self._students = self.studentize(s, c, i)
             s2, c2, i2 = self._db.get_alumni()
             self._alumni = self.alumnize(s2, c2, i2)
-            self._curMatches = self._db.all_matches()
+            self._curMatches = self._db.retrieve_matches("0", display_all=True)
         except Exception as e:
             html = "error occurred: " + str(e)
             print(e)
