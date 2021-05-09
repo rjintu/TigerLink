@@ -166,6 +166,9 @@
 
 
     <!-- postid TEXT, authorname TEXT, authorid TEXT, posttime TEXT, posttitle TEXT, postcontent TEXT, imgurl TEXT, privacy TEXT, communities TEXT -->
+    {% if posts|length == 0 %}
+    <h2 style="align-content: center; color: #252525"> No Posts Created </h2>
+    {% endif %}
     {% for res in posts: %}
     <div class="container mt-5 mb-5">
         <div class="row">
