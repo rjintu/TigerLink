@@ -65,36 +65,45 @@
                         {% for i in range (2, match|length): %}
                         {% if (i == 6) %}
                             {% if match[i] > 80 %}
-
+                            <td>
                             <span class="fa fa-star checked"></span>
                             <span class="fa fa-star checked"></span>
                             <span class="fa fa-star checked"></span>
                             <span class="fa fa-star checked"></span>
                             <span class="fa fa-star checked"></span>
+                            </td>
                             {% elif match[i] > 60 %}
+                            <td>
                             <span class="fa fa-star checked"></span>
                             <span class="fa fa-star checked"></span>
                             <span class="fa fa-star checked"></span>
                             <span class="fa fa-star checked"></span>
                             <span class="fa fa-star"></span>
+                            </td>  
                             {% elif match[i] > 40 %}
+                            <td>
                             <span class="fa fa-star checked"></span>
                             <span class="fa fa-star checked"></span>
                             <span class="fa fa-star checked"></span>
                             <span class="fa fa-star"></span>
                             <span class="fa fa-star"></span>
+                            </td>
                             {% elif match[i] > 20 %}
+                            <td>
                             <span class="fa fa-star checked"></span>
                             <span class="fa fa-star checked"></span>
                             <span class="fa fa-star"></span>
                             <span class="fa fa-star"></span>
                             <span class="fa fa-star"></span>
+                            </td>
                             {% else %}
+                            <td>
                             <span class="fa fa-star checked"></span>
                             <span class="fa fa-star"></span>
                             <span class="fa fa-star"></span>
                             <span class="fa fa-star"></span>
                             <span class="fa fa-star"></span>
+                            </td>
                             {% endif %}
 
                             <!-- <td>{{ match[i] }}%</td> -->
