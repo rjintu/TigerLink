@@ -528,12 +528,11 @@ class Database:
     # :param name: search query name
     # :param email: search query email
     # :param major: search query major
-    # :param zipcode: search query zipcode
-    def _search_students(self, name, email, major, zipcode):
+    def _search_students(self, name, email, major):
         cursor = self._connection.cursor()
         stmtStr = "SELECT profileid, classyear, name, major, email FROM students WHERE lower(name) LIKE %s " + \
-            "AND email LIKE %s AND major LIKE %s AND zip LIKE %s"
-        cursor.execute(stmtStr, [name, email, major, zipcode])
+            "AND email LIKE %s AND major LIKE %s"
+        cursor.execute(stmtStr, [name, email, major])
         return cursor
 
     # helper method to search alumni table
@@ -541,8 +540,7 @@ class Database:
     # :param name: search query name
     # :param email: search query email
     # :param major: search query major
-    # :param zipcode: search query zipcode
-    def _search_alumni(self, name, email, major, zipcode):
+    def _search_alumni(self, name, email, major):
         cursor = self._connection.cursor()
         stmtStr = "SELECT profileid, classyear, name, major, email FROM alumni WHERE lower(name) LIKE %s " + \
             "AND email LIKE %s AND major LIKE %s"
@@ -558,7 +556,7 @@ class Database:
         for i in range(0, len(search_values)):
             if (search_values[i] == ''):
                 search_values[i] = '%%%%'
-        name, email, major, zipcode, _, _, typeofSearch = search_values
+        name, email, major, _, _, _, typeofSearch = search_values
         careers = search_query[-3]
         interests = search_query[-2]
         name = '%%' + name.lower() + '%%'
@@ -585,7 +583,7 @@ class Database:
                 row = cursor.fetchone()
 
         if search_alumni:
-            cursor = self._search_alumni(name, email, major, zipcode)
+            cursor = self._search_alumni(name, email, major)
             row = cursor.fetchone()
 
             # filter users based on career and interest
