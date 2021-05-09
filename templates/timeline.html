@@ -11,6 +11,7 @@
 
     <!-- Meta tag for number of posts -->
     <meta id="num-posts" data-name="{{posts|length}}">
+    <meta id="more-posts" data-name="{{more_posts}}">
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
     {% with bold='timeline' %}
@@ -255,8 +256,8 @@
                 $("#prev").show();
             }
             var numPosts = $('#num-posts').data();
-            console.log(numPosts.name)
-            if (numPosts.name < 5) {
+            var morePosts = $('#more-posts').data();
+            if (numPosts.name < 5 || morePosts.name == 'False') {
                 $("#next").hide();
                 $("#endresults").show();
             }
