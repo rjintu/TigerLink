@@ -203,7 +203,6 @@
               <label class="form-check-label" for="everyone"> Everyone </label>
             </div>
             <br>
-
             <div class="form-group" id="privatecomms" style="display: none">
               <label for="groupsForm"><strong>Select the communities you'd like to post to.</strong></label>
               <select multiple class="selectpicker" id="communities" name="communities" data-selected-text-format="count">
@@ -221,7 +220,19 @@
             </label> -->
             <label class="form-label" for="file-upload"><h5>Upload an Image:</h5></label>
             <input type="file" accept='image/*' class="form-control" id="file-upload" />
-                        
+            <br>
+            <br>
+            <div class="form-group" id="tags">
+              <label for="groupsForm"><strong>Select any tags the post best identifies with.</strong></label>
+              <select multiple class="selectpicker" id="tags" name="tags" data-selected-text-format="count">
+                <option>Internship Opportunity</option>
+                <option>Networking Events</option>
+                <option>Reunions</option>
+                <option>On-Campus Social Event</option>
+                <option>Sports</option>
+              </select>
+            </div>
+           
           </div>
 
           <input id="imgurl" name="imgurl" type="hidden" value="google.com">

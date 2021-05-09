@@ -1,7 +1,7 @@
 
 class Post(object):
 
-    def __init__(self, postid, authorid, posttime, posttitle, postcontent, imgurl, privacy, communities, moderation):
+    def __init__(self, postid, authorid, posttime, posttitle, postcontent, imgurl, privacy, communities, moderation, tags):
         self._postid = postid
         self._authorid = authorid
         self._posttime = posttime
@@ -11,6 +11,7 @@ class Post(object):
         self._privacy = privacy
         self._communities = communities 
         self._moderation = moderation
+        self._tags = tags
 
     def addField(self, fieldName, fieldVal):
         setattr(self, fieldName, fieldVal)
