@@ -197,6 +197,13 @@
                             </tbody>
                         </table>
                     </div>
+
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="manualEmailCheck" checked>
+                        <label class="form-check-label" for="flexCheckDefault">
+                            Email users about new match
+                        </label>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button id="manualCancelBtn" class="btn btn-secondary mr-auto">Cancel</button>
@@ -245,14 +252,22 @@
             $('.dataTables_length').addClass('bs-select');
 
             $('#creatematches').click(() => {
-                $('#confirmBody').html("Automatic matches will now be created. Continue?");
+                $('#confirmBody').html(
+                    'Automatic matches will now be created. Continue? <br> <br>'
+                  + '<div class="form-check">'
+                  + '   <input class="form-check-input" type="checkbox" value="" id="autoEmailCheck">'
+                  + '   <label class="form-check-label" for="flexCheckDefault">'
+                  + '       Email users about new matches'
+                  + '   </label>'
+                  + '</div>'
+                );
                 $('#confirmModal').modal('show');
                 $('#confirmYesBtn').removeClass('btn-danger');
                 $('#confirmYesBtn').addClass('btn-primary');
                 $('#confirmYesBtn').click(() => {
                     $('#confirmYesBtn').prop('disabled', true);
                     $('#confirmNoBtn').prop('disabled', true);
-                    $.post("/admin/creatematches")
+                    $.post("/admin/creatematches", {email: $('#autoEmailCheck').checked} )
                         .done(function() { 
                             $('#confirmModal').modal('hide');
                             $('#successModal').modal('show'); 
@@ -373,7 +388,7 @@
                 $('#manualSaveBtn').prop('disabled', true);
                 $('#manualSaveBtn').html("Saving...");
                 $('#manualCancelBtn').prop('disabled', true);
-                $.post("/admin/manualmatch", { studentid: currStudent, alumid: currAlum })
+                $.post("/admin/manualmatch", { studentid: currStudent, alumid: currAlum, email: $('#autoEmailCheck').checked })
                     .done(function (m) { 
                         console.log(m);
                         if(m == "success!") {
