@@ -120,19 +120,21 @@ def manualmatch():
     # compute similarity score
     m = Matching()
     matches, final = m._processMatches()
+    studObj = None
     for stud in m._students:
         if stud._profileid == request.form['studentid']:
             studObj = stud
             break
+    alumObj = None
     for alum in m._alumni:
         if alum._profileid == request.form['alumid']:
             alumObj = alum
             break
     
-    if stud is None or alum is None:
-        return make_response('failure')
-    if (stud._profileid, alum._profileid) in matches:
-        return make_response('failure')
+    if studObj is None or alumObj is None:
+        return make_response('You cannot exceed the maximum number of matches for the selected student & alum!')
+    if (studObj._profileid, alumObj._profileid) in matches:
+        return make_response('The selected student and alum are already matched!')
 
     similarity = m.dotProduct(studObj, alumObj)
 
