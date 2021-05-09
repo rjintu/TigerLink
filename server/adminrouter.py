@@ -88,6 +88,7 @@ def creatematches():
     db = Database()
     db.connect()
     db.reset_matches()
+
     db.add_matches(matches)
 
     do_email = request.form['email'] == 'true'
