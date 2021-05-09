@@ -104,7 +104,7 @@
                 <div class="modal-header">
                     <h5 class="modal-title text-danger">Error</h5>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body" id="failureDetails">
                     Something went wrong when trying to edit matches in the server. Please contact the TigerLink
                     developers for support.
                 </div>
@@ -374,7 +374,15 @@
                 $('#manualSaveBtn').html("Saving...");
                 $('#manualCancelBtn').prop('disabled', true);
                 $.post("/admin/manualmatch", { studentid: currStudent, alumid: currAlum })
-                    .done(function () { location.reload(); })
+                    .done(function (m) { 
+                        console.log(m);
+                        if(m == "success!") {
+                            location.reload();
+                        } else {
+                            $('#failureDetails').html(m);
+                            fail();
+                        }
+                    })
                     .fail(function () { 
                         fail(); 
                         $('#manualSaveBtn').prop('disabled', false);
