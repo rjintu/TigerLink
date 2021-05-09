@@ -126,6 +126,10 @@ class Matching(object):
         #matches, finalMatches = [], []
         absoluteFinal = []
         topSim = 0
+        for existing in finalMatches:
+            print(topSim)
+            topSim = max(topSim, existing[6])
+
         while (len(students) > 0):
             if len(alumni) == 0:
                 if topSim == 0:
