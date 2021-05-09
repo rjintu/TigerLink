@@ -50,7 +50,7 @@ class Database:
         # Timeline posts tables
         cursor.execute('DROP TABLE IF EXISTS posts')
         cursor.execute('CREATE TABLE posts ' + 
-                '(postid SERIAL, authorname TEXT, authorid TEXT, posttime TEXT, posttitle TEXT, postcontent TEXT, imgurl TEXT, privacy TEXT, communities TEXT, propic TEXT)')
+                '(postid SERIAL, authorname TEXT, authorid TEXT, posttime TEXT, posttitle TEXT, postcontent TEXT, imgurl TEXT, privacy TEXT, communities TEXT, propic TEXT, moderation TEXT, tags TEXT)')
         cursor.execute('DROP TABLE IF EXISTS comments')
         cursor.execute('CREATE TABLE comments ' +
                 '(postid TEXT, author TEXT, comment TEXT)')
@@ -77,7 +77,7 @@ class Database:
         cursor.execute('DROP TABLE IF EXISTS posts')
         cursor.execute('CREATE TABLE posts ' + 
                 '(postid SERIAL, authorname TEXT, authorid TEXT, posttime TEXT, posttitle TEXT, ' + 
-                'postcontent TEXT, imgurl TEXT, privacy TEXT, communities TEXT, propic TEXT, moderation TEXT)')
+                'postcontent TEXT, imgurl TEXT, privacy TEXT, communities TEXT, propic TEXT, moderation TEXT, tags TEXT)')
         cursor.execute('DROP TABLE IF EXISTS comments')
         cursor.execute('CREATE TABLE comments ' +
                 '(postid TEXT, author TEXT, comment TEXT)')
@@ -545,8 +545,8 @@ class Database:
     def _search_alumni(self, name, email, major, zipcode):
         cursor = self._connection.cursor()
         stmtStr = "SELECT profileid, classyear, name, major, email FROM alumni WHERE lower(name) LIKE %s " + \
-            "AND email LIKE %s AND major LIKE %s AND zip LIKE %s"
-        cursor.execute(stmtStr, [name, email, major, zipcode])
+            "AND email LIKE %s AND major LIKE %s"
+        cursor.execute(stmtStr, [name, email, major])
         return cursor
 
     # search users based on given queries
@@ -573,11 +573,12 @@ class Database:
             search_alumni = True
 
         if search_students:
-            cursor = self._search_students(name, email, major, zipcode)
+            cursor = self._search_students(name, email, major)
             row = cursor.fetchone()
 
             # filter users based on career and interest
             while row is not None:
+                print(row)
                 profileid = row[0]
                 if self._contains_career(profileid, careers) and self._contains_interest(profileid, interests):
                     output.append(row)
@@ -626,7 +627,7 @@ class Database:
         cursor = self._connection.cursor()
 
         stmtStr = "SELECT postid, authorid, posttime, posttitle, postcontent, " + \
-                "imgurl, privacy, communities, moderation FROM posts ORDER BY postid DESC "
+                "imgurl, privacy, communities, moderation, tags FROM posts ORDER BY postid DESC "
 
         if limit:
             stmtStr += "OFFSET %s LIMIT %s"
@@ -637,7 +638,7 @@ class Database:
         row = cursor.fetchone()
         output = []
         while row is not None:
-            curr_post = Post(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8])
+            curr_post = Post(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9])
             output.append(curr_post)
             row = cursor.fetchone()
 
@@ -655,7 +656,7 @@ class Database:
         revised_output = []
         for post in output:
             revised_output.append((post._postid, post._authorid, post._authorname, post._posttime, post._posttitle, post._postcontent, post._imgurl, 
-            post._privacy, post._communities, post._propic, post._moderation))
+            post._privacy, post._communities, post._propic, post._moderation, post._tags))
             
         cursor.close()
         return revised_output
@@ -728,11 +729,11 @@ class Database:
     # :param privacy: # TODO: clarify
     # :param communities: list of communities to which the post should be displayed
     # :param propic: user's profile picture
-    def create_post(self, profileid, authorName, time, title, content, image_url, privacy, communities, propic):
+    def create_post(self, profileid, authorName, time, title, content, image_url, privacy, communities, propic, tags):
         cursor = self._connection.cursor()
-        cursor.execute('INSERT INTO posts(authorid, authorname, posttime, posttitle, postcontent, imgurl, privacy, communities, propic, moderation) ' +
-                        'VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)', 
-                        [profileid, authorName, time, title, content, image_url, privacy, communities, propic, str(0)])
+        cursor.execute('INSERT INTO posts(authorid, authorname, posttime, posttitle, postcontent, imgurl, privacy, communities, propic, moderation, tags) ' +
+                        'VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)', 
+                        [profileid, authorName, time, title, content, image_url, privacy, communities, propic, str(0), tags])
         self._connection.commit()
         cursor.close()
 

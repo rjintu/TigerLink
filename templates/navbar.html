@@ -103,26 +103,42 @@
         </button>
           <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                 <ul class="navbar-nav ms-auto" id="two">
+                    {% if bold == 'timeline' %}
+                    <li id='nav-disable' class="nav-item">
+                        {% else %}
                     <li class="nav-item">
-                        <a href="timeline" data-toggle="search">
+                        {% endif %}
+                    <a href="timeline" data-toggle="search">
                             <i class="pe-7s-home"></i>
                             <p>Timeline</p>
                         </a>
                     </li>
+                    {% if bold == 'search' %}
+                    <li id='nav-disable' class="nav-item">
+                        {% else %}
                     <li class="nav-item">
-                        <a href="dosearch" data-toggle="search">
+                        {% endif %}
+                    <a href="dosearch" data-toggle="search">
                             <i class="pe-7s-search"></i>
                             <p>Search</p>
                         </a>
                     </li>
+                    {% if bold == 'matches' %}
+                    <li id='nav-disable' class="nav-item">
+                        {% else %}
                     <li class="nav-item">
-                        <a href="displaymatches" data-toggle="Matches">
+                        {% endif %}
+                    <a href="displaymatches" data-toggle="Matches">
                             <i class="pe-7s-gift"></i>
                             <p>Matches</p>
                         </a>
                     </li>
+                    {% if bold == 'post' %}
+                    <li id='nav-disable' class="nav-item">
+                        {% else %}
                     <li class="nav-item">
-                        <a href="loadpost" data-toggle="LoadPost">
+                        {% endif %}
+                    <a href="loadpost" data-toggle="LoadPost">
                             <i class="pe-7s-plus"></i>
                             <p>Post</p>
                         </a>

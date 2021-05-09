@@ -170,7 +170,9 @@ def createpost():
         communities = acct_info.getlist(
             'communities')
         imgurl = acct_info.get('imgurl', '')
-
+        tags = acct_info.getlist('tags')
+        print("tags: ")
+        print(tags)
         db = Database()
         db.connect()
         profileid = session['profileid']
@@ -191,7 +193,7 @@ def createpost():
         # currDate = str(datetime.now())
 
         db.create_post(str(profileid), str(name), str(currDate), str(title),
-                    str(content), str(imgurl), str(private), json.dumps(communities), str(session['picture']))
+                    str(content), str(imgurl), str(private), json.dumps(communities), str(session['picture']), json.dumps(tags))
         db.disconnect()
         return redirect('/timeline')
     
@@ -676,10 +678,6 @@ def timeline():
         output = db.get_posts()
         reported_posts = db.get_reports_byprofileid(profileid)
 
-        print("reported posts:")
-        print(reported_posts)
-        print("end of reported posts:")
-
         time_offset = int(request.args.get('time_offset', 240)) # FIXME: need to pass in user time zone from JS (right now offset doesn't exist)
         for i in output:
             curr_time = datetime.fromisoformat(i[3])
@@ -688,7 +686,8 @@ def timeline():
             # curr_time = curr_time.replace(tzinfo=timezone.utc).astimezone(tz=local_tz)
             formatted_time = curr_time.strftime("%A, %B %d at %I:%M %p")
 
-            copy = i[:3] + (formatted_time,) + i[4:8] + (', '.join(json.loads(i[8])),) + (i[9],)
+            copy = i[:3] + (formatted_time,) + i[4:8] + (', '.join(json.loads(i[8])),) + i[9:11] + (', '.join(json.loads(i[11])),)
+            print(copy)
             if str(copy[0]) in reported_posts:
                 continue
             elif copy[1] == profileid or role == i[7]:
