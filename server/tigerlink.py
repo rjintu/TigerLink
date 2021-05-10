@@ -419,7 +419,7 @@ def matchdetails():
                 html += '<td>' + alum._email + '</td>'
             else:
                 html += '<td>' + student._email + '</td>'
-                html += '<td <a href = \"mailto: ' + alum._email + '\">' + alum._email + '</a></td>' # hyperlink
+                html += '<td> <a href = \"mailto: ' + alum._email + '\">' + alum._email + '</a></td>' # hyperlink
         else:
             html += '<td>' + student._email + '</td>'
             html += '<td>' + student._email + '</td>'
